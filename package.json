@@ -1,0 +1,22 @@
+{
+  "name": "geb-subgraph",
+  "version": "0.1.0",
+  "description": "The Graph protocol subgraph for GEB",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/reflexer-labs/geb-subgraph.git"
+  },
+  "author": "Guillaume Felley",
+  "license": "GNU",
+  "bugs": {
+    "url": "https://github.com/reflexer-labs/geb-subgraph/issues"
+  },
+  "homepage": "https://github.com/reflexer-labs/geb-subgraph#readme",
+  "devDependencies": {
+    "@graphprotocol/graph-cli": "^0.18.0",
+    "@graphprotocol/graph-ts": "^0.18.1"
+  }
+}

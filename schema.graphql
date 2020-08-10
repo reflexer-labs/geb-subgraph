@@ -1,0 +1,41 @@
+" GEB CDP "
+type CDP @entity {
+  " Equals to: <cdpHandler>-<CollateralType>"
+  id: ID!
+
+  " CDP ID if this CDP was created through the manager (GebCdpManager) "
+  cdpId: BigInt
+
+  " Collateral type associated to this cdp "
+  collateralType: CollateralType!
+
+  " Assets locked as collateral (cdpCollateral) "
+  collateral: BigDecimal!
+
+  " Outstanding debt "
+  debt: BigDecimal!
+
+  " cdpHandler address (ownership at the CDPEngine level) "
+  handler: Bytes!
+
+  " Address of CDP owner (top level ownership)"
+  owner: Bytes!
+
+  " Timestamp of the block in which this CDP was opened [seconds] "
+  openedAt: BigInt!
+
+  " Block number in which this CDP was opened "
+  openedAtBlock: BigInt!
+
+  " Transaction hash in which this CDP was opened "
+  openedAtTransaction: Bytes!
+
+  " Timestamp of the block in which this CDP was last modified [seconds] "
+  modifiedAt: BigInt
+
+  " Block number in which this CDP was last modified "
+  modifiedAtBlock: BigInt
+
+  " Transaction hash in which this CDP was last modified "
+  modifiedAtTransaction: Bytes
+}

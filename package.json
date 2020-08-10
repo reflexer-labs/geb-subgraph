@@ -10,7 +10,7 @@
     "url": "git+https://github.com/reflexer-labs/geb-subgraph.git"
   },
   "author": "Guillaume Felley",
-  "license": "GNU",
+  "license": "AGPL-3.0",
   "bugs": {
     "url": "https://github.com/reflexer-labs/geb-subgraph/issues"
   },

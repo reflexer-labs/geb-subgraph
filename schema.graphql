@@ -116,9 +116,6 @@ type CollateralPrice @entity {
   " Collateral type "
   collateral: CollateralType!
 
-  " Market price with safety margin (current price less liquidation ratio) [USD] "
-  safetyPrice: BigDecimal!
-
   " Timestamp in seconds "
   timestamp: BigInt!
 

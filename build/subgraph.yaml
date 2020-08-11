@@ -17,10 +17,53 @@ dataSources:
       language: wasm/assemblyscript
       file: GebDeploy/GebDeploy.wasm
       entities:
-        - CDP
+        - CDPEngine
       abis:
         - name: GebDeploy
           file: GebDeploy/abis/GebDeploy.json
       callHandlers:
         - function: deployCDPEngine()
           handler: handleDeployCDPEngine
+templates:
+  - name: CDPEngine
+    kind: ethereum/contract
+    network: kovan
+    source:
+      abi: CDPEngine
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: templates/CDPEngine/CDPEngine.wasm
+      entities:
+        - CollateralType
+        - SystemState
+        - Cdp
+      abis:
+        - name: CDPEngine
+          file: CDPEngine/abis/CDPEngine.json
+      eventHandlers:
+        - event: InitializeCollateralType(bytes32)
+          handler: handleInitializeCollateralType
+        - event: ModifyParameters(bytes32,bytes32,uint256)
+          handler: handleModifyParametersCollateralTypeUint
+        - event: ModifyParameters(bytes32,uint256)
+          handler: handleModifyParametersUint
+        - event: ModifyCollateralBalance(bytes32,address,int256)
+          handler: handleModifyCollateralBalance
+        - event: TransferCollateral(bytes32,address,address,uint256)
+          handler: handleTransferCollateral
+        - event: TransferInternalCoins(address,address,uint256)
+          handler: handleTransferInternalCoins
+        - event: ModifyCDPCollateralization(bytes32,address,address,address,int256,int256,uint256,uint256,uint256)
+          handler: handleModifyCDPCollateralization
+        - event: TransferCDPCollateralAndDebt(bytes32,address,address,int256,int256,uint256,uint256,uint256,uint256)
+          handler: handleTransferCDPCollateralAndDebt
+        - event: ConfiscateCDPCollateralAndDebt(bytes32,address,address,address,int256,int256,uint256)
+          handler: handleConfiscateCDPCollateralAndDebt
+        - event: SettleDebt(uint256,uint256,uint256,uint256,uint256)
+          handler: handleSettleDebt
+        - event: CreateUnbackedDebt(address,address,uint256,uint256,uint256,uint256,uint256)
+          handler: handleCreateUnbackedDebt
+        - event: UpdateAccumulatedRate(bytes32,address,int256,uint256,uint256)
+          handler: handleUpdateAccumulatedRate

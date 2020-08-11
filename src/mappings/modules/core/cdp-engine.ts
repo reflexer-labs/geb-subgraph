@@ -22,7 +22,6 @@ import {
 import * as bytes from '../../../utils/bytes'
 import * as decimal from '../../../utils/decimal'
 import * as integer from '../../../utils/integer'
-import { getFunctionSignatureFormInput, functionSignature } from '../../../utils/ethereum'
 
 // Register a new collateral type
 export function handleInitializeCollateralType(event: InitializeCollateralType): void {
@@ -68,7 +67,7 @@ export function handleModifyParametersUint(event: ModifyParametersUint): void {
   }
 }
 
-export function handleModifyParametersCollateralTypeUint(event: ModifyParametersCollateralTypeUint) {
+export function handleModifyParametersCollateralTypeUint(event: ModifyParametersCollateralTypeUint): void {
   let system = getSystemState(event)
   let collateralType = event.params.collateralType.toString()
   let what = event.params.parameter.toString()

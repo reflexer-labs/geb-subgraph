@@ -447,15 +447,6 @@ export class CollateralPrice extends Entity {
     this.set("collateral", Value.fromString(value));
   }
 
-  get safetyPrice(): BigDecimal {
-    let value = this.get("safetyPrice");
-    return value.toBigDecimal();
-  }
-
-  set safetyPrice(value: BigDecimal) {
-    this.set("safetyPrice", Value.fromBigDecimal(value));
-  }
-
   get timestamp(): BigInt {
     let value = this.get("timestamp");
     return value.toBigInt();

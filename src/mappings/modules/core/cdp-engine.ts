@@ -1,4 +1,4 @@
-import { Address, Bytes } from '@graphprotocol/graph-ts'
+import { Address, Bytes, log } from '@graphprotocol/graph-ts'
 
 import { CollateralType, Cdp, UserProxy } from '../../../../generated/schema'
 
@@ -26,6 +26,9 @@ import * as integer from '../../../utils/integer'
 // Register a new collateral type
 export function handleInitializeCollateralType(event: InitializeCollateralType): void {
   let collateral = new CollateralType(event.params.collateralType.toString())
+
+  log.info('Onboard new collateral {}', [collateral.id])
+
   collateral.debtCeiling = decimal.ZERO
   collateral.debtFloor = decimal.ZERO
   collateral.debtAmount = decimal.ZERO
@@ -99,16 +102,19 @@ export function handleModifyParametersCollateralTypeUint(event: ModifyParameters
 // Modify a user's collateral balance
 export function handleModifyCollateralBalance(event: ModifyCollateralBalance): void {
   // TODO:
+  log.warning('ModifyCollateralBalance called but handler not implemented!', [])
 }
 
 // Transfer collateral between users
 export function handleTransferCollateral(event: TransferCollateral): void {
   // TODO:
+  log.warning('TransferCollateral called but handler not implemented!', [])
 }
 
 // Transfer reflexer bond between users
 export function handleTransferInternalCoins(event: TransferInternalCoins): void {
   // TODO:
+  log.warning('TransferCollateral called but handler not implemented!', [])
 }
 
 // Create or modify a CDP
@@ -173,11 +179,13 @@ export function handleModifyCDPCollateralization(event: ModifyCDPCollateralizati
 // Split a CDP - binary approval or splitting/merging Vaults
 export function handleTransferCDPCollateralAndDebt(event: TransferCDPCollateralAndDebt): void {
   // TODO:
+  log.warning('TransferCDPCollateralAndDebt called but handler not implemented!', [])
 }
 
 // Liquidate a CDP
 export function handleConfiscateCDPCollateralAndDebt(event: ConfiscateCDPCollateralAndDebt): void {
   // TODO:
+  log.warning('ConfiscateCDPCollateralAndDebt called but handler not implemented!', [])
 }
 
 // Create/destroy equal quantities of reflexer bond and system debt

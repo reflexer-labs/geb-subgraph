@@ -6,8 +6,17 @@ import { getSystemState } from '../../../entities'
 
 import {
   InitializeCollateralType,
-  ModifyParameters as ModifyParametersCollateralTypeUint,
-  ModifyParameters1 as ModifyParametersUint,
+  ModifyParameters as ModifyParametersUint,
+  ModifyParameters1 as ModifyParametersCollateralTypeUint,
+  ModifyCollateralBalance,
+  TransferCollateral,
+  TransferInternalCoins,
+  ModifyCDPCollateralization,
+  TransferCDPCollateralAndDebt,
+  ConfiscateCDPCollateralAndDebt,
+  SettleDebt,
+  CreateUnbackedDebt,
+  UpdateAccumulatedRate,
 } from '../../../../generated/templates/CDPEngine/CDPEngine'
 
 import * as bytes from '../../../utils/bytes'
@@ -25,7 +34,8 @@ export function handleInitializeCollateralType(event: InitializeCollateralType):
   // TODO: auction parameter init
 
   collateral.liquidationPenalty = decimal.ZERO
-  collateral.liquidationRatio = decimal.ZERO
+  collateral.liquidationCRatio = decimal.ZERO
+  collateral.safetyCRatio = decimal.ZERO
 
   collateral.rate = decimal.ZERO
 
@@ -47,7 +57,7 @@ export function handleInitializeCollateralType(event: InitializeCollateralType):
 }
 
 // Modify collateral type parameters
-export function handleModifyParametersCollateralTypeUint(event: ModifyParametersCollateralTypeUint): void {
+export function handleModifyParametersUint(event: ModifyParametersUint): void {
   let system = getSystemState(event)
   let what = event.params.parameter.toString()
   let data = event.params.data
@@ -58,7 +68,7 @@ export function handleModifyParametersCollateralTypeUint(event: ModifyParameters
   }
 }
 
-export function handleModifyParametersUint(event: ModifyParametersUint) {
+export function handleModifyParametersCollateralTypeUint(event: ModifyParametersCollateralTypeUint) {
   let system = getSystemState(event)
   let collateralType = event.params.collateralType.toString()
   let what = event.params.parameter.toString()
@@ -88,101 +98,101 @@ export function handleModifyParametersUint(event: ModifyParametersUint) {
   }
 }
 // Modify a user's collateral balance
-export function handleSlip(event: LogNote): void {
-  // TODO
+export function handleModifyCollateralBalance(event: ModifyCollateralBalance): void {
+  // TODO:
 }
 
 // Transfer collateral between users
-export function handleFlux(event: LogNote): void {
-  // TODO
+export function handleTransferCollateral(event: TransferCollateral): void {
+  // TODO:
 }
 
-// Transfer stablecoin between users
-export function handleMove(event: LogNote): void {
-  // TODO
+// Transfer reflexer bond between users
+export function handleTransferInternalCoins(event: TransferInternalCoins): void {
+  // TODO:
 }
 
-// Create or modify a Vault
-export function handleFrob(event: LogNote): void {
-  let ilk = event.params.arg1.toString()
-  let urn = bytes.toAddress(event.params.arg2)
-  let dink = bytes.toSignedInt(<Bytes>event.params.data.subarray(132, 164))
-  let dart = bytes.toSignedInt(<Bytes>event.params.data.subarray(164, 196))
+// Create or modify a CDP
+export function handleModifyCDPCollateralization(event: ModifyCDPCollateralization): void {
+  let collateralType = event.params.collateralType.toString()
+  let cdpAddress = event.params.cdp
+  let deltaCollateral = event.params.deltaCollateral
+  let deltaDebt = event.params.deltaDebt
 
-  let collateral = CollateralType.load(ilk)
+  let collateral = CollateralType.load(collateralType)
 
   if (collateral != null) {
-    let debt = decimal.fromWad(dart)
-    let collateralBalance = decimal.fromWad(dink)
+    let debt = decimal.fromWad(deltaDebt)
+    let collateralBalance = decimal.fromWad(deltaCollateral)
 
-    let vaultId = urn.toHexString() + '-' + ilk
-    let vault = Vault.load(vaultId)
+    let cdpId = cdpAddress.toHexString() + '-' + collateralType
+    let cdp = Cdp.load(cdpId)
 
     let system = getSystemState(event)
 
-    if (vault == null) {
+    if (cdp == null) {
       // Register new unmanaged vault
-      let proxy = UserProxy.load(urn.toHexString())
+      let proxy = UserProxy.load(cdpAddress.toHexString())
 
-      vault = new Vault(vaultId)
-      vault.collateralType = collateral.id
-      vault.collateral = decimal.ZERO
-      vault.debt = decimal.ZERO
-      vault.handler = urn
+      cdp = new Cdp(cdpId)
+      cdp.collateralType = collateral.id
+      cdp.collateral = decimal.ZERO
+      cdp.debt = decimal.ZERO
+      cdp.handler = cdpAddress
 
-      vault.owner = proxy != null ? Address.fromString(proxy.owner) : urn
+      cdp.owner = proxy != null ? Address.fromString(proxy.owner) : cdpAddress
 
-      vault.openedAt = event.block.timestamp
-      vault.openedAtBlock = event.block.number
-      vault.openedAtTransaction = event.transaction.hash
+      cdp.openedAt = event.block.timestamp
+      cdp.openedAtBlock = event.block.number
+      cdp.openedAtTransaction = event.transaction.hash
 
-      collateral.unmanagedVaultCount = collateral.unmanagedVaultCount.plus(integer.ONE)
+      collateral.unmanagedCdpCount = collateral.unmanagedCdpCount.plus(integer.ONE)
 
-      system.unmanagedVaultCount = system.unmanagedVaultCount.plus(integer.ONE)
+      system.unmanagedCdpCount = system.unmanagedCdpCount.plus(integer.ONE)
     } else {
       // Update existing Vault
-      vault.collateral = vault.collateral.plus(collateralBalance)
-      vault.debt = vault.debt.plus(debt)
+      cdp.collateral = cdp.collateral.plus(collateralBalance)
+      cdp.debt = cdp.debt.plus(debt)
 
-      vault.modifiedAt = event.block.timestamp
-      vault.modifiedAtBlock = event.block.number
-      vault.modifiedAtTransaction = event.transaction.hash
+      cdp.modifiedAt = event.block.timestamp
+      cdp.modifiedAtBlock = event.block.number
+      cdp.modifiedAtTransaction = event.transaction.hash
     }
 
-    collateral.totalDebt = collateral.totalDebt.plus(debt)
+    collateral.debtAmount = collateral.debtAmount.plus(debt)
 
     collateral.modifiedAt = event.block.timestamp
     collateral.modifiedAtBlock = event.block.number
     collateral.modifiedAtTransaction = event.transaction.hash
 
-    vault.save()
+    cdp.save()
     collateral.save()
     system.save()
   }
 }
 
-// Split a Vault - binary approval or splitting/merging Vaults
-export function handleFork(event: LogNote): void {
-  // TODO
+// Split a CDP - binary approval or splitting/merging Vaults
+export function handleTransferCDPCollateralAndDebt(event: TransferCDPCollateralAndDebt): void {
+  // TODO:
 }
 
-// Liquidate a Vault
-export function handleGrab(event: LogNote): void {
-  // TODO
+// Liquidate a CDP
+export function handleConfiscateCDPCollateralAndDebt(event: ConfiscateCDPCollateralAndDebt): void {
+  // TODO:
 }
 
-// Create/destroy equal quantities of stablecoin and system debt
-export function handleHeal(event: LogNote): void {
-  let rad = decimal.fromRad(bytes.toUnsignedInt(event.params.arg1))
+// Create/destroy equal quantities of reflexer bond and system debt
+export function handleSettleDebt(event: SettleDebt): void {
+  let rad = decimal.fromRad(event.params.rad)
 
   let system = getSystemState(event)
   system.totalDebt = system.totalDebt.minus(rad)
   system.save()
 }
 
-// Mint unbacked stablecoin
-export function handleSuck(event: LogNote): void {
-  let rad = decimal.fromRad(bytes.toUnsignedInt(event.params.arg3))
+// Mint unbacked reflexer bonds
+export function handleCreateUnbackedDebt(event: CreateUnbackedDebt): void {
+  let rad = decimal.fromRad(event.params.rad)
 
   let system = getSystemState(event)
   system.totalDebt = system.totalDebt.plus(rad)
@@ -190,14 +200,14 @@ export function handleSuck(event: LogNote): void {
 }
 
 // Modify the debt multiplier, creating/destroying corresponding debt
-export function handleFold(event: LogNote): void {
-  let ilk = event.params.arg1.toString()
-  let rate = decimal.fromRay(bytes.toSignedInt(event.params.arg3))
+export function handleUpdateAccumulatedRate(event: UpdateAccumulatedRate): void {
+  let collateralType = event.params.collateralType.toString()
+  let rate = decimal.fromRay(event.params.rateMultiplier)
 
-  let collateral = CollateralType.load(ilk)
+  let collateral = CollateralType.load(collateralType)
 
   if (collateral != null) {
-    let rad = collateral.totalDebt.times(rate)
+    let rad = collateral.debtAmount.times(rate)
 
     collateral.rate = collateral.rate.plus(rate)
     collateral.save()

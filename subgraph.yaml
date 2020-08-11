@@ -17,7 +17,7 @@ dataSources:
       language: wasm/assemblyscript
       file: ./src/mappings/modules/init/geb-deployer.ts
       entities:
-        - CDP
+        - CDPEngine
       abis:
         - name: GebDeploy
           file: ./abis/GebDeploy.json
@@ -39,7 +39,9 @@ templates:
       language: wasm/assemblyscript
       file: ./src/mappings/modules/core/cdp-engine.ts
       entities:
-        - CDP
+        - CollateralType
+        - SystemState
+        - Cdp
       abis:
         - name: CDPEngine
           file: ./abis/CDPEngine.json

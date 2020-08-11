@@ -1,0 +1,952 @@
+[
+  {
+    "anonymous": true,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "bytes4",
+        "name": "sig",
+        "type": "bytes4"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "usr",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "arg1",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "arg2",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes",
+        "name": "data",
+        "type": "bytes"
+      }
+    ],
+    "name": "LogNote",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "authority",
+        "type": "address"
+      }
+    ],
+    "name": "LogSetAuthority",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      }
+    ],
+    "name": "LogSetOwner",
+    "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "accountingEngine",
+    "outputs": [
+      {
+        "internalType": "contract AccountingEngine",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "accountingEngineFactory",
+    "outputs": [
+      {
+        "internalType": "contract AccountingEngineFactory",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "collateralType",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "address",
+        "name": "usr",
+        "type": "address"
+      }
+    ],
+    "name": "addAuthToCollateralAuctionHouse",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "addCreatorAuth",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "authority",
+    "outputs": [
+      {
+        "internalType": "contract DSAuthority",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "cdpEngine",
+    "outputs": [
+      {
+        "internalType": "contract CDPEngine",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "cdpEngineFactory",
+    "outputs": [
+      {
+        "internalType": "contract CDPEngineFactory",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "coin",
+    "outputs": [
+      {
+        "internalType": "contract Coin",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "coinFactory",
+    "outputs": [
+      {
+        "internalType": "contract CoinFactory",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "coinJoin",
+    "outputs": [
+      {
+        "internalType": "contract CoinJoin",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "coinJoinFactory",
+    "outputs": [
+      {
+        "internalType": "contract CoinJoinFactory",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "coinSavingsAccount",
+    "outputs": [
+      {
+        "internalType": "contract CoinSavingsAccount",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "coinSavingsAccountFactory",
+    "outputs": [
+      {
+        "internalType": "contract CoinSavingsAccountFactory",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "name": "collateralTypes",
+    "outputs": [
+      {
+        "internalType": "contract EnglishCollateralAuctionHouse",
+        "name": "englishCollateralAuctionHouse",
+        "type": "address"
+      },
+      {
+        "internalType": "contract FixedDiscountCollateralAuctionHouse",
+        "name": "fixedDiscountCollateralAuctionHouse",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "adapter",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "debtAuctionHouse",
+    "outputs": [
+      {
+        "internalType": "contract DebtAuctionHouse",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "debtAuctionHouseFactory",
+    "outputs": [
+      {
+        "internalType": "contract DebtAuctionHouseFactory",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "deployAccountingEngine",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "prot",
+        "type": "address"
+      }
+    ],
+    "name": "deployAuctions",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "deployCDPEngine",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "symbol",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "chainId",
+        "type": "uint256"
+      }
+    ],
+    "name": "deployCoin",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "auctionHouseType",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "collateralType",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "address",
+        "name": "adapter",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "collateralOSM",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "collateralMedian",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "systemCoinOracle",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "bidToMarketPriceRatio",
+        "type": "uint256"
+      }
+    ],
+    "name": "deployCollateral",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "deployLiquidator",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "delay",
+        "type": "uint256"
+      },
+      {
+        "internalType": "contract DSAuthority",
+        "name": "authority",
+        "type": "address"
+      }
+    ],
+    "name": "deployPause",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "deploySavingsAccount",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "deploySettlementSurplusAuctioneer",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "prot",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "tokenBurner",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "thresholdSetter",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "threshold",
+        "type": "uint256"
+      }
+    ],
+    "name": "deployShutdown",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "deployStabilityFeeTreasury",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "deployTaxation",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "englishCollateralAuctionHouseFactory",
+    "outputs": [
+      {
+        "internalType": "contract EnglishCollateralAuctionHouseFactory",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "esm",
+    "outputs": [
+      {
+        "internalType": "contract ESM",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "esmFactory",
+    "outputs": [
+      {
+        "internalType": "contract ESMFactory",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "fixedDiscountCollateralAuctionHouseFactory",
+    "outputs": [
+      {
+        "internalType": "contract FixedDiscountCollateralAuctionHouseFactory",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "usr",
+        "type": "address"
+      }
+    ],
+    "name": "giveControl",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "globalSettlement",
+    "outputs": [
+      {
+        "internalType": "contract GlobalSettlement",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "globalSettlementFactory",
+    "outputs": [
+      {
+        "internalType": "contract GlobalSettlementFactory",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "liquidationEngine",
+    "outputs": [
+      {
+        "internalType": "contract LiquidationEngine",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "liquidationEngineFactory",
+    "outputs": [
+      {
+        "internalType": "contract LiquidationEngineFactory",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "oracleRelayer",
+    "outputs": [
+      {
+        "internalType": "contract OracleRelayer",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "oracleRelayerFactory",
+    "outputs": [
+      {
+        "internalType": "contract OracleRelayerFactory",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "pause",
+    "outputs": [
+      {
+        "internalType": "contract DSPause",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "pauseFactory",
+    "outputs": [
+      {
+        "internalType": "contract PauseFactory",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "postSettlementSurplusAuctionHouse",
+    "outputs": [
+      {
+        "internalType": "contract PostSettlementSurplusAuctionHouse",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "postSettlementSurplusAuctionHouseFactory",
+    "outputs": [
+      {
+        "internalType": "contract PostSettlementSurplusAuctionHouseFactory",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "preSettlementSurplusAuctionHouse",
+    "outputs": [
+      {
+        "internalType": "contract PreSettlementSurplusAuctionHouse",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "preSettlementSurplusAuctionHouseFactory",
+    "outputs": [
+      {
+        "internalType": "contract PreSettlementSurplusAuctionHouseFactory",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "releaseAuth",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "collateralType",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "address",
+        "name": "usr",
+        "type": "address"
+      }
+    ],
+    "name": "releaseAuthCollateralAuctionHouse",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract DSAuthority",
+        "name": "authority_",
+        "type": "address"
+      }
+    ],
+    "name": "setAuthority",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract CDPEngineFactory",
+        "name": "cdpEngineFactory_",
+        "type": "address"
+      },
+      {
+        "internalType": "contract TaxCollectorFactory",
+        "name": "taxCollectorFactory_",
+        "type": "address"
+      },
+      {
+        "internalType": "contract AccountingEngineFactory",
+        "name": "accountingEngineFactory_",
+        "type": "address"
+      },
+      {
+        "internalType": "contract LiquidationEngineFactory",
+        "name": "liquidationEngineFactory_",
+        "type": "address"
+      },
+      {
+        "internalType": "contract CoinFactory",
+        "name": "coinFactory_",
+        "type": "address"
+      },
+      {
+        "internalType": "contract CoinJoinFactory",
+        "name": "coinJoinFactory_",
+        "type": "address"
+      },
+      {
+        "internalType": "contract CoinSavingsAccountFactory",
+        "name": "coinSavingsAccountFactory_",
+        "type": "address"
+      },
+      {
+        "internalType": "contract SettlementSurplusAuctioneerFactory",
+        "name": "settlementSurplusAuctioneerFactory_",
+        "type": "address"
+      }
+    ],
+    "name": "setFirstFactoryBatch",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "owner_",
+        "type": "address"
+      }
+    ],
+    "name": "setOwner",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract PreSettlementSurplusAuctionHouseFactory",
+        "name": "preSettlementSurplusAuctionHouseFactory_",
+        "type": "address"
+      },
+      {
+        "internalType": "contract PostSettlementSurplusAuctionHouseFactory",
+        "name": "postSettlementSurplusAuctionHouseFactory_",
+        "type": "address"
+      },
+      {
+        "internalType": "contract DebtAuctionHouseFactory",
+        "name": "debtAuctionHouseFactory_",
+        "type": "address"
+      },
+      {
+        "internalType": "contract EnglishCollateralAuctionHouseFactory",
+        "name": "englishCollateralAuctionHouseFactory_",
+        "type": "address"
+      },
+      {
+        "internalType": "contract FixedDiscountCollateralAuctionHouseFactory",
+        "name": "fixedDiscountCollateralAuctionHouseFactory_",
+        "type": "address"
+      },
+      {
+        "internalType": "contract OracleRelayerFactory",
+        "name": "oracleRelayerFactory_",
+        "type": "address"
+      },
+      {
+        "internalType": "contract GlobalSettlementFactory",
+        "name": "globalSettlementFactory_",
+        "type": "address"
+      },
+      {
+        "internalType": "contract ESMFactory",
+        "name": "esmFactory_",
+        "type": "address"
+      }
+    ],
+    "name": "setSecondFactoryBatch",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract PauseFactory",
+        "name": "pauseFactory_",
+        "type": "address"
+      },
+      {
+        "internalType": "contract StabilityFeeTreasuryFactory",
+        "name": "stabilityFeeTreasuryFactory_",
+        "type": "address"
+      }
+    ],
+    "name": "setThirdFactoryBatch",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "settlementSurplusAuctioneer",
+    "outputs": [
+      {
+        "internalType": "contract SettlementSurplusAuctioneer",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "settlementSurplusAuctioneerFactory",
+    "outputs": [
+      {
+        "internalType": "contract SettlementSurplusAuctioneerFactory",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "stabilityFeeTreasury",
+    "outputs": [
+      {
+        "internalType": "contract StabilityFeeTreasury",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "stabilityFeeTreasuryFactory",
+    "outputs": [
+      {
+        "internalType": "contract StabilityFeeTreasuryFactory",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "usr",
+        "type": "address"
+      }
+    ],
+    "name": "takeControl",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "taxCollector",
+    "outputs": [
+      {
+        "internalType": "contract TaxCollector",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "taxCollectorFactory",
+    "outputs": [
+      {
+        "internalType": "contract TaxCollectorFactory",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+]

@@ -1,0 +1,134 @@
+" GEB CDP "
+type CDP @entity {
+  " Equals to: <cdpHandler>-<CollateralType>"
+  id: ID!
+
+  " CDP ID if this CDP was created through the manager (GebCdpManager) "
+  cdpId: BigInt
+
+  " Collateral type associated to this cdp "
+  collateralType: CollateralType!
+
+  " Assets locked as collateral (cdpCollateral) "
+  collateral: BigDecimal!
+
+  " Outstanding debt "
+  debt: BigDecimal!
+
+  " cdpHandler address (ownership at the CDPEngine level) "
+  handler: Bytes!
+
+  " Address of CDP owner (top level ownership)"
+  owner: Bytes!
+
+  " Timestamp of the block in which this CDP was opened [seconds] "
+  openedAt: BigInt!
+
+  " Block number in which this CDP was opened "
+  openedAtBlock: BigInt!
+
+  " Transaction hash in which this CDP was opened "
+  openedAtTransaction: Bytes!
+
+  " Timestamp of the block in which this CDP was last modified [seconds] "
+  modifiedAt: BigInt
+
+  " Block number in which this CDP was last modified "
+  modifiedAtBlock: BigInt
+
+  " Transaction hash in which this CDP was last modified "
+  modifiedAtTransaction: Bytes
+}
+
+"""
+Collateral auctions are used to sell collateral from Vaults that have become undercollateralized
+in order to preserve the collateralization of the system
+"""
+type CollateralType @entity {
+  " Collateral type name "
+  id: ID!
+
+  " Debt ceiling [DAI] (line) "
+  debtCeiling: BigDecimal!
+
+  " Min debt per vault [DAI] (dust) "
+  vaultDebtFloor: BigDecimal!
+
+  " Current market price [USD] "
+  currentPrice: CollateralPrice
+
+  " Asset/DAI exchange rate (rate) "
+  rate: BigDecimal!
+
+  " Total debt backed by this collateral type [DAI] (Art)"
+  totalDebt: BigDecimal!
+
+  " Number of collateral auctions started for this collateral type "
+  auctionCount: BigInt!
+
+  " Maximum auction duration [seconds] "
+  auctionDuration: BigInt!
+
+  " Max bid duration in a collateral auction [seconds] "
+  bidDuration: BigInt!
+
+  " Minimum bid increase in a collateral auction "
+  minimumBidIncrease: BigDecimal!
+
+  " Maximum size of collateral that can be auctioned at once (lump) "
+  liquidationLotSize: BigDecimal!
+
+  " Liquidation penalty (chop) "
+  liquidationPenalty: BigDecimal!
+
+  " Min collateralization ratio "
+  liquidationRatio: BigDecimal!
+
+  " Stability fee rate per second "
+  stabilityFee: BigDecimal!
+
+  " Number of vaults NOT opened through the manager (CdpManager) "
+  unmanagedVaultCount: BigInt!
+
+  " Number of vaults opened through the manager (CdpManager) "
+  vaultCount: BigInt!
+
+  " Timestamp of the block in which this collateral type was added [seconds] "
+  addedAt: BigInt!
+
+  " Block number in which this collateral type was added "
+  addedAtBlock: BigInt!
+
+  " Transaction hash in which this collateral type was added "
+  addedAtTransaction: Bytes!
+
+  " Timestamp of the block in which this collateral type was last modified [seconds] "
+  modifiedAt: BigInt
+
+  " Block number in which this collateral type was last modified "
+  modifiedAtBlock: BigInt
+
+  " Transaction hash in which this collateral type was last modified "
+  modifiedAtTransaction: Bytes
+}
+
+" Collateral market price at a given block "
+type CollateralPrice @entity {
+  " Equals to: <block_number>-<ilk>"
+  id: ID!
+
+  " Block number "
+  block: BigInt!
+
+  " Collateral type "
+  collateral: CollateralType!
+
+  " Market price with safety margin (current price less liquidation ratio) [USD] (spot) "
+  spotPrice: BigDecimal!
+
+  " Timestamp in seconds "
+  timestamp: BigInt!
+
+  " Price value "
+  value: BigDecimal!
+}

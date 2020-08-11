@@ -1,5 +1,5 @@
 " GEB CDP "
-type CDP @entity {
+type Cdp @entity {
   " Equals to: <cdpHandler>-<CollateralType>"
   id: ID!
 
@@ -68,8 +68,11 @@ type CollateralType @entity {
   " Liquidation penalty "
   liquidationPenalty: BigDecimal!
 
-  " Min collateralization ratio "
-  liquidationRatio: BigDecimal!
+  " collateral price with safety margin. Used to limit the amount of debt that can be generated per one unit of collateral "
+  safetyCRatio: BigDecimal!
+
+  " Collateral price with safety margin. Used only in LiquidationEngine when a CDP is liquidated "
+  liquidationCRatio: BigDecimal!
 
   " Stability fee rate per second "
   stabilityFee: BigDecimal!
@@ -77,7 +80,7 @@ type CollateralType @entity {
   " Number of CDP NOT opened through the manager (CdpManager) "
   unmanagedCdpCount: BigInt!
 
-  " Number of vaults opened through the manager (CdpManager) "
+  " Number of CDPs opened through the manager (CdpManager) "
   cdpCount: BigInt!
 
   " Timestamp of the block in which this collateral type was added [seconds] "
@@ -119,6 +122,94 @@ type CollateralPrice @entity {
   " Timestamp in seconds "
   timestamp: BigInt!
 
-  " Price value "
-  value: BigDecimal!
+  " Safety Price "
+  safetyPrice: BigDecimal!
+
+  " Liquidation price "
+  liquidationPrice: BigDecimal!
+}
+
+"""
+CDP owner
+"""
+type User @entity {
+  " Account address "
+  id: ID!
+
+  " Account address "
+  address: Bytes!
+
+  " Up to one per collateral type"
+  proxies: [UserProxy!] @derivedFrom(field: "owner")
+}
+
+" Contract used to execute transactions and sequences of transactions on behalf of a user "
+type UserProxy @entity {
+  " Proxy address "
+  id: ID!
+
+  " Proxy contract address "
+  address: Bytes!
+
+  " Cache contract address "
+  cache: Bytes!
+
+  " User reference "
+  owner: User!
+}
+
+" Provide information about the current system state and parameters "
+type SystemState @entity {
+  " Singleton entity. Equals to 'current' "
+  id: ID!
+
+  " The latest block in which a system parameters was modified "
+  block: BigInt!
+
+  " The latest timestamp in which a system parameters was modified "
+  timestamp: BigInt!
+
+  " The latest transaction hash in which a system parameters was modified "
+  transaction: Bytes!
+
+  #
+  # General protocol stats
+  #
+
+  " Total debt issued [RAI]"
+  totalDebt: BigDecimal!
+
+  #
+  # About number of entities registered system-wide
+  #
+
+  " Number of collateral types registered "
+  collateralCount: BigInt!
+
+  " Number of collateral auctions started "
+  collateralAuctionCount: BigInt!
+
+  " Number of user proxies created "
+  proxyCount: BigInt!
+
+  " Number of CDPs NOT opened through the manager (CdpManager) "
+  unmanagedCdpCount: BigInt!
+
+  " Number of CDPs opened through the manager (CdpManager) "
+  cdpCount: BigInt!
+
+  #
+  # General system parameters
+  #
+
+  " Base rate for stability fee per second "
+  baseStabilityFee: BigDecimal!
+
+  " Savings Rate "
+  savingsRate: BigDecimal!
+
+  " Total Debt Ceiling "
+  totalDebtCeiling: BigDecimal!
+
+  # TODO: Flap and flop auctions parameters used to be here. Add the auction abstraction class.
 }

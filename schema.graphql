@@ -39,3 +39,86 @@ type CDP @entity {
   " Transaction hash in which this CDP was last modified "
   modifiedAtTransaction: Bytes
 }
+
+"""
+Collateral auctions are used to sell collateral from CDPs that have become undercollateralized
+in order to preserve the collateralization of the system
+
+TODO: Auction specific parameters used to be here, move them to appropriate class
+"""
+type CollateralType @entity {
+  " Collateral type name "
+  id: ID!
+
+  " Debt ceiling [RAI] (line) "
+  debtCeiling: BigDecimal!
+
+  " Min debt per CDP [RAI] "
+  debtFloor: BigDecimal!
+
+  " Current market price [USD] "
+  currentPrice: CollateralPrice
+
+  " Asset/RAI exchange rate (rate) "
+  rate: BigDecimal!
+
+  " Total debt backed by this collateral type [RAI]"
+  debtAmount: BigDecimal!
+
+  " Liquidation penalty "
+  liquidationPenalty: BigDecimal!
+
+  " Min collateralization ratio "
+  liquidationRatio: BigDecimal!
+
+  " Stability fee rate per second "
+  stabilityFee: BigDecimal!
+
+  " Number of CDP NOT opened through the manager (CdpManager) "
+  unmanagedCdpCount: BigInt!
+
+  " Number of vaults opened through the manager (CdpManager) "
+  cdpCount: BigInt!
+
+  " Timestamp of the block in which this collateral type was added [seconds] "
+  addedAt: BigInt!
+
+  " Block number in which this collateral type was added "
+  addedAtBlock: BigInt!
+
+  " Transaction hash in which this collateral type was added "
+  addedAtTransaction: Bytes!
+
+  " Timestamp of the block in which this collateral type was last modified [seconds] "
+  modifiedAt: BigInt
+
+  " Block number in which this collateral type was last modified "
+  modifiedAtBlock: BigInt
+
+  " Transaction hash in which this collateral type was last modified "
+  modifiedAtTransaction: Bytes
+}
+
+"""
+Collateral market price at a given block
+TODO: Add the new liquidationPrice
+"""
+type CollateralPrice @entity {
+  " Equals to: <block_number>-<collateral_type>"
+  id: ID!
+
+  " Block number "
+  block: BigInt!
+
+  " Collateral type "
+  collateral: CollateralType!
+
+  " Market price with safety margin (current price less liquidation ratio) [USD] "
+  safetyPrice: BigDecimal!
+
+  " Timestamp in seconds "
+  timestamp: BigInt!
+
+  " Price value "
+  value: BigDecimal!
+}

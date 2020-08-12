@@ -125,7 +125,6 @@ export function handleModifyCDPCollateralization(event: ModifyCDPCollateralizati
   let deltaDebt = event.params.deltaDebt
 
   let collateral = CollateralType.load(collateralType)
-
   if (collateral != null) {
     let debt = decimal.fromWad(deltaDebt)
     let collateralBalance = decimal.fromWad(deltaCollateral)
@@ -136,6 +135,7 @@ export function handleModifyCDPCollateralization(event: ModifyCDPCollateralizati
     let system = getSystemState(event)
 
     if (cdp == null) {
+      console.log('Update cpd collateralization of unmanaged CDP #{}, address: {}', [cdp.cdpId, cdpAddress])
       // Register new unmanaged vault
       let proxy = UserProxy.load(cdpAddress.toHexString())
 
@@ -156,6 +156,8 @@ export function handleModifyCDPCollateralization(event: ModifyCDPCollateralizati
       system.unmanagedCdpCount = system.unmanagedCdpCount.plus(integer.ONE)
     } else {
       // Update existing Vault
+      console.log('Update cpd collateralization of CDP #{}, address: ', [cdp.cdpId, cdpAddress])
+
       cdp.collateral = cdp.collateral.plus(collateralBalance)
       cdp.debt = cdp.debt.plus(debt)
 

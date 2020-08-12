@@ -1,0 +1,12 @@
+version: '3'
+services:
+  graph-node:
+    # To define in .env file
+    environment:
+      - postgres_pass
+      # i.g: : mainnet:http://mainnet.infura.io/API_KEY/'
+      - ethereum
+  postgres:
+    # To define in .env file
+    environment:
+      - POSTGRES_PASSWORD # Same as postgres_pass

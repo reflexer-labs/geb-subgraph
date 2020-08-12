@@ -59,3 +59,8 @@ typings/
 
 # next.js build output
 .next
+
+# Graph-node
+graph-node/.env
+graph-node/data
+

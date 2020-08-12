@@ -31,5 +31,7 @@ export function getSystemState(event: ethereum.Event): SystemState {
   state.timestamp = event.block.timestamp
   state.transaction = event.transaction.hash
 
+  state.save()
+
   return state as SystemState
 }

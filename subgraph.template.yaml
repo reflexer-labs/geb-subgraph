@@ -6,11 +6,11 @@ schema:
 dataSources:
   - name: GebDeploy
     kind: ethereum/contract
-    network: kovan
+    network: {{network}}
     source:
-      address: '0xeF3efcdeAAEAb7F71d1aadDd38E52efFF9841d25'
+      address: '{{GebDeploy_address}}'
       abi: GebDeploy
-      startBlock: 19664937
+      startBlock: {{startblock}}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -27,12 +27,13 @@ dataSources:
       callHandlers:
         - function: deployCDPEngine()
           handler: handleDeployCDPEngine
-templates:
   - name: CDPEngine
     kind: ethereum/contract
-    network: kovan
+    network: {{network }}
     source:
+      address: '{{CDPEngine_address}}'
       abi: CDPEngine
+      startBlock: {{startblock}}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4

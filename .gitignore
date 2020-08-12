@@ -61,6 +61,10 @@ typings/
 .next
 
 # Graph-node
-graph-node/.env
-graph-node/data
+docker/.env
+docker/data
+
+subgraph.yaml
+
+build/
 

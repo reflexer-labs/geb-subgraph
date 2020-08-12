@@ -9,7 +9,10 @@
     "create-local": "graph create --node http://localhost:8020/ reflexer-labs/geb-subgraph",
     "deploy": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ guifel/geb",
     "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 reflexer-labs/geb-subgraph",
-    "remove-local": "graph remove --node http://localhost:8020/ reflexer-labs/geb-subgraph"
+    "remove-local": "graph remove --node http://localhost:8020/ reflexer-labs/geb-subgraph",
+    "prepare-test": "mustache config/test.json subgraph.template.yaml > subgraph.yaml",
+    "prepare-mainnet": "mustache config/mainnet.json subgraph.template.yaml > subgraph.yaml",
+    "prepare-kovan": "mustache config/kovan.json subgraph.template.yaml > subgraph.yaml",
   },
   "repository": {
     "type": "git",
@@ -23,6 +26,8 @@
   "homepage": "https://github.com/reflexer-labs/geb-subgraph#readme",
   "devDependencies": {
     "@graphprotocol/graph-cli": "^0.18.0",
-    "@graphprotocol/graph-ts": "^0.18.1"
-  }
+    "@graphprotocol/graph-ts": "^0.18.1",
+    "mustache": "^4.0.1"
+  },
+  "dependencies": {}
 }

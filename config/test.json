@@ -1,0 +1,6 @@
+{
+  "network": "mainnet",
+  "startblock": 0,
+  "CDPEngine_address": "0x1E36dd9024E063D764bFCD92ed6598CeB4ec90a8",
+  "GebDeploy_address": "0x7E430F637F3b844D09fc7f81e7FbBCe520162092"
+}

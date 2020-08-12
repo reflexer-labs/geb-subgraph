@@ -1,6 +1,6 @@
 import { Address, dataSource, log } from '@graphprotocol/graph-ts'
 
-import { CDPManager, NewCdp } from '../../../../generated/CdpManager/CDPManager'
+import { CDPManager, NewCdp, TransferCDPOwnership } from '../../../../generated/CdpManager/CDPManager'
 import { CollateralType, UserProxy, Cdp } from '../../../../generated/schema'
 
 import { getSystemState } from '../../../entities'
@@ -52,4 +52,15 @@ export function handleNewCdp(event: NewCdp): void {
   let system = getSystemState(event)
   system.cdpCount = system.cdpCount.plus(integer.ONE)
   system.save()
+}
+
+export function handleTransferCDPOwnership(event: TransferCDPOwnership) : void {
+    let manager = CDPManager.bind(dataSource.address())
+    let collateralType = manager.collateralTypes(event.params.cdp)
+    let collateral = CollateralType.load(collateralType.toString())
+    let cdpAddress = manager.cdps(event.params.cdp)
+    let cdp = Cdp.load(cdpAddress.toHexString() + '-' + collateral.id)
+
+    cdp.owner = event.params.dst
+    cdp.save()
 }

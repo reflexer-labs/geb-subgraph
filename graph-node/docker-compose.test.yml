@@ -1,12 +1,23 @@
 version: '3'
 services:
   # Override base compose file like this:
-  # graph-node:
-  #   environment:
-  #     - ethereum='local:0.0.0.0'
+  graph-node:
+    environment:
+      - ethereum=mainnet:http://host.docker.internal:8545/
+    networks:
+      - geb-testchain-docker-deploy_default
+  ipfs:
+    networks:
+      - geb-testchain-docker-deploy_default
+  postgres:
+    networks:
+      - geb-testchain-docker-deploy_default
 
+networks:
+  geb-testchain-docker-deploy_default:
+    external: true
   # TODO: Start the testchain with deployed contracts
-  testchain:
-    image: <TODO>
-    ports:
-      - 8545:8545
+  # testchain:
+  #   image: <TODO>
+  #   ports:
+  #     - 8545:8545

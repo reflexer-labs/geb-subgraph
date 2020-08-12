@@ -67,4 +67,4 @@ docker/data
 subgraph.yaml
 
 build/
-
+generated/

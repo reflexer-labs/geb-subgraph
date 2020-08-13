@@ -62,7 +62,7 @@ type CollateralType @entity {
   " Current market price [USD] "
   currentPrice: CollateralPrice
 
-  " Asset/bonds exchange rate (rate) "
+  " Asset/bonds exchange rate (rate), interest accrued on this collateral type "
   rate: BigDecimal!
 
   " Total debt backed by this collateral type [bonds]"

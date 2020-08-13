@@ -50,19 +50,19 @@ type CollateralType @entity {
   " Collateral type name "
   id: ID!
 
-  " Debt ceiling [RAI] (line) "
+  " Debt ceiling [bond] (line) "
   debtCeiling: BigDecimal!
 
-  " Min debt per CDP [RAI] "
+  " Min debt per CDP [bond] "
   debtFloor: BigDecimal!
 
   " Current market price [USD] "
   currentPrice: CollateralPrice
 
-  " Asset/RAI exchange rate (rate) "
+  " Asset/bonds exchange rate (rate) "
   rate: BigDecimal!
 
-  " Total debt backed by this collateral type [RAI]"
+  " Total debt backed by this collateral type [bonds]"
   debtAmount: BigDecimal!
 
   " Liquidation penalty "
@@ -104,7 +104,6 @@ type CollateralType @entity {
 
 """
 Collateral market price at a given block
-TODO: Add the new liquidationPrice
 """
 type CollateralPrice @entity {
   " Equals to: <block_number>-<collateral_type>"
@@ -113,18 +112,63 @@ type CollateralPrice @entity {
   " Block number "
   block: BigInt!
 
+  " Timestamp in seconds "
+  timestamp: BigInt!
+  
   " Collateral type "
   collateral: CollateralType!
 
-  " Timestamp in seconds "
-  timestamp: BigInt!
 
-  " Safety Price "
+  " Price of the collateral discounted by the redemptionPrice and safetyCRatio, price used for bonds mint and redemption "
   safetyPrice: BigDecimal!
 
-  " Liquidation price "
+  " Price of the collateral discounted by the redemptionPrice an liquidationCRatio, price at which a cdp gets liquidated "
   liquidationPrice: BigDecimal!
+
+  " Collateral price in USD "
+  value: BigDecimal!
 }
+
+"""
+Reflex bond price for redemption
+"""
+type RedemptionPrice @entity {
+  " Equals to: <block_number>"
+  id: ID!
+
+  " Block number "
+  block: BigInt!
+
+  " Timestamp in seconds "
+  timestamp: BigInt!
+  
+  " Rate of change of the redemption price, output from the feedback mechanism"
+  redemptionRate: BigDecimal!
+
+  " Value of the redemption price, the price of redemption of a reflex bond"
+  value: BigDecimal!
+}
+
+"""
+Rate of change of the redemption price, output from the feedback mechanism.
+"""
+type RedemptionRate @entity {
+  " Equals to: <block_number>"
+  id: ID!
+
+  " Block number "
+  block: BigInt!
+
+  " Timestamp in seconds "
+  timestamp: BigInt!
+  
+  " TODO: "
+  redemptionRate: BigDecimal!
+
+  " Rate of change of the redemption price, output from the feedback mechanism"
+  value: BigDecimal!
+
+} 
 
 """
 CDP owner
@@ -173,7 +217,7 @@ type SystemState @entity {
   # General protocol stats
   #
 
-  " Total debt issued [RAI]"
+  " Total debt issued in bonds"
   totalDebt: BigDecimal!
 
   #

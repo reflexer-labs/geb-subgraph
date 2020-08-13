@@ -95,3 +95,33 @@ dataSources:
           handler: handleOpenCdp
         - event: TransferCDPOwnership(address,uint256,address)
           handler: handleTransferCDPOwnership
+  - name: OracleRelayer
+    kind: ethereum/contract
+    network: {{NETWORK}}
+    source:
+      address: '{{GEB_ORACLE_RELAYER}}'
+      abi: OracleRelayer
+      startBlock: {{STARTING_BLOCK_NUMBER}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/modules/core/oracle-relayer.ts
+      entities:
+        - CollateralType
+        - SystemState
+        - Cdp
+      abis:
+        - name: OracleRelayer
+          file: ./abis/OracleRelayer.json
+      eventHandlers:
+        - event: UpdateCollateralPrice(bytes32,bytes32,uint256,uint256)
+          handler: handleUpdateCollateralPrice
+        - event: UpdateRedemptionPrice(uint256)
+          handler: handleUpdateRedemptionPrice
+        - event: ModifyParameters(bytes32,bytes32,address)
+          handler: handleModifyParametersCollateralTypeAddress
+        - event: ModifyParameters(bytes32,bytes32,uint256)
+          handler: handleModifyParametersCollateralTypeUint
+        - event: ModifyParameters(bytes32,uint256)
+          handler: handleModifyParametersUint

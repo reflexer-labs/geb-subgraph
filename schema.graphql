@@ -63,7 +63,7 @@ type CollateralType @entity {
   currentPrice: CollateralPrice
 
   " Asset/bonds exchange rate (rate), interest accrued on this collateral type "
-  rate: BigDecimal!
+  accumulatedRate: BigDecimal!
 
   " Total debt backed by this collateral type [bonds]"
   debtAmount: BigDecimal!
@@ -80,7 +80,7 @@ type CollateralType @entity {
   " OSM contract address for the colateral (price source)"
   osmAddress: Bytes
 
-  " Stability fee rate per second "
+  " Stability fee rate per second for the collateral "
   stabilityFee: BigDecimal!
 
   " Number of CDP NOT opened through the manager (CdpManager) "
@@ -226,10 +226,10 @@ type SystemState @entity {
   " The latest transaction hash in which a system parameters was modified "
   transaction: Bytes!
 
-  " Total debt issued in bonds across all collateral "
+  " Total debt issued in bonds across all collaterals "
   globalDebt: BigDecimal!
 
-  " Total unbacked debt issued in bonds across all collateral "
+  " Total unbacked debt issued in bonds across all collaterals "
   globalUnbackedDebt: BigDecimal!
 
   " Total global Debt Ceiling "
@@ -238,8 +238,8 @@ type SystemState @entity {
   " Number of collateral types registered "
   collateralCount: BigInt!
 
-  " Base rate for stability fee per second "
-  baseStabilityFee: BigDecimal!
+  " Base rate for stability fee per second add for all collaterals "
+  globalStabilityFee: BigDecimal!
 
   " Savings Rate "
   savingsRate: BigDecimal!

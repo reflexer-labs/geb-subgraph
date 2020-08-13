@@ -1,4 +1,4 @@
-import { Address, Bytes, log } from '@graphprotocol/graph-ts'
+import { Address, log } from '@graphprotocol/graph-ts'
 
 import { CollateralType, Cdp, UserProxy } from '../../../../generated/schema'
 
@@ -156,7 +156,6 @@ export function handleModifyCDPCollateralization(event: ModifyCDPCollateralizati
 
       collateral.unmanagedCdpCount = collateral.unmanagedCdpCount.plus(integer.ONE)
 
-      // TODO: increase system total debt (RAI)
       system.unmanagedCdpCount = system.unmanagedCdpCount.plus(integer.ONE)
     } else {
       // Update existing Vault
@@ -171,6 +170,7 @@ export function handleModifyCDPCollateralization(event: ModifyCDPCollateralizati
     }
 
     collateral.debtAmount = collateral.debtAmount.plus(debt)
+    system.totalDebt = system.totalDebt.plus(debt)
 
     collateral.modifiedAt = event.block.timestamp
     collateral.modifiedAtBlock = event.block.number

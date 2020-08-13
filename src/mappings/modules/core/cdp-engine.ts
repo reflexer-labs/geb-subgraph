@@ -17,7 +17,7 @@ import {
   SettleDebt,
   CreateUnbackedDebt,
   UpdateAccumulatedRate,
-} from '../../../../generated/templates/CDPEngine/CDPEngine'
+} from '../../../../generated/CDPEngine/CDPEngine'
 
 import * as bytes from '../../../utils/bytes'
 import * as decimal from '../../../utils/decimal'

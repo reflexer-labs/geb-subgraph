@@ -65,7 +65,7 @@ export function handleModifyParametersUint(event: ModifyParametersUint): void {
   let data = event.params.data
 
   if (what == 'globalDebtCeiling') {
-    system.totalDebtCeiling = decimal.fromRad(data)
+    system.globalDebtCeiling = decimal.fromRad(data)
     system.save()
   }
 }
@@ -170,7 +170,7 @@ export function handleModifyCDPCollateralization(event: ModifyCDPCollateralizati
     }
 
     collateral.debtAmount = collateral.debtAmount.plus(debt)
-    system.totalDebt = system.totalDebt.plus(debt)
+    system.globalDebt = system.globalDebt.plus(debt)
 
     collateral.modifiedAt = event.block.timestamp
     collateral.modifiedAtBlock = event.block.number
@@ -190,7 +190,7 @@ export function handleTransferCDPCollateralAndDebt(event: TransferCDPCollateralA
 
 // Liquidate a CDP
 export function handleConfiscateCDPCollateralAndDebt(event: ConfiscateCDPCollateralAndDebt): void {
-  // TODO:
+  // TODO: 
   log.warning('ConfiscateCDPCollateralAndDebt called but handler not implemented!', [])
 }
 
@@ -199,7 +199,7 @@ export function handleSettleDebt(event: SettleDebt): void {
   let rad = decimal.fromRad(event.params.rad)
 
   let system = getSystemState(event)
-  system.totalDebt = system.totalDebt.minus(rad)
+  system.globalDebt = system.globalDebt.minus(rad)
   system.save()
 }
 
@@ -208,7 +208,10 @@ export function handleCreateUnbackedDebt(event: CreateUnbackedDebt): void {
   let rad = decimal.fromRad(event.params.rad)
 
   let system = getSystemState(event)
-  system.totalDebt = system.totalDebt.plus(rad)
+  system.globalDebt = system.globalDebt.plus(rad)
+  system.globalUnbackedDebt = system.globalUnbackedDebt.plus(rad)
+
+  // TODO: update internal balance of src and dst
   system.save()
 }
 
@@ -226,7 +229,7 @@ export function handleUpdateAccumulatedRate(event: UpdateAccumulatedRate): void 
     collateral.save()
 
     let system = getSystemState(event)
-    system.totalDebt = system.totalDebt.plus(rad)
+    system.globalDebt = system.globalDebt.plus(rad)
     system.save()
   }
 }

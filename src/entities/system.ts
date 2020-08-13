@@ -12,7 +12,7 @@ export function getSystemState(event: ethereum.Event): SystemState {
     state = new SystemState('current')
 
     // Protocol-wide stats
-    state.totalDebt = decimal.ZERO
+    state.globalDebt = decimal.ZERO
 
     // Entities counters
     state.collateralCount = integer.ZERO
@@ -24,7 +24,8 @@ export function getSystemState(event: ethereum.Event): SystemState {
     // System parameters
     state.baseStabilityFee = decimal.ONE
     state.savingsRate = decimal.ONE
-    state.totalDebtCeiling = decimal.ZERO
+    state.globalDebtCeiling = decimal.ZERO
+    state.globalUnbackedDebt = decimal.ZERO
   }
 
   state.block = event.block.number

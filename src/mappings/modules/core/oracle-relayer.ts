@@ -1,4 +1,4 @@
-import { Address, Bytes, log, dataSource } from '@graphprotocol/graph-ts'
+import { log, dataSource } from '@graphprotocol/graph-ts'
 
 import * as bytes from '../../../utils/bytes'
 import * as decimal from '../../../utils/decimal'
@@ -12,6 +12,7 @@ import {
   OracleRelayer,
 } from '../../../../generated/OracleRelayer/OracleRelayer'
 import { CollateralType, CollateralPrice, RedemptionPrice, RedemptionRate } from '../../../../generated/schema'
+import { getSystemState } from '../../../entities'
 
 export function handleUpdateCollateralPrice(event: UpdateCollateralPrice): void {
   let collateralType = event.params.collateralType.toString()
@@ -41,11 +42,54 @@ export function handleUpdateRedemptionPrice(event: UpdateRedemptionPrice): void 
   price.value = decimal.fromRay(event.params.redemptionPrice)
   let relayer = OracleRelayer.bind(dataSource.address())
   price.redemptionRate = decimal.fromRay(relayer.redemptionRate())
+
+  let system = getSystemState(event)
+  system.currentRedemptionPrice = price.id
+
+  system.save()
   price.save()
 }
 
-export function handleModifyParametersCollateralTypeAddress(event: ModifyParametersCollateralTypeAddress): void {}
+export function handleModifyParametersCollateralTypeAddress(event: ModifyParametersCollateralTypeAddress): void {
+  let what = event.params.parameter.toString()
 
-export function handleModifyParametersCollateralTypeUint(event: ModifyParametersCollateralTypeUint): void {}
+  if (what == 'orcl') {
+    let collateralType = CollateralType.load(event.params.collateralType.toString())
+    collateralType.osmAddress = event.params.addr
+    collateralType.save()
+  }
+}
 
-export function handleModifyParametersUint(event: ModifyParametersUint): void {}
+export function handleModifyParametersCollateralTypeUint(event: ModifyParametersCollateralTypeUint): void {
+  let what = event.params.parameter.toString()
+  let collateralType = CollateralType.load(event.params.collateralType.toString())
+
+  if (what == 'safetyCRatio') {
+    collateralType.safetyCRatio = decimal.fromRay(event.params.data)
+  } else if (what == 'liquidationCRatio') {
+    collateralType.liquidationCRatio = decimal.fromRay(event.params.data)
+  }
+
+  collateralType.save()
+}
+
+export function handleModifyParametersUint(event: ModifyParametersUint): void {
+  let what = event.params.parameter.toString()
+
+  if (what == 'redemptionPrice') {
+    log.error('ModifyParameters-redemptionPrice is not supported', [])
+  } else if (what == 'redemptionRate') {
+    let system = getSystemState(event)
+    let rate = new RedemptionRate(event.block.number.toString())
+    rate.block = event.block.number
+    rate.timestamp = event.block.timestamp
+    rate.value = decimal.fromRay(event.params.data)
+    let relayer = OracleRelayer.bind(dataSource.address())
+    // TODO: Test, does that work ? `redemptionPrice` is not view
+    rate.redemptionPrice = decimal.fromRay(relayer.redemptionPrice())
+    system.currentRedemptionRate = rate.id
+
+    rate.save()
+    system.save()
+  }
+}

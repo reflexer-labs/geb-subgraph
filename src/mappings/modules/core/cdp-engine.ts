@@ -202,7 +202,7 @@ export function handleUpdateAccumulatedRate(event: UpdateAccumulatedRate): void 
   if (collateral != null) {
     let rad = collateral.debtAmount.times(rate)
 
-    collateral.rate = collateral.rate.plus(rate)
+    collateral.accumulatedRate = collateral.accumulatedRate.plus(rate)
     collateral.save()
 
     let system = getSystemState(event)

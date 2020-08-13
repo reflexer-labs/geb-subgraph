@@ -19,7 +19,7 @@ export function getOrCreateCollateral(collateralType: Bytes, event: ethereum.Eve
     collateral.liquidationCRatio = decimal.ZERO
     collateral.safetyCRatio = decimal.ZERO
 
-    collateral.rate = decimal.fromRay(BigInt.fromI32(10).pow(27))
+    collateral.accumulatedRate = decimal.fromRay(BigInt.fromI32(10).pow(27))
 
     collateral.stabilityFee = decimal.ONE
 

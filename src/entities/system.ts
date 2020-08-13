@@ -22,7 +22,7 @@ export function getSystemState(event: ethereum.Event): SystemState {
     state.cdpCount = integer.ZERO
 
     // System parameters
-    state.baseStabilityFee = decimal.ONE
+    state.globalStabilityFee = decimal.ZERO
     state.savingsRate = decimal.ONE
     state.globalDebtCeiling = decimal.ZERO
     state.globalUnbackedDebt = decimal.ZERO

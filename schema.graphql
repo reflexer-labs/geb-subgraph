@@ -21,6 +21,9 @@ type Cdp @entity {
   " Address of CDP owner (top level ownership)"
   owner: Bytes!
 
+  " Optional, address of the proxy if the owner is using a proxy "
+  proxy: UserProxy
+
   " Timestamp of the block in which this CDP was opened [seconds] "
   openedAt: BigInt!
 

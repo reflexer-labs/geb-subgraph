@@ -125,3 +125,23 @@ dataSources:
           handler: handleModifyParametersCollateralTypeUint
         - event: ModifyParameters(bytes32,uint256)
           handler: handleModifyParametersUint
+  - name: ProxyFactory
+    kind: ethereum/contract
+    network: {{NETWORK}}
+    source:
+      abi: DSProxyFactory
+      address: '{{PROXY_FACTORY}}'
+      startBlock: {{STARTING_BLOCK_NUMBER}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/modules/proxy/proxy-factory.ts
+      entities:
+        - UserProxy
+      abis:
+        - name: DSProxyFactory
+          file: ./abis/DSProxyFactory.json
+      eventHandlers:
+        - event: Created(indexed address,indexed address,address,address)
+          handler: handleCreated

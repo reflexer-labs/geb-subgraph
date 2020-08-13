@@ -29,6 +29,10 @@ export function handleOpenCdp(event: OpenCdp): void {
 
     cdp.owner = proxy != null ? Address.fromString(proxy.owner) : event.params.own
 
+    if (proxy != null) {
+      cdp.proxy = proxy.id
+    }
+
     log.info('New Manged CDP, id: #{}, owner {}, address: {}', [
       cdp.cdpId.toString(),
       cdp.owner.toHexString(),

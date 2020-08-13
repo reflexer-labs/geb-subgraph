@@ -6,11 +6,11 @@ schema:
 dataSources:
   - name: GebDeploy
     kind: ethereum/contract
-    network: {{network}}
+    network: {{NETWORK}}
     source:
-      address: '{{GebDeploy_address}}'
+      address: '{{GEB_DEPLOY}}'
       abi: GebDeploy
-      startBlock: {{startblock}}
+      startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -29,11 +29,11 @@ dataSources:
           handler: handleDeployCDPEngine
   - name: CDPEngine
     kind: ethereum/contract
-    network: {{network}}
+    network: {{NETWORK}}
     source:
-      address: '{{CDPEngine_address}}'
+      address: '{{GEB_CDP_ENGINE}}'
       abi: CDPEngine
-      startBlock: {{startblock}}
+      startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -71,13 +71,13 @@ dataSources:
           handler: handleCreateUnbackedDebt
         - event: UpdateAccumulatedRate(bytes32,address,int256,uint256,uint256)
           handler: handleUpdateAccumulatedRate
-  - name: CDPManager
+  - name: GebCDPManager
     kind: ethereum/contract
-    network: {{network}}
+    network: {{NETWORK}}
     source:
-      address: '{{CDPEngine_address}}'
-      abi: CDPManager
-      startBlock: {{startblock}}
+      address: '{{CDP_MANAGER}}'
+      abi: GebCDPManager
+      startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -88,10 +88,10 @@ dataSources:
         - SystemState
         - Cdp
       abis:
-        - name: CDPManager
-          file: ./abis/CDPManager.json
+        - name: GebCDPManager
+          file: ./abis/GebCDPManager.json
       eventHandlers:
-        - event: NewCdp(indexed address,indexed address,indexed uint256)
-          handler: handleNewCdp
+        - event: OpenCdp(indexed address,indexed address,indexed uint256)
+          handler: handleOpenCdp
         - event: TransferCDPOwnership(address,uint256,address)
           handler: handleTransferCDPOwnership

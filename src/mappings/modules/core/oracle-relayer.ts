@@ -13,6 +13,7 @@ import {
 } from '../../../../generated/OracleRelayer/OracleRelayer'
 import { CollateralType, CollateralPrice, RedemptionPrice, RedemptionRate } from '../../../../generated/schema'
 import { getSystemState } from '../../../entities'
+import { getOrCreateCollateral } from '../../../entities/collateral'
 
 export function handleUpdateCollateralPrice(event: UpdateCollateralPrice): void {
   let collateralType = event.params.collateralType.toString()
@@ -54,9 +55,14 @@ export function handleModifyParametersCollateralTypeAddress(event: ModifyParamet
   let what = event.params.parameter.toString()
 
   if (what == 'orcl') {
-    let collateralType = CollateralType.load(event.params.collateralType.toString())
-    collateralType.osmAddress = event.params.addr
-    collateralType.save()
+    let collateral = getOrCreateCollateral(event.params.collateralType, event)
+
+    collateral.osmAddress = event.params.addr
+    collateral.modifiedAt = event.block.timestamp
+    collateral.modifiedAtBlock = event.block.number
+    collateral.modifiedAtTransaction = event.transaction.hash
+
+    collateral.save()
   }
 }
 

@@ -19,38 +19,15 @@ import {
   UpdateAccumulatedRate,
 } from '../../../../generated/CDPEngine/CDPEngine'
 
-import * as bytes from '../../../utils/bytes'
 import * as decimal from '../../../utils/decimal'
 import * as integer from '../../../utils/integer'
+import { getOrCreateCollateral } from '../../../entities/collateral'
 
 // Register a new collateral type
 export function handleInitializeCollateralType(event: InitializeCollateralType): void {
-  let collateral = new CollateralType(event.params.collateralType.toString())
+  let collateral = getOrCreateCollateral(event.params.collateralType, event)
 
   log.info('Onboard new collateral {}', [collateral.id])
-
-  collateral.debtCeiling = decimal.ZERO
-  collateral.debtFloor = decimal.ZERO
-  collateral.debtAmount = decimal.ZERO
-
-  // TODO: auction parameter init
-
-  collateral.liquidationPenalty = decimal.ZERO
-  collateral.liquidationCRatio = decimal.ZERO
-  collateral.safetyCRatio = decimal.ZERO
-
-  collateral.rate = decimal.ZERO
-
-  collateral.stabilityFee = decimal.ONE
-
-  collateral.unmanagedCdpCount = integer.ZERO
-  collateral.cdpCount = integer.ZERO
-
-  collateral.addedAt = event.block.timestamp
-  collateral.addedAtBlock = event.block.number
-  collateral.addedAtTransaction = event.transaction.hash
-
-  collateral.save()
 
   // Update system state
   let state = getSystemState(event)
@@ -190,7 +167,7 @@ export function handleTransferCDPCollateralAndDebt(event: TransferCDPCollateralA
 
 // Liquidate a CDP
 export function handleConfiscateCDPCollateralAndDebt(event: ConfiscateCDPCollateralAndDebt): void {
-  // TODO: 
+  // TODO:
   log.warning('ConfiscateCDPCollateralAndDebt called but handler not implemented!', [])
 }
 

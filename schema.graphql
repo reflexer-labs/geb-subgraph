@@ -16,7 +16,7 @@ type Cdp @entity {
   debt: BigDecimal!
 
   " cdpHandler address (ownership at the CDPEngine level) "
-  handler: Bytes!
+  cdpHandler: Bytes!
 
   " Address of CDP owner (top level ownership)"
   owner: Bytes!

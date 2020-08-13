@@ -25,7 +25,7 @@ export function handleOpenCdp(event: OpenCdp): void {
     cdp.collateralType = collateral.id
     cdp.collateral = decimal.ZERO
     cdp.debt = decimal.ZERO
-    cdp.handler = cdpAddress
+    cdp.cdpHandler = cdpAddress
 
     cdp.owner = proxy != null ? Address.fromString(proxy.owner) : event.params.own
 

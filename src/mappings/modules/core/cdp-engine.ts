@@ -146,7 +146,7 @@ export function handleModifyCDPCollateralization(event: ModifyCDPCollateralizati
       cdp.collateralType = collateral.id
       cdp.collateral = collateralBalance
       cdp.debt = debt
-      cdp.handler = cdpAddress
+      cdp.cdpHandler = cdpAddress
 
       cdp.owner = proxy != null ? Address.fromString(proxy.owner) : cdpAddress
 

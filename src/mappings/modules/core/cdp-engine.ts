@@ -135,14 +135,17 @@ export function handleModifyCDPCollateralization(event: ModifyCDPCollateralizati
     let system = getSystemState(event)
 
     if (cdp == null) {
-      console.log('Update cpd collateralization of unmanaged CDP #{}, address: {}', [cdp.cdpId, cdpAddress])
+      log.info('Update cpd collateralization of unmanaged CDP #{}, address: {}', [
+        cdp.cdpId.toString(),
+        cdpAddress.toHexString(),
+      ])
       // Register new unmanaged vault
       let proxy = UserProxy.load(cdpAddress.toHexString())
 
       cdp = new Cdp(cdpId)
       cdp.collateralType = collateral.id
-      cdp.collateral = decimal.ZERO
-      cdp.debt = decimal.ZERO
+      cdp.collateral = collateralBalance
+      cdp.debt = debt
       cdp.handler = cdpAddress
 
       cdp.owner = proxy != null ? Address.fromString(proxy.owner) : cdpAddress
@@ -153,10 +156,11 @@ export function handleModifyCDPCollateralization(event: ModifyCDPCollateralizati
 
       collateral.unmanagedCdpCount = collateral.unmanagedCdpCount.plus(integer.ONE)
 
+      // TODO: increase system total debt (RAI)
       system.unmanagedCdpCount = system.unmanagedCdpCount.plus(integer.ONE)
     } else {
       // Update existing Vault
-      console.log('Update cpd collateralization of CDP #{}, address: ', [cdp.cdpId, cdpAddress])
+      log.info('Update cpd collateralization of CDP #{}, address: ', [cdp.cdpId.toString(), cdpAddress.toHexString()])
 
       cdp.collateral = cdp.collateral.plus(collateralBalance)
       cdp.debt = cdp.debt.plus(debt)

@@ -1,6 +1,12 @@
 import { Address, dataSource, log } from '@graphprotocol/graph-ts'
 
-import { GebCDPManager, TransferCDPOwnership, OpenCdp } from '../../../../generated/GebCdpManager/GebCDPManager'
+import {
+  GebCDPManager,
+  TransferCDPOwnership,
+  OpenCdp,
+  AllowCDP,
+  AllowHandler,
+} from '../../../../generated/GebCdpManager/GebCDPManager'
 import { CollateralType, UserProxy, Cdp } from '../../../../generated/schema'
 
 import { getSystemState } from '../../../entities'
@@ -71,4 +77,14 @@ export function handleTransferCDPOwnership(event: TransferCDPOwnership): void {
 
   cdp.owner = event.params.dst
   cdp.save()
+}
+
+export function handleAllowCDP(event: AllowCDP): void {
+  // TODO:
+  log.warning('AllowCDP not implemented', [])
+}
+
+export function handleAllowHandler(event: AllowHandler): void {
+  // TODO:
+  log.warning('AllowHandler not implemented', [])
 }

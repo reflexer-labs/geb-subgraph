@@ -95,6 +95,12 @@ dataSources:
           handler: handleOpenCdp
         - event: TransferCDPOwnership(address,uint256,address)
           handler: handleTransferCDPOwnership
+        - event: AllowCDP(address,uint256,address,uint256)
+          handler: handleAllowCDP
+        - event: AllowHandler(address,address,uint256)
+          handler: handleAllowHandler
+        # Other events in CDPManager are handled by CDPEngine
+
   - name: OracleRelayer
     kind: ethereum/contract
     network: {{NETWORK}}

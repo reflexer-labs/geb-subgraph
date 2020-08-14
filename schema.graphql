@@ -122,7 +122,7 @@ type CollateralType implements Dated @entity {
   maxCollateralToSellInLiquidations: BigDecimal
 
   " Maximum auction length "
-  totalAuctionLength: BigInt!
+  totalAuctionLength: BigInt
 
   " Auction configuration (Fix discount auction only) "
   englishAuctionConfiguration: EnglishAuctionConfiguration

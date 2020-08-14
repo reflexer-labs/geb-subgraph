@@ -169,13 +169,15 @@ dataSources:
       language: wasm/assemblyscript
       file: ./src/mappings/modules/core/liquidation-engine.ts
       entities:
-        #  TODO: redo this
         - CollateralType
-        - SystemState
-        - Cdp
+        - CollateralAuction
+        - EnglishAuctionConfiguration
+        - FixDiscountAuctionConfiguration
       abis:
         - name: LiquidationEngine
           file: ./abis/LiquidationEngine.json
+        - name: EnglishCollateralAuctionHouse
+          file: ./abis/EnglishCollateralAuctionHouse.json
       eventHandlers:
         # - event: AddAuthorization(address)
         #   handler: handleAddAuthorization
@@ -220,3 +222,42 @@ dataSources:
       eventHandlers:
         - event: Created(indexed address,indexed address,address,address)
           handler: handleCreated
+templates:
+  - name: EnglishCollateralAuctionHouse
+    kind: ethereum/contract
+    network: {{NETWORK}}
+    source:
+      abi: EnglishCollateralAuctionHouse
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/modules/collateral/english-collateral-auction-house.ts
+      entities:
+        - CollateralType
+        - CollateralAuction
+        - EnglishAuctionConfiguration
+      abis:
+        - name: EnglishCollateralAuctionHouse
+          file: ./abis/EnglishCollateralAuctionHouse.json
+      eventHandlers:
+        # - event: AddAuthorization(address)
+        #   handler: AddAuthorization
+        - event: DecreaseSoldAmount(uint256,address,uint256,uint256,uint256)
+          handler: DecreaseSoldAmount
+        - event: IncreaseBidSize(uint256,address,uint256,uint256,uint256)
+          handler: IncreaseBidSize
+        - event: ModifyParameters(bytes32,address)
+          handler: ModifyParametersAddress
+        - event: ModifyParameters(bytes32,uint256)
+          handler: ModifyParametersUint
+        # - event: RemoveAuthorization(address)
+        #   handler: RemoveAuthorization
+        # - event: RestartAuction(uint256,uint256)
+        #   handler: RestartAuction
+        - event: SettleAuction(uint256)
+          handler: SettleAuction
+        # - event: StartAuction(uint256,uint256,uint256,uint256,uint256,indexed address,indexed address,uint256)
+        #   handler: StartAuction
+        - event: TerminateAuctionPrematurely(uint256,address,uint256,uint256)
+          handler: TerminateAuctionPrematurely

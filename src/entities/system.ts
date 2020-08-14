@@ -28,9 +28,9 @@ export function getSystemState(event: ethereum.Event): SystemState {
     state.globalUnbackedDebt = decimal.ZERO
   }
 
-  state.block = event.block.number
-  state.timestamp = event.block.timestamp
-  state.transaction = event.transaction.hash
+  state.createdAtBlock = event.block.number
+  state.createdAt = event.block.timestamp
+  state.createdAtTransaction = event.transaction.hash
 
   state.save()
 

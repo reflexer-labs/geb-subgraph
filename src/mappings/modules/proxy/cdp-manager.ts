@@ -13,6 +13,7 @@ import { getSystemState } from '../../../entities'
 
 import * as decimal from '../../../utils/decimal'
 import * as integer from '../../../utils/integer'
+import { updateLastModifyCdp, updateLastModifyCollateralType, updateLastModifySystemState } from '../../../utils/state'
 
 export function handleOpenCdp(event: OpenCdp): void {
   let manager = GebCDPManager.bind(dataSource.address())
@@ -45,14 +46,15 @@ export function handleOpenCdp(event: OpenCdp): void {
       cdpAddress.toHexString(),
     ])
 
-    cdp.openedAt = event.block.timestamp
-    cdp.openedAtBlock = event.block.number
-    cdp.openedAtTransaction = event.transaction.hash
+    cdp.createdAt = event.block.timestamp
+    cdp.createdAtBlock = event.block.number
+    cdp.createdAtTransaction = event.transaction.hash
 
     // Update vault counter
     collateral.cdpCount = collateral.cdpCount.plus(integer.ONE)
 
     cdp.save()
+    updateLastModifyCollateralType(collateral as CollateralType, event)
     collateral.save()
   } else {
     log.warning('Wrong collateral type: {}, cdp_id: {}, tx_hash: {}', [
@@ -65,6 +67,7 @@ export function handleOpenCdp(event: OpenCdp): void {
   // Update system state
   let system = getSystemState(event)
   system.cdpCount = system.cdpCount.plus(integer.ONE)
+  updateLastModifySystemState(system, event)
   system.save()
 }
 
@@ -76,6 +79,7 @@ export function handleTransferCDPOwnership(event: TransferCDPOwnership): void {
   let cdp = Cdp.load(cdpAddress.toHexString() + '-' + collateral.id)
 
   cdp.owner = event.params.dst
+  updateLastModifyCdp(cdp as Cdp, event)
   cdp.save()
 }
 

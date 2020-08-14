@@ -1,6 +1,4 @@
 import {
-  AddAuthorization,
-  AddSecondaryReceiver,
   ModifyParameters as ModifyParametersCollateralTypeUint,
   ModifyParameters1 as ModifyParametersUint,
 } from '../../../../generated/TaxCollector/TaxCollector'

@@ -22,6 +22,7 @@ import {
 import * as decimal from '../../../utils/decimal'
 import * as integer from '../../../utils/integer'
 import { getOrCreateCollateral } from '../../../entities/collateral'
+import { updateLastModifySystemState, updateLastModifyCollateralType, updateLastModifyCdp } from '../../../utils/state'
 
 // Register a new collateral type
 export function handleInitializeCollateralType(event: InitializeCollateralType): void {
@@ -30,9 +31,10 @@ export function handleInitializeCollateralType(event: InitializeCollateralType):
   log.info('Onboard new collateral {}', [collateral.id])
 
   // Update system state
-  let state = getSystemState(event)
-  state.collateralCount = state.collateralCount.plus(integer.ONE)
-  state.save()
+  let system = getSystemState(event)
+  system.collateralCount = system.collateralCount.plus(integer.ONE)
+  updateLastModifySystemState(system, event)
+  system.save()
 }
 
 // Modify collateral type parameters
@@ -43,12 +45,12 @@ export function handleModifyParametersUint(event: ModifyParametersUint): void {
 
   if (what == 'globalDebtCeiling') {
     system.globalDebtCeiling = decimal.fromRad(data)
+    updateLastModifySystemState(system, event)
     system.save()
   }
 }
 
 export function handleModifyParametersCollateralTypeUint(event: ModifyParametersCollateralTypeUint): void {
-  let system = getSystemState(event)
   let collateralType = event.params.collateralType.toString()
   let what = event.params.parameter.toString()
   let data = event.params.data
@@ -67,13 +69,8 @@ export function handleModifyParametersCollateralTypeUint(event: ModifyParameters
     } else {
       return
     }
-
-    collateral.modifiedAt = event.block.timestamp
-    collateral.modifiedAtBlock = event.block.number
-    collateral.modifiedAtTransaction = event.transaction.hash
-
+    updateLastModifyCollateralType(collateral as CollateralType, event)
     collateral.save()
-    system.save()
   }
 }
 // Modify a user's collateral balance
@@ -127,9 +124,9 @@ export function handleModifyCDPCollateralization(event: ModifyCDPCollateralizati
 
       cdp.owner = proxy != null ? Address.fromString(proxy.owner) : cdpAddress
 
-      cdp.openedAt = event.block.timestamp
-      cdp.openedAtBlock = event.block.number
-      cdp.openedAtTransaction = event.transaction.hash
+      cdp.createdAt = event.block.timestamp
+      cdp.createdAtBlock = event.block.number
+      cdp.createdAtTransaction = event.transaction.hash
 
       collateral.unmanagedCdpCount = collateral.unmanagedCdpCount.plus(integer.ONE)
 
@@ -140,18 +137,14 @@ export function handleModifyCDPCollateralization(event: ModifyCDPCollateralizati
 
       cdp.collateral = cdp.collateral.plus(collateralBalance)
       cdp.debt = cdp.debt.plus(debt)
-
-      cdp.modifiedAt = event.block.timestamp
-      cdp.modifiedAtBlock = event.block.number
-      cdp.modifiedAtTransaction = event.transaction.hash
+      updateLastModifyCdp(cdp as Cdp, event)
     }
 
     collateral.debtAmount = collateral.debtAmount.plus(debt)
     system.globalDebt = system.globalDebt.plus(debt)
 
-    collateral.modifiedAt = event.block.timestamp
-    collateral.modifiedAtBlock = event.block.number
-    collateral.modifiedAtTransaction = event.transaction.hash
+    updateLastModifyCollateralType(collateral as CollateralType, event)
+    updateLastModifySystemState(system, event)
 
     cdp.save()
     collateral.save()
@@ -177,6 +170,7 @@ export function handleSettleDebt(event: SettleDebt): void {
 
   let system = getSystemState(event)
   system.globalDebt = system.globalDebt.minus(rad)
+  updateLastModifySystemState(system, event)
   system.save()
 }
 
@@ -189,6 +183,8 @@ export function handleCreateUnbackedDebt(event: CreateUnbackedDebt): void {
   system.globalUnbackedDebt = system.globalUnbackedDebt.plus(rad)
 
   // TODO: update internal balance of src and dst
+
+  updateLastModifySystemState(system, event)
   system.save()
 }
 
@@ -203,10 +199,12 @@ export function handleUpdateAccumulatedRate(event: UpdateAccumulatedRate): void 
     let rad = collateral.debtAmount.times(rate)
 
     collateral.accumulatedRate = collateral.accumulatedRate.plus(rate)
+    updateLastModifyCollateralType(collateral as CollateralType , event)
     collateral.save()
 
     let system = getSystemState(event)
     system.globalDebt = system.globalDebt.plus(rad)
+    updateLastModifySystemState(system, event)
     system.save()
   }
 }

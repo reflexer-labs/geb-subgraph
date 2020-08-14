@@ -1,5 +1,26 @@
+
+interface Dated {
+  " Timestamp of the block in which the object was created [seconds] "
+  createdAt: BigInt!
+
+  " Block number in which the object was created "
+  createdAtBlock: BigInt!
+
+  " Transaction hash in which the object was created "
+  createdAtTransaction: Bytes!
+  
+  " Timestamp of the block in which the object was last modified [seconds] "
+  modifiedAt: BigInt
+
+  " Block number in which the object was last modified "
+  modifiedAtBlock: BigInt
+
+  " Transaction hash in which the object was last modified "
+  modifiedAtTransaction: Bytes
+}
+
 " GEB CDP "
-type Cdp @entity {
+type Cdp implements Dated @entity {
   " Equals to: <cdpHandler>-<CollateralType>"
   id: ID!
 
@@ -25,13 +46,13 @@ type Cdp @entity {
   proxy: UserProxy
 
   " Timestamp of the block in which this CDP was opened [seconds] "
-  openedAt: BigInt!
+  createdAt: BigInt!
 
   " Block number in which this CDP was opened "
-  openedAtBlock: BigInt!
+  createdAtBlock: BigInt!
 
   " Transaction hash in which this CDP was opened "
-  openedAtTransaction: Bytes!
+  createdAtTransaction: Bytes!
 
   " Timestamp of the block in which this CDP was last modified [seconds] "
   modifiedAt: BigInt
@@ -49,7 +70,7 @@ in order to preserve the collateralization of the system
 
 TODO: Auction specific parameters used to be here, move them to appropriate class
 """
-type CollateralType @entity {
+type CollateralType implements Dated @entity {
   " Collateral type name "
   id: ID!
 
@@ -67,9 +88,6 @@ type CollateralType @entity {
 
   " Total debt backed by this collateral type [bonds]"
   debtAmount: BigDecimal!
-
-  " Liquidation penalty "
-  liquidationPenalty: BigDecimal!
 
   " collateral price with safety margin. Used to limit the amount of debt that can be generated per one unit of collateral "
   safetyCRatio: BigDecimal!
@@ -92,14 +110,23 @@ type CollateralType @entity {
   " Number of CDPs opened through the manager (CdpManager) "
   cdpCount: BigInt!
 
+  " Penalty applied to every liquidation involving this collateral type "
+  liquidationPenalty: BigDecimal!
+  
+  " Address of the liquidation auction smart contract "
+  collateralAuctionHouseAddress: Bytes
+
+  " Max amount of collateral to sell in one liquidation auction [collateralToSell in LiquidationEngine] "
+  maxCollateralToSellInLiquidations: BigDecimal!
+  
   " Timestamp of the block in which this collateral type was added [seconds] "
-  addedAt: BigInt!
+  createdAt: BigInt!
 
   " Block number in which this collateral type was added "
-  addedAtBlock: BigInt!
+  createdAtBlock: BigInt!
 
   " Transaction hash in which this collateral type was added "
-  addedAtTransaction: Bytes!
+  createdAtTransaction: Bytes!
 
   " Timestamp of the block in which this collateral type was last modified [seconds] "
   modifiedAt: BigInt
@@ -223,12 +250,6 @@ type SystemState @entity {
   " The latest block in which a system parameters was modified "
   block: BigInt!
 
-  " The latest timestamp in which a system parameters was modified. TODO: not updated! "
-  timestamp: BigInt!
-
-  " The latest transaction hash in which a system parameters was modified. TODO: not updated! "
-  transaction: Bytes!
-
   " Total debt issued in bonds across all collaterals "
   globalDebt: BigDecimal!
 
@@ -256,5 +277,23 @@ type SystemState @entity {
   " Latest redemption price "
   currentRedemptionPrice: RedemptionPrice
 
+  " Timestamp of the block in which the system was created [seconds] "
+  createdAt: BigInt!
+
+  " Block number in which the system was created "
+  createdAtBlock: BigInt!
+
+  " Transaction hash in which the system was created "
+  createdAtTransaction: Bytes!
+  
+  " Timestamp of the block in which the system was last modified [seconds] "
+  modifiedAt: BigInt
+
+  " Block number in which the system was last modified "
+  modifiedAtBlock: BigInt
+
+  " Transaction hash in which the system was last modified "
+  modifiedAtTransaction: Bytes
+  
   # TODO: Flap and flop auctions parameters used to be here. Add the auction abstraction class.
 }

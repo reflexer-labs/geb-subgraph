@@ -1,8 +1,9 @@
 import { CollateralType } from '../../generated/schema'
-import { Bytes, ethereum, BigInt } from '@graphprotocol/graph-ts'
+import { Bytes, ethereum, BigInt, Entity } from '@graphprotocol/graph-ts'
 
 import * as decimal from '../utils/decimal'
 import * as integer from '../utils/integer'
+import { updateLastModifyCollateralType } from '../utils/state'
 
 export function getOrCreateCollateral(collateralType: Bytes, event: ethereum.Event): CollateralType {
   let collateral = CollateralType.load(collateralType.toString())
@@ -27,9 +28,9 @@ export function getOrCreateCollateral(collateralType: Bytes, event: ethereum.Eve
     collateral.unmanagedCdpCount = integer.ZERO
     collateral.cdpCount = integer.ZERO
 
-    collateral.addedAt = event.block.timestamp
-    collateral.addedAtBlock = event.block.number
-    collateral.addedAtTransaction = event.transaction.hash
+    collateral.createdAt = event.block.timestamp
+    collateral.createdAtBlock = event.block.number
+    collateral.createdAtTransaction = event.transaction.hash
 
     collateral.save()
   }

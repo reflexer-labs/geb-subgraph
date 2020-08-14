@@ -155,25 +155,51 @@ dataSources:
           handler: handleModifyParametersCollateralTypeUint
         - event: ModifyParameters(bytes32,uint256) # Type 1
           handler: handleModifyParametersUint
+  
+  - name: LiquidationEngine
+    kind: ethereum/contract
+    network: {{NETWORK}}
+    source:
+      address: '{{GEB_LIQUIDATION_ENGINE}}'
+      abi: LiquidationEngine
+      startBlock: {{STARTING_BLOCK_NUMBER}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/modules/core/liquidation-engine.ts
+      entities:
+        #  TODO: redo this
+        - CollateralType
+        - SystemState
+        - Cdp
+      abis:
+        - name: LiquidationEngine
+          file: ./abis/LiquidationEngine.json
+      eventHandlers:
         # - event: AddAuthorization(address)
         #   handler: handleAddAuthorization
-        # - event: AddSecondaryReceiver(bytes32,uint256,uint256,uint256,uint256)
-        #   handler: handleAddSecondaryReceiver
-        # - event: CollectTax(bytes32,uint256,int256)
-        #   handler: handleCollectTax
-        # - event: DistributeTax(bytes32,address,int256)
-        #   handler: handleDistributeTax
-        # - event: ModifyParameters(bytes32,address) # Type 2
-        #   handler: handleModifyParametersAddress
-        # - event: ModifyParameters(bytes32,uint256,uint256) # Type 3
-        #   handler: handleModifyParametersCollateralTypeUintUint
-        # - event: ModifyParameters(bytes32,uint256,uint256,address) # Type 4
-        #   handler: handleModifyParametersCollateralTypeUintUintAddress
-        # - event: ModifySecondaryReceiver(bytes32,uint256,uint256,uint256,uint256)
-        #   handler: handleModifySecondaryReceiver
+        # - event: ConnectCDPSaviour(address)
+        #   handler: handleConnectCDPSaviour
+        # - event: DisableContract()
+        #   handler: handleDisableContract
+        # - event: DisconnectCDPSaviour(address)
+        #   handler: handleDisconnectCDPSaviour
+        # - event: FailedCDPSave(bytes)
+        #   handler: handleFailedCDPSave
+        - event: Liquidate(indexed bytes32,indexed address,uint256,uint256,uint256,address,uint256)
+          handler: handleLiquidate
+        - event: ModifyParameters(bytes32,bytes32,address)
+          handler: handleModifyParametersCollateralTypeAddress
+        - event: ModifyParameters(bytes32,bytes32,uint256)
+          handler: handleModifyParametersCollateralTypeUint
+        # - event: ProtectCDP(bytes32,address,address)
+        #   handler: handleProtectCDP
         # - event: RemoveAuthorization(address)
         #   handler: handleRemoveAuthorization
-  
+        # - event: SaveCDP(indexed bytes32,indexed address,uint256)
+        #   handler: handleSaveCDP
+
   - name: ProxyFactory
     kind: ethereum/contract
     network: {{NETWORK}}

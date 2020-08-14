@@ -237,6 +237,7 @@ templates:
         - CollateralType
         - CollateralAuction
         - EnglishAuctionConfiguration
+        - EnglishAuctionBid
       abis:
         - name: EnglishCollateralAuctionHouse
           file: ./abis/EnglishCollateralAuctionHouse.json

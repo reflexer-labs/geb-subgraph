@@ -9,11 +9,12 @@
     "create-local": "graph create --node http://localhost:8020/ reflexer-labs/rai",
     "remove-local": "graph remove --node http://localhost:8020/ reflexer-labs/rai",
     "deploy-local": "npm run codegen && graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 reflexer-labs/rai",
+    "deploy-local-test": "npm run prepare-test && npm run create-local; npm run deploy-local",
     "deploy-hosted-kovan": "npm run prepare-kovan && npm run codegen && graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ reflexer-labs/rai-kovan",
     "deploy-hosted-mainnet": "npm run prepare-mainnet && npm run codegen && graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ reflexer-labs/rai",
     "prepare-test": "mustache config/test.json subgraph.template.yaml > subgraph.yaml",
     "prepare-mainnet": "mustache config/mainnet.json subgraph.template.yaml > subgraph.yaml",
-    "prepare-kovan": "mustache config/kovan.json subgraph.template.yaml > subgraph.yaml",
+    "prepare-kovan": "mustache config/kovan.json subgraph.template.yaml > subgraph.yaml"
   },
   "repository": {
     "type": "git",

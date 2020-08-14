@@ -315,6 +315,9 @@ type EnglishAuctionConfiguration @entity {
   " Collateral type name "
   id: ID!
 
+  " Collateral type"
+  collateralType: CollateralType!
+
   " Minimum bid increase ratio i.g: 1.05 means 5% bid increase minimum "
   bidIncrease: BigDecimal!
 
@@ -378,13 +381,13 @@ type CollateralAuction @entity {
   isClaimed: Boolean!
 
   " List of individual bid (English auction only) "
-  EnglishAuctionBids: [EnglishAuctionBid!]
+  englishAuctionBids: [EnglishAuctionBid!] @derivedFrom(field: "auction")
 
   " Auction configuration (Fix discount auction only) "
   englishAuctionConfiguration: EnglishAuctionConfiguration
 
   " Auction configuration (English auction only) "
-  FixDiscountAuctionConfiguration: FixDiscountAuctionConfiguration
+  fixDiscountAuctionConfiguration: FixDiscountAuctionConfiguration
 
   " Timestamp of the block in which the liquidation was started "
   createdAt: BigInt!

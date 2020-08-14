@@ -131,6 +131,49 @@ dataSources:
           handler: handleModifyParametersCollateralTypeUint
         - event: ModifyParameters(bytes32,uint256)
           handler: handleModifyParametersUint
+  
+  - name: TaxCollector
+    kind: ethereum/contract
+    network: {{NETWORK}}
+    source:
+      address: '{{GEB_TAX_COLLECTOR}}'
+      abi: TaxCollector
+      startBlock: {{STARTING_BLOCK_NUMBER}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/modules/rates/tax-collector.ts
+      entities:
+        - CollateralType
+        - SystemState
+      abis:
+        - name: TaxCollector
+          file: ./abis/TaxCollector.json
+      eventHandlers:
+        - event: ModifyParameters(bytes32,bytes32,uint256) # Type 0
+          handler: handleModifyParametersCollateralTypeUint
+        - event: ModifyParameters(bytes32,uint256) # Type 1
+          handler: handleModifyParametersUint
+        # - event: AddAuthorization(address)
+        #   handler: handleAddAuthorization
+        # - event: AddSecondaryReceiver(bytes32,uint256,uint256,uint256,uint256)
+        #   handler: handleAddSecondaryReceiver
+        # - event: CollectTax(bytes32,uint256,int256)
+        #   handler: handleCollectTax
+        # - event: DistributeTax(bytes32,address,int256)
+        #   handler: handleDistributeTax
+        # - event: ModifyParameters(bytes32,address) # Type 2
+        #   handler: handleModifyParametersAddress
+        # - event: ModifyParameters(bytes32,uint256,uint256) # Type 3
+        #   handler: handleModifyParametersCollateralTypeUintUint
+        # - event: ModifyParameters(bytes32,uint256,uint256,address) # Type 4
+        #   handler: handleModifyParametersCollateralTypeUintUintAddress
+        # - event: ModifySecondaryReceiver(bytes32,uint256,uint256,uint256,uint256)
+        #   handler: handleModifySecondaryReceiver
+        # - event: RemoveAuthorization(address)
+        #   handler: handleRemoveAuthorization
+  
   - name: ProxyFactory
     kind: ethereum/contract
     network: {{NETWORK}}

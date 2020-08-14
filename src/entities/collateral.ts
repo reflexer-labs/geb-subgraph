@@ -22,6 +22,7 @@ export function getOrCreateCollateral(collateralType: Bytes, event: ethereum.Eve
     collateral.accumulatedRate = decimal.fromRay(BigInt.fromI32(10).pow(27))
 
     collateral.stabilityFee = decimal.ONE
+    collateral.stabilityFeeLastUpdatedAt = event.block.timestamp
 
     collateral.unmanagedCdpCount = integer.ZERO
     collateral.cdpCount = integer.ZERO

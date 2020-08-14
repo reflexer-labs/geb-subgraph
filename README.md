@@ -10,11 +10,15 @@ Deploy the subgraph on the hosted Graph protocol service.
 
 Need authentication
 
-TODO: config
+Set the smart-contract addresses in configuration files `config/kovan.json` or `config/mainnet.json`.
 
 ```
 npm install -D
-npm run deploy
+
+# For kovan testnet
+npm run deploy-hosted-kovan
+# For mainnet
+npm run deploy-hosted-mainnet
 ```
 
 ## Tests

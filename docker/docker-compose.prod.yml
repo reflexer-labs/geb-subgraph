@@ -3,10 +3,16 @@ services:
   graph-node:
     # To define in .env file
     environment:
-      - postgres_pass
+      postgres_pass: ${POSTGRES_PASSWORD}
       # i.g: : mainnet:http://mainnet.infura.io/API_KEY/'
-      - ethereum
+      ethereum: 'mainnet:${ETHEREUM_RPC}'
   postgres:
     # To define in .env file
     environment:
-      - POSTGRES_PASSWORD # Same as postgres_pass
+      - POSTGRES_PASSWORD
+  graph-deployer:
+    build: ../
+    depends_on:
+      - graph-node
+      - postgres
+    command: './docker/wait-for-it.sh\ graph-node:8000\ --timeout=40\ &&\ npm\ run\ deploy-local-${NETWORK-mainnet}'

@@ -1,7 +1,12 @@
-FROM node:12 AS testchain
+FROM node:12 AS deployer
 WORKDIR /usr/graph/
 
-COPY ./lib/geb-snap-testchain .
-ENV SKIP_SUBMODULE_UPDATE=true
+COPY package.json .
+RUN npm install -D
+COPY . .
+# COPY ./src/ ./src
+# COPY schema.graphql schema.graphql
 
-RUN ["/bin/sh", "-c", "scripts/launch -s testchain-value-english-governance-median-multisig"]
+RUN chmod +x docker/wait-for-it.sh
+
+ENTRYPOINT [ "/bin/bash", "-c" ]

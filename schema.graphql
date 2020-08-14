@@ -115,8 +115,20 @@ type CollateralType implements Dated @entity {
   " Address of the liquidation auction smart contract "
   collateralAuctionHouseAddress: Bytes
 
+  " Type of collateral auction "
+  auctionType: AuctionType
+
   " Max amount of collateral to sell in one liquidation auction [collateralToSell in LiquidationEngine] "
   maxCollateralToSellInLiquidations: BigDecimal
+
+  " Maximum auction length "
+  totalAuctionLength: BigInt!
+
+  " Auction configuration (Fix discount auction only) "
+  englishAuctionConfiguration: EnglishAuctionConfiguration
+
+  " Auction configuration (English auction only) "
+  FixDiscountAuctionConfiguration: FixDiscountAuctionConfiguration
 
   " Timestamp of the block in which this collateral type was added [seconds] "
   createdAt: BigInt!
@@ -292,4 +304,134 @@ type SystemState @entity {
   modifiedAtTransaction: Bytes
 
   # TODO: Flap and flop auctions parameters used to be here. Add the auction abstraction class.
+}
+
+enum AuctionType {
+  ENGLISH
+  FIXED_DISCOUNT
+}
+
+type EnglishAuctionConfiguration @entity {
+  " Collateral type name "
+  id: ID!
+
+  " Minimum bid increase ratio i.g: 1.05 means 5% bid increase minimum "
+  bidIncrease: BigDecimal!
+
+  " How long the auction lasts after a new bid is submitted "
+  bidDuration: BigInt!
+
+  " Minimum mandatory size of the first bid compared to collateral price coming from the oracle "
+  bidToMarketPriceRatio: BigDecimal!
+
+  " OSM contract"
+  osm: Bytes
+
+  " Oracle relay contract"
+  oracleRelayer: Bytes
+}
+
+type FixDiscountAuctionConfiguration @entity {
+  " Collateral type name "
+  id: ID!
+  # TODO:
+}
+
+type CollateralAuction @entity {
+  "<Collateral type>-<auction ID>- "
+  id: ID!
+
+  " Auction incrmental id per collateral "
+  auctionId: BigInt!
+
+  " Type of auction contract, currently english or fix discount "
+  auctionType: AuctionType!
+
+  " Collateral type of the auction "
+  collateralType: CollateralType!
+
+  " CDP handler address in the CDP engine "
+  cdpHandler: Bytes!
+
+  " Total collateral for sale "
+  collateralAmount: BigDecimal!
+
+  " Total debt of the CDP "
+  debtAmount: BigDecimal!
+
+  " Minimum amount to raise (If less is raised, unbacked debt is created) "
+  amountToRaise: BigDecimal!
+
+  " Liquidated CDP "
+  cdp: Cdp!
+
+  " Hard deadline for the auction after which no more bids can be placed  "
+  auctionDeadline: BigInt!
+
+  " Address that started the auction "
+  startedBy: Bytes!
+
+  " If the auction finised "
+  isTerminated: Boolean!
+
+  " If the bough collateral was claimed "
+  isClaimed: Boolean!
+
+  " List of individual bid (English auction only) "
+  EnglishAuctionBids: [EnglishAuctionBid!]
+
+  " Auction configuration (Fix discount auction only) "
+  englishAuctionConfiguration: EnglishAuctionConfiguration
+
+  " Auction configuration (English auction only) "
+  FixDiscountAuctionConfiguration: FixDiscountAuctionConfiguration
+
+  " Timestamp of the block in which the liquidation was started "
+  createdAt: BigInt!
+
+  " Block number in which the liquidation was started "
+  createdAtBlock: BigInt!
+
+  " Transaction hash in which tthe liquidation was started "
+  createdAtTransaction: Bytes!
+}
+
+enum EnglishBidType {
+  DecreaseSoldAmount
+  IncreaseBidSize
+}
+
+type EnglishAuctionBid @entity {
+  " <auction id>-<block> "
+  id: ID!
+
+  " Type, either increase buy or decrease sell "
+  type: EnglishBidType!
+
+  " Auction to which the bid belongs "
+  auction: CollateralAuction!
+
+  " How many reflex bonds are offerd for the auctioned batch "
+  bidAmount: BigDecimal!
+
+  " Size of the auction batch the auctioned batch in collateral "
+  amountToSell: BigDecimal!
+
+  " Collateral price "
+  price: BigDecimal!
+
+  " When the latest bid expires and the auction can be settled "
+  bidExpiry: BigInt!
+
+  " Bidder address"
+  bidder: Bytes
+
+  " Timestamp of the block in which the liquidation was started "
+  createdAt: BigInt!
+
+  " Block number in which the liquidation was started "
+  createdAtBlock: BigInt!
+
+  " Transaction hash in which tthe liquidation was started "
+  createdAtTransaction: Bytes!
 }

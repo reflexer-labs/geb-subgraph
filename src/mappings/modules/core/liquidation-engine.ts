@@ -85,7 +85,6 @@ export function handleLiquidate(event: Liquidate): void {
   liquidation.debtAmount = decimal.fromWad(event.params.debtAmount)
   liquidation.amountToRaise = decimal.fromRad(event.params.amountToRaise)
   liquidation.startedBy = event.transaction.from
-  liquidation.isTerminated = false
   liquidation.isClaimed = false
   liquidation.createdAt = event.block.timestamp
   liquidation.createdAtBlock = event.block.number

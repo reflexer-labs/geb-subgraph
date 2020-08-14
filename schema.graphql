@@ -374,10 +374,7 @@ type CollateralAuction @entity {
   " Address that started the auction "
   startedBy: Bytes!
 
-  " If the auction finised "
-  isTerminated: Boolean!
-
-  " If the bough collateral was claimed "
+  " If the bough collateral was claimed by the auction winner "
   isClaimed: Boolean!
 
   " List of individual bid (English auction only) "
@@ -397,6 +394,8 @@ type CollateralAuction @entity {
 
   " Transaction hash in which tthe liquidation was started "
   createdAtTransaction: Bytes!
+
+  # TODO: add currentwinner, add current current size and rename the existing InitialdebtAmount and initial collateralAmount,
 }
 
 enum EnglishBidType {

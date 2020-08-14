@@ -21,9 +21,6 @@ dataSources:
       abis:
         - name: GebDeploy
           file: ./abis/GebDeploy.json
-      # eventHandlers:
-      # - event: NewGravatar(uint256,address,string,string)
-      #   handler: handleNewGravatar
       callHandlers:
         - function: deployCDPEngine()
           handler: handleDeployCDPEngine
@@ -179,6 +176,14 @@ dataSources:
         - name: EnglishCollateralAuctionHouse
           file: ./abis/EnglishCollateralAuctionHouse.json
       eventHandlers:
+        - event: Liquidate(indexed bytes32,indexed address,uint256,uint256,uint256,address,uint256)
+          handler: handleLiquidate
+        - event: ModifyParameters(bytes32,bytes32,address)
+          handler: handleModifyParametersCollateralTypeAddress
+        - event: ModifyParameters(bytes32,bytes32,uint256)
+          handler: handleModifyParametersCollateralTypeUint
+        
+        # Remaining events:
         # - event: AddAuthorization(address)
         #   handler: handleAddAuthorization
         # - event: ConnectCDPSaviour(address)
@@ -189,12 +194,6 @@ dataSources:
         #   handler: handleDisconnectCDPSaviour
         # - event: FailedCDPSave(bytes)
         #   handler: handleFailedCDPSave
-        - event: Liquidate(indexed bytes32,indexed address,uint256,uint256,uint256,address,uint256)
-          handler: handleLiquidate
-        - event: ModifyParameters(bytes32,bytes32,address)
-          handler: handleModifyParametersCollateralTypeAddress
-        - event: ModifyParameters(bytes32,bytes32,uint256)
-          handler: handleModifyParametersCollateralTypeUint
         # - event: ProtectCDP(bytes32,address,address)
         #   handler: handleProtectCDP
         # - event: RemoveAuthorization(address)
@@ -242,8 +241,6 @@ templates:
         - name: EnglishCollateralAuctionHouse
           file: ./abis/EnglishCollateralAuctionHouse.json
       eventHandlers:
-        # - event: AddAuthorization(address)
-        #   handler: AddAuthorization
         - event: DecreaseSoldAmount(uint256,address,uint256,uint256,uint256)
           handler: DecreaseSoldAmount
         - event: IncreaseBidSize(uint256,address,uint256,uint256,uint256)
@@ -252,13 +249,17 @@ templates:
           handler: handleModifyParametersAddress
         - event: ModifyParameters(bytes32,uint256)
           handler: handleModifyParametersUint
+        - event: SettleAuction(uint256)
+          handler: handleSettleAuction
+        
+        # Remaining events:
+        # - event: AddAuthorization(address)
+        #   handler: AddAuthorization
         # - event: RemoveAuthorization(address)
         #   handler: RemoveAuthorization
         # - event: RestartAuction(uint256,uint256)
         #   handler: RestartAuction
-        - event: SettleAuction(uint256)
-          handler: SettleAuction
         # - event: StartAuction(uint256,uint256,uint256,uint256,uint256,indexed address,indexed address,uint256)
         #   handler: StartAuction
-        - event: TerminateAuctionPrematurely(uint256,address,uint256,uint256)
-          handler: TerminateAuctionPrematurely
+        # - event: TerminateAuctionPrematurely(uint256,address,uint256,uint256)
+        #   handler: handleTerminateAuctionPrematurely

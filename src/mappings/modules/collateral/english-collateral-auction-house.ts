@@ -5,6 +5,7 @@ import {
   EnglishCollateralAuctionHouse,
   IncreaseBidSize,
   RestartAuction,
+  SettleAuction,
 } from '../../../../generated/templates/EnglishCollateralAuctionHouse/EnglishCollateralAuctionHouse'
 import {
   EnglishAuctionConfiguration,
@@ -111,4 +112,12 @@ export function handleRestartAuction(event: RestartAuction): void {
   let auctionId = id.toString() + '-' + collateral.toString()
   let auction = CollateralAuction.load(auctionId)
   auction.auctionDeadline = event.params.auctionDeadline
+}
+
+export function handleSettleAuction(event: SettleAuction): void {
+    let id = event.params.id
+    let collateral = EnglishCollateralAuctionHouse.bind(dataSource.address()).collateralType()
+    let auctionId = id.toString() + '-' + collateral.toString()
+    let auction = CollateralAuction.load(auctionId)
+    auction.isClaimed = true
 }

@@ -6,7 +6,7 @@ import {
   OpenCdp,
   AllowCDP,
   AllowHandler,
-} from '../../../../generated/GebCdpManager/GebCDPManager'
+} from '../../../../generated/GebCDPManager/GebCDPManager'
 import { CollateralType, UserProxy, Cdp } from '../../../../generated/schema'
 
 import { getSystemState } from '../../../entities'

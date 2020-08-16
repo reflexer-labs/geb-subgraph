@@ -14,10 +14,10 @@ services:
     environment:
       postgres_host: postgres:5432
       postgres_user: graph-node
-      postgres_pass: let-me-in
+      postgres_pass: ${POSTGRES_PASSWORD}
       postgres_db: graph-node
       ipfs: 'ipfs:5001'
-      ethereum: 'mainnet:http://host.docker.internal:8545/'
+      ethereum: '${NETWORK}:${ETHEREUM_RPC}'
       RUST_LOG: info
   ipfs:
     image: ipfs/go-ipfs:v0.4.23
@@ -36,3 +36,14 @@ services:
       POSTGRES_DB: graph-node
     volumes:
       - ./data/postgres:/var/lib/postgresql/data
+  graph-deployer:
+    build: ../
+    depends_on:
+      - graph-node
+      - postgres
+    environment:
+      - GRAPH_ADMIN_RPC_URL=http://graph-node:8020/
+      - IPFS_URL=http://ipfs:5001
+      - SUBGRAPH_NAME=reflexer-labs/rai
+      - NETWORK
+    command: './docker/wait-for-it.sh\ graph-node:8000\ --timeout=40\ &&\ npm\ run\ deploy-local'

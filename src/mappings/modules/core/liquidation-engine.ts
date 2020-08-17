@@ -6,7 +6,7 @@ import {
 
 import { EnglishCollateralAuctionHouse } from '../../../../generated/templates'
 import { EnglishCollateralAuctionHouse as EnglishCollateralAuctionHouseBind } from '../../../../generated/templates/EnglishCollateralAuctionHouse/EnglishCollateralAuctionHouse'
-import { getOrCreateCollateral, CollateralAuction, Cdp, EnglishAuctionConfiguration } from '../../../entities'
+import { getOrCreateCollateral, Cdp, EnglishAuctionConfiguration, EnglishCollateralAuction } from '../../../entities'
 
 import * as decimal from '../../../utils/decimal'
 import * as integer from '../../../utils/integer'
@@ -33,12 +33,15 @@ export function handleModifyParametersCollateralTypeAddress(event: ModifyParamet
   let collateral = getOrCreateCollateral(event.params.collateralType, event)
 
   if (what == 'collateralAuctionHouse') {
+    // Configure auction type
+
     let address = event.params.data
     collateral.collateralAuctionHouseAddress = address
 
     // Detect the type of auction
     let auctionHouse = EnglishCollateralAuctionHouseBind.bind(address)
     let auctionType = auctionHouse.AUCTION_TYPE().toString()
+
     if (auctionType == 'ENGLISH') {
       log.info('English auction set for collateral {}', [collateral.id])
 
@@ -48,10 +51,10 @@ export function handleModifyParametersCollateralTypeAddress(event: ModifyParamet
       auctionConfiguration.bidDuration = integer.HOUR.times(integer.fromNumber(3)) // 3 hours
       auctionConfiguration.bidToMarketPriceRatio = decimal.ZERO
       auctionConfiguration.collateralType = collateral.id
+      auctionConfiguration.totalAuctionLength = integer.DAY.times(integer.fromNumber(2)) // 2 days
       auctionConfiguration.save()
 
       collateral.auctionType = 'ENGLISH'
-      collateral.totalAuctionLength = integer.DAY.times(integer.fromNumber(2)) // 2 days
       collateral.englishAuctionConfiguration = auctionConfiguration.id
 
       // Start indexing an instance of english auction contract
@@ -73,32 +76,34 @@ export function handleModifyParametersCollateralTypeAddress(event: ModifyParamet
 export function handleLiquidate(event: Liquidate): void {
   let id = event.params.auctionId
   let collateral = getOrCreateCollateral(event.params.collateralType, event)
-
+  let config = EnglishAuctionConfiguration.load(collateral.id)
   log.info('Start liquidation id {} of collateral {}', [id.toString(), collateral.id])
 
-  let liquidation = new CollateralAuction(collateral.id.toString() + '-' + id.toString())
-  liquidation.auctionId = id
-  liquidation.auctionType = collateral.auctionType
-  liquidation.collateralType = collateral.id
-  liquidation.cdpHandler = event.params.cdp
-  liquidation.collateralAmount = decimal.fromWad(event.params.collateralAmount)
-  liquidation.debtAmount = decimal.fromWad(event.params.debtAmount)
-  liquidation.amountToRaise = decimal.fromRad(event.params.amountToRaise)
-  liquidation.startedBy = event.transaction.from
-  liquidation.isClaimed = false
-  liquidation.createdAt = event.block.timestamp
-  liquidation.createdAtBlock = event.block.number
-  liquidation.createdAtTransaction = event.transaction.hash
-  if (liquidation.auctionType == 'ENGLISH') {
+  if (collateral.auctionType == 'ENGLISH') {
+    let liquidation = new EnglishCollateralAuction(collateral.id.toString() + '-' + id.toString())
+    liquidation.auctionId = id
+    liquidation.auctionType = collateral.auctionType
+    liquidation.collateralType = collateral.id
+    liquidation.cdpHandler = event.params.cdp
+    liquidation.initialCollateralAmount = decimal.fromWad(event.params.collateralAmount)
+    liquidation.initialDebtAmount = decimal.fromWad(event.params.debtAmount)
+    liquidation.bondAmountRaised = decimal.ZERO
+    liquidation.collateralAmountSold = liquidation.initialCollateralAmount
+    liquidation.highestBidPrice = decimal.ZERO
+    liquidation.bondAmountToRaise = decimal.fromRad(event.params.amountToRaise)
+    liquidation.startedBy = event.transaction.from
+    liquidation.isClaimed = false
+    liquidation.createdAt = event.block.timestamp
+    liquidation.createdAtBlock = event.block.number
+    liquidation.createdAtTransaction = event.transaction.hash
     liquidation.englishAuctionConfiguration = collateral.id
-  } else if (liquidation.auctionType == 'FIX_DISCOUNT') {
-    liquidation.fixDiscountAuctionConfiguration = collateral.id
+    liquidation.auctionDeadline = config.totalAuctionLength.plus(event.block.timestamp)
+
+    let cdp = Cdp.load(event.params.cdp.toHexString() + '-' + collateral.id)
+    liquidation.cdp = cdp.id
+
+    liquidation.save()
+  } else if (collateral.auctionType == 'FIX_DISCOUNT') {
+    // TODO:
   }
-
-  let cdp = Cdp.load(event.params.cdp.toHexString() + '-' + collateral.id)
-  liquidation.cdp = cdp.id
-
-  liquidation.auctionDeadline = collateral.totalAuctionLength.plus(event.block.timestamp)
-
-  liquidation.save()
 }

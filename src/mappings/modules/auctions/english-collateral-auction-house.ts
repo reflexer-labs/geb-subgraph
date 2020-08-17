@@ -10,7 +10,7 @@ import {
 import {
   EnglishAuctionConfiguration,
   EnglishAuctionBid,
-  CollateralAuction,
+  EnglishCollateralAuction,
   getOrCreateCollateral,
 } from '../../../entities'
 import { dataSource, log } from '@graphprotocol/graph-ts'
@@ -50,7 +50,7 @@ export function handleModifyParametersUint(event: ModifyParametersUint): void {
   } else if (what == 'bidDuration') {
     config.bidDuration = val
   } else if (what == 'totalAuctionLength') {
-    collateral.totalAuctionLength = val
+    config.totalAuctionLength = val
   } else if (what == 'bidToMarketPriceRatio') {
     config.bidToMarketPriceRatio = decimal.fromRay(val)
   }
@@ -64,21 +64,26 @@ export function handleDecreaseSoldAmount(event: DecreaseSoldAmount): void {
   let bid = new EnglishAuctionBid(event.block.number.toString() + '-' + id.toString())
 
   let auctionId = id.toString() + '-' + collateral.toString()
-  let auction = CollateralAuction.load(auctionId)
+  let auction = EnglishCollateralAuction.load(auctionId)
 
   bid.type = 'DecreaseSoldAmount'
   bid.auction = auctionId
-  bid.bidAmount = auction.amountToRaise
-  bid.amountToSell = decimal.fromRad(event.params.amountToBuy)
-  bid.price = bid.amountToSell.div(bid.bidAmount)
+  bid.bondAmountRaised = auction.bondAmountToRaise
   bid.bidExpiry = event.params.bidExpiry
   bid.bidder = event.params.highBidder
   bid.createdAt = event.block.timestamp
   bid.createdAtBlock = event.block.number
   bid.createdAtTransaction = event.transaction.hash
+  
+  // Decrease the amount of collateral sold off 
+  bid.collateralAmountSold = decimal.fromRad(event.params.amountToBuy)
+  bid.price = bid.collateralAmountSold.div(bid.bondAmountRaised)
   bid.save()
 
   auction.auctionDeadline = event.params.bidExpiry
+  auction.collateralAmountSold = bid.collateralAmountSold
+  auction.highestBidPrice = bid.price
+  auction.highestBidder = bid.bidder
   auction.save()
 }
 
@@ -88,21 +93,26 @@ export function handleIncreaseBidSize(event: IncreaseBidSize): void {
   let bid = new EnglishAuctionBid(event.block.number.toString() + '-' + id.toString())
 
   let auctionId = id.toString() + '-' + collateral.toString()
-  let auction = CollateralAuction.load(auctionId)
+  let auction = EnglishCollateralAuction.load(auctionId)
 
   bid.type = 'IncreaseBidSize'
   bid.auction = auctionId
-  bid.bidAmount = decimal.fromRad(event.params.rad)
-  bid.amountToSell = auction.collateralAmount
-  bid.price = bid.amountToSell.div(bid.bidAmount)
+  bid.collateralAmountSold = auction.initialCollateralAmount
   bid.bidExpiry = event.params.bidExpiry
   bid.bidder = event.params.highBidder
   bid.createdAt = event.block.timestamp
   bid.createdAtBlock = event.block.number
   bid.createdAtTransaction = event.transaction.hash
+  
+  // Increased to amount of bond received
+  bid.bondAmountRaised = decimal.fromRad(event.params.rad)
+  bid.price = bid.collateralAmountSold.div(bid.bondAmountRaised)
   bid.save()
 
   auction.auctionDeadline = event.params.bidExpiry
+  auction.bondAmountRaised = bid.bondAmountRaised
+  auction.highestBidPrice = bid.price
+  auction.highestBidder = bid.bidder
   auction.save()
 }
 
@@ -110,7 +120,7 @@ export function handleRestartAuction(event: RestartAuction): void {
   let id = event.params.id
   let collateral = EnglishCollateralAuctionHouse.bind(dataSource.address()).collateralType()
   let auctionId = id.toString() + '-' + collateral.toString()
-  let auction = CollateralAuction.load(auctionId)
+  let auction = EnglishCollateralAuction.load(auctionId)
   auction.auctionDeadline = event.params.auctionDeadline
 }
 
@@ -118,6 +128,6 @@ export function handleSettleAuction(event: SettleAuction): void {
     let id = event.params.id
     let collateral = EnglishCollateralAuctionHouse.bind(dataSource.address()).collateralType()
     let auctionId = id.toString() + '-' + collateral.toString()
-    let auction = CollateralAuction.load(auctionId)
+    let auction = EnglishCollateralAuction.load(auctionId)
     auction.isClaimed = true
 }

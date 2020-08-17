@@ -189,8 +189,6 @@ type CollateralType @entity {
   " Max amount of collateral to sell in one liquidation auction [collateralToSell in LiquidationEngine] "
   maxCollateralToSellInLiquidations: BigDecimal
 
-  " Maximum auction length "
-  totalAuctionLength: BigInt
 
   " Auction configuration (Fix discount auction only) "
   englishAuctionConfiguration: EnglishAuctionConfiguration
@@ -292,6 +290,9 @@ enum AuctionType {
   FIXED_DISCOUNT
 }
 
+"""
+Static enlgish auction configuration
+"""
 type EnglishAuctionConfiguration @entity {
   " Collateral type name "
   id: ID!
@@ -304,6 +305,9 @@ type EnglishAuctionConfiguration @entity {
 
   " How long the auction lasts after a new bid is submitted "
   bidDuration: BigInt!
+
+    " Maximum auction length "
+  totalAuctionLength: BigInt!
 
   " Minimum mandatory size of the first bid compared to collateral price coming from the oracle "
   bidToMarketPriceRatio: BigDecimal!
@@ -321,7 +325,7 @@ type FixDiscountAuctionConfiguration @entity {
   # TODO:
 }
 
-type CollateralAuction @entity {
+type EnglishCollateralAuction @entity {
   "<Collateral type>-<auction ID>- "
   id: ID!
 
@@ -338,13 +342,25 @@ type CollateralAuction @entity {
   cdpHandler: Bytes!
 
   " Total collateral for sale "
-  collateralAmount: BigDecimal!
+  initialCollateralAmount: BigDecimal!
 
-  " Total debt of the CDP "
-  debtAmount: BigDecimal!
+  " Total debt of the CDP to be repaid "
+  initialDebtAmount: BigDecimal!
 
-  " Minimum amount to raise (If less is raised, unbacked debt is created) "
-  amountToRaise: BigDecimal!
+  " Minimum amount to raise in bonds (If less is raised, unbacked debt is created) "
+  bondAmountToRaise: BigDecimal!
+
+  " Amount raised so far to repay the debt.  amountRaised <= amountToRaise < initialDebtAmount"
+  bondAmountRaised: BigDecimal!
+
+  " Collateral being sold, the remaining is returned to the owner.  collateralAmountSold <= initialCollateralAmount"
+  collateralAmountSold: BigDecimal
+
+  " Best bid price at which the collateral is being sold "
+  highestBidPrice: BigDecimal!
+
+  " Bidder currently winning the auction "
+  highestBidder: Bytes
 
   " Liquidated CDP "
   cdp: Cdp!
@@ -362,10 +378,7 @@ type CollateralAuction @entity {
   englishAuctionBids: [EnglishAuctionBid!] @derivedFrom(field: "auction")
 
   " Auction configuration (Fix discount auction only) "
-  englishAuctionConfiguration: EnglishAuctionConfiguration
-
-  " Auction configuration (English auction only) "
-  fixDiscountAuctionConfiguration: FixDiscountAuctionConfiguration
+  englishAuctionConfiguration: EnglishAuctionConfiguration!
 
   " Timestamp of the block in which the liquidation was started "
   createdAt: BigInt!
@@ -392,13 +405,13 @@ type EnglishAuctionBid @entity {
   type: EnglishBidType!
 
   " Auction to which the bid belongs "
-  auction: CollateralAuction!
+  auction: EnglishCollateralAuction!
 
   " How many reflex bonds are offerd for the auctioned batch "
-  bidAmount: BigDecimal!
+  bondAmountRaised: BigDecimal!
 
   " Size of the auction batch the auctioned batch in collateral "
-  amountToSell: BigDecimal!
+  collateralAmountSold: BigDecimal!
 
   " Collateral price "
   price: BigDecimal!

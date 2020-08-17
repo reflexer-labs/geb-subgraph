@@ -1,7 +1,7 @@
 
 " GEB CDP "
 type Cdp @entity {
-  " Equals to: <cdpHandler>-<CollateralType>"
+  " Equals to: <cdpHandler>-<CollateralType> "
   id: ID!
 
   " CDP ID if this CDP was created through the manager (GebCdpManager) "
@@ -217,6 +217,200 @@ type CollateralType @entity {
   " Transaction hash in which this collateral type was last modified "
   modifiedAtTransaction: Bytes
 }
+
+# --- Balances & Deposits/Withdrawals ---
+
+type InternalCollateralBalance @entity {
+  " Equals to: <accountHandler>-<CollateralType> "
+  id: ID!
+
+  " Account ownership at the CDPengine level "
+  accountHandler: Bytes!
+
+  " Ultimate owner of the balance (The accountHandler or the Proxy)"
+  owner: Bytes!
+
+  " Collateral type of the balance "
+  collateralType: CollateralType!
+
+  " Proxy address if the balance belongs to a proxy "
+  proxy: UserProxy
+
+  " Actual balance "
+  balance: BigDecimal!
+
+  " List of Collateral Joins (= deposits)"
+  joins: [CollateralJoin!]
+
+  " List of Collateral Exits (= withdrawals)"
+  exits: [CollateralExit!]
+
+  " Timestamp of the block in which this CDP was opened [seconds] "
+  createdAt: BigInt!
+
+  " Block number in which this CDP was opened "
+  createdAtBlock: BigInt!
+
+  " Transaction hash in which this CDP was opened "
+  createdAtTransaction: Bytes!
+
+  " Timestamp of the block in which this CDP was last modified [seconds] "
+  modifiedAt: BigInt
+
+  " Block number in which this CDP was last modified "
+  modifiedAtBlock: BigInt
+
+  " Transaction hash in which this CDP was last modified "
+  modifiedAtTransaction: Bytes
+}
+
+type InternalBondBalance @entity {
+  " Equals to: <accountHandler> "
+  id: ID!
+
+  " Account ownership at the CDPengine level "
+  accountHandler: Bytes!
+
+  " Ultimate owner of the balance (The accountHandler or the Proxy)"
+  owner: Bytes!
+
+  " Proxy address if the balance belongs to a proxy "
+  proxy: UserProxy
+
+  " Actual balance "
+  balance: BigDecimal!
+
+  " List of Collateral Joins (= deposits)"
+  joins: [BondJoin!]
+
+  " List of Collateral Exits (= withdrawals)"
+  exits: [BondExit!]
+
+  " Timestamp of the block in which this CDP was opened [seconds] "
+  createdAt: BigInt!
+
+  " Block number in which this CDP was opened "
+  createdAtBlock: BigInt!
+
+  " Transaction hash in which this CDP was opened "
+  createdAtTransaction: Bytes!
+
+  " Timestamp of the block in which this CDP was last modified [seconds] "
+  modifiedAt: BigInt
+
+  " Block number in which this CDP was last modified "
+  modifiedAtBlock: BigInt
+
+  " Transaction hash in which this CDP was last modified "
+  modifiedAtTransaction: Bytes
+}
+
+type InternalDebtBalance @entity {
+  " Equals to: <accountHandler> "
+  id: ID!
+
+  " Account ownership at the CDPengine level "
+  accountHandler: Bytes!
+
+  " Ultimate owner of the balance (The accountHandler or the Proxy)"
+  owner: Bytes!
+
+  " Actual balance "
+  balance: BigDecimal!
+
+  " Timestamp of the block in which this CDP was opened [seconds] "
+  createdAt: BigInt!
+
+  " Block number in which this CDP was opened "
+  createdAtBlock: BigInt!
+
+  " Transaction hash in which this CDP was opened "
+  createdAtTransaction: Bytes!
+
+  " Timestamp of the block in which this CDP was last modified [seconds] "
+  modifiedAt: BigInt
+
+  " Block number in which this CDP was last modified "
+  modifiedAtBlock: BigInt
+
+  " Transaction hash in which this CDP was last modified "
+  modifiedAtTransaction: Bytes
+}
+
+type CollateralJoin @entity {
+  " <Collateral type>-<TX hash> "
+  id: ID!
+
+  " Join amount "
+  amount: Bytes!
+
+  " Collateral type of the Join "
+  collateralType: CollateralType!
+
+  " Timestamp of the block in which this CDP was opened [seconds] "
+  createdAt: BigInt!
+
+  " Block number in which this CDP was opened "
+  createdAtBlock: BigInt!
+
+  " Transaction hash in which this CDP was opened "
+  createdAtTransaction: Bytes!
+}
+
+type CollateralExit @entity {
+  " <Collateral type>-<TX hash> "
+  id: ID!
+
+  " Exit amount "
+  amount: Bytes!
+
+  " Collateral type of the Exit "
+  collateralType: CollateralType!
+
+  " Timestamp of the block in which this CDP was opened [seconds] "
+  createdAt: BigInt!
+
+  " Block number in which this CDP was opened "
+  createdAtBlock: BigInt!
+
+  " Transaction hash in which this CDP was opened "
+  createdAtTransaction: Bytes!
+}
+
+type BondJoin @entity {
+  " <Collateral type>-<TX hash> "
+  id: ID!
+
+  " Join amount "
+  amount: Bytes!
+
+  " Timestamp of the block in which this CDP was opened [seconds] "
+  createdAt: BigInt!
+
+  " Block number in which this CDP was opened "
+  createdAtBlock: BigInt!
+
+  " Transaction hash in which this CDP was opened "
+  createdAtTransaction: Bytes!
+}
+
+type BondExit @entity {
+  " <Collateral type>-<TX hash> "
+  id: ID!
+
+  " Exit amount "
+  amount: Bytes!
+
+  " Timestamp of the block in which this CDP was opened [seconds] "
+  createdAt: BigInt!
+
+  " Block number in which this CDP was opened "
+  createdAtBlock: BigInt!
+
+  " Transaction hash in which this CDP was opened "
+  createdAtTransaction: Bytes!
+}
+
 
 # --- Prices ---
 

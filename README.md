@@ -51,7 +51,7 @@ Configure the `docker/.env` to:
 POSTGRES_PASSWORD=1234
 
 # Ethereum node RPC endpoint (i.g: infura)
-ETHEREUM_RPC=hhttps://kovan.infura.io/v3/<API_KEY>
+ETHEREUM_RPC=https://kovan.infura.io/v3/<API_KEY>/
 
 # Set to mainnet or kovan
 NETWORK=kovan

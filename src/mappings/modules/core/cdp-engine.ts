@@ -131,7 +131,7 @@ export function handleModifyCDPCollateralization(event: ModifyCDPCollateralizati
       collateral.unmanagedCdpCount = collateral.unmanagedCdpCount.plus(integer.ONE)
       
       if(collateralBalance.gt(decimal.ZERO) || debt.gt(decimal.ZERO)) {
-        collateral.totalActiveCdpCount = collateral.totalActiveCdpCount.plus(integer.ONE)
+        system.totalActiveCdpCount = system.totalActiveCdpCount.plus(integer.ONE)
       }
 
       system.unmanagedCdpCount = system.unmanagedCdpCount.plus(integer.ONE)
@@ -143,7 +143,7 @@ export function handleModifyCDPCollateralization(event: ModifyCDPCollateralizati
       cdp.debt = cdp.debt.plus(debt)
 
       if(collateralBalance.equals(decimal.ZERO) || debt.equals(decimal.ZERO)) {
-        collateral.totalActiveCdpCount = collateral.totalActiveCdpCount.minus(integer.ONE)
+        system.totalActiveCdpCount = system.totalActiveCdpCount.minus(integer.ONE)
       }
 
       updateLastModifyCdp(cdp as Cdp, event)

@@ -84,6 +84,9 @@ type UserProxy @entity {
     " Number of CDPs NOT opened through the manager (CdpManager) "
     unmanagedCdpCount: BigInt!
 
+    " Total number of CDPs with collateral > 0 or debt > 0" 
+    totalActiveCdpCount: BigInt!
+
     " Number of user proxies created "
     proxyCount: BigInt!
 

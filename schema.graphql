@@ -1,25 +1,6 @@
-interface Dated {
-  " Timestamp of the block in which the object was created [seconds] "
-  createdAt: BigInt!
-
-  " Block number in which the object was created "
-  createdAtBlock: BigInt!
-
-  " Transaction hash in which the object was created "
-  createdAtTransaction: Bytes!
-
-  " Timestamp of the block in which the object was last modified [seconds] "
-  modifiedAt: BigInt
-
-  " Block number in which the object was last modified "
-  modifiedAtBlock: BigInt
-
-  " Transaction hash in which the object was last modified "
-  modifiedAtTransaction: Bytes
-}
 
 " GEB CDP "
-type Cdp implements Dated @entity {
+type Cdp @entity {
   " Equals to: <cdpHandler>-<CollateralType>"
   id: ID!
 
@@ -64,12 +45,99 @@ type Cdp implements Dated @entity {
 }
 
 """
-Collateral auctions are used to sell collateral from CDPs that have become undercollateralized
-in order to preserve the collateralization of the system
-
-TODO: Auction specific parameters used to be here, move them to appropriate class
+CDP owner
 """
-type CollateralType implements Dated @entity {
+type User @entity {
+  " Account address "
+  id: ID!
+
+  " Account address "
+  address: Bytes!
+
+  " Up to one per collateral type"
+  proxies: [UserProxy!] @derivedFrom(field: "owner")
+}
+
+" Contract used to execute transactions and sequences of transactions on behalf of a user "
+type UserProxy @entity {
+  " Proxy address "
+  id: ID!
+
+  " Proxy contract address "
+  address: Bytes!
+
+  " Cache contract address "
+  cache: Bytes!
+
+  " User reference "
+  owner: User!
+}
+
+  " Provide information about the current system state and parameters "
+  type SystemState @entity {
+    " Singleton entity. Equals to 'current' "
+    id: ID!
+
+    " Number of CDPs opened through the manager (CdpManager) "
+    cdpCount: BigInt!
+
+    " Number of CDPs NOT opened through the manager (CdpManager) "
+    unmanagedCdpCount: BigInt!
+
+    " Number of user proxies created "
+    proxyCount: BigInt!
+
+    " Total debt issued in bonds across all collaterals "
+    globalDebt: BigDecimal!
+
+    " Total unbacked debt issued in bonds across all collaterals "
+    globalUnbackedDebt: BigDecimal!
+
+    " Total global Debt Ceiling "
+    globalDebtCeiling: BigDecimal!
+
+    " Number of collateral types registered "
+    collateralCount: BigInt!
+
+    " Base rate for stability fee per second add for all collaterals "
+    globalStabilityFee: BigDecimal!
+
+    " Savings Rate "
+    savingsRate: BigDecimal!
+
+    " Number of collateral auctions started "
+    collateralAuctionCount: BigInt!
+
+    " Latest redemption rate"
+    currentRedemptionRate: RedemptionRate
+
+    " Latest redemption price "
+    currentRedemptionPrice: RedemptionPrice
+
+    " Timestamp of the block in which the system was created [seconds] "
+    createdAt: BigInt!
+
+    " Block number in which the system was created "
+    createdAtBlock: BigInt!
+
+    " Transaction hash in which the system was created "
+    createdAtTransaction: Bytes!
+
+    " Timestamp of the block in which the system was last modified [seconds] "
+    modifiedAt: BigInt
+
+    " Block number in which the system was last modified "
+    modifiedAtBlock: BigInt
+
+    " Transaction hash in which the system was last modified "
+    modifiedAtTransaction: Bytes
+
+    # TODO: Flap and flop auctions parameters used to be here. Add the auction abstraction class.
+  }
+"""
+Collateral specific information
+"""
+type CollateralType @entity {
   " Collateral type name "
   id: ID!
 
@@ -149,6 +217,8 @@ type CollateralType implements Dated @entity {
   modifiedAtTransaction: Bytes
 }
 
+# --- Prices ---
+
 """
 Collateral market price at a given block
 """
@@ -215,96 +285,7 @@ type RedemptionRate @entity {
   value: BigDecimal!
 }
 
-"""
-CDP owner
-"""
-type User @entity {
-  " Account address "
-  id: ID!
-
-  " Account address "
-  address: Bytes!
-
-  " Up to one per collateral type"
-  proxies: [UserProxy!] @derivedFrom(field: "owner")
-}
-
-" Contract used to execute transactions and sequences of transactions on behalf of a user "
-type UserProxy @entity {
-  " Proxy address "
-  id: ID!
-
-  " Proxy contract address "
-  address: Bytes!
-
-  " Cache contract address "
-  cache: Bytes!
-
-  " User reference "
-  owner: User!
-}
-
-" Provide information about the current system state and parameters "
-type SystemState @entity {
-  " Singleton entity. Equals to 'current' "
-  id: ID!
-
-  " Number of CDPs opened through the manager (CdpManager) "
-  cdpCount: BigInt!
-
-  " Number of CDPs NOT opened through the manager (CdpManager) "
-  unmanagedCdpCount: BigInt!
-
-  " Number of user proxies created "
-  proxyCount: BigInt!
-
-  " Total debt issued in bonds across all collaterals "
-  globalDebt: BigDecimal!
-
-  " Total unbacked debt issued in bonds across all collaterals "
-  globalUnbackedDebt: BigDecimal!
-
-  " Total global Debt Ceiling "
-  globalDebtCeiling: BigDecimal!
-
-  " Number of collateral types registered "
-  collateralCount: BigInt!
-
-  " Base rate for stability fee per second add for all collaterals "
-  globalStabilityFee: BigDecimal!
-
-  " Savings Rate "
-  savingsRate: BigDecimal!
-
-  " Number of collateral auctions started "
-  collateralAuctionCount: BigInt!
-
-  " Latest redemption rate"
-  currentRedemptionRate: RedemptionRate
-
-  " Latest redemption price "
-  currentRedemptionPrice: RedemptionPrice
-
-  " Timestamp of the block in which the system was created [seconds] "
-  createdAt: BigInt!
-
-  " Block number in which the system was created "
-  createdAtBlock: BigInt!
-
-  " Transaction hash in which the system was created "
-  createdAtTransaction: Bytes!
-
-  " Timestamp of the block in which the system was last modified [seconds] "
-  modifiedAt: BigInt
-
-  " Block number in which the system was last modified "
-  modifiedAtBlock: BigInt
-
-  " Transaction hash in which the system was last modified "
-  modifiedAtTransaction: Bytes
-
-  # TODO: Flap and flop auctions parameters used to be here. Add the auction abstraction class.
-}
+# --- Auctions ---
 
 enum AuctionType {
   ENGLISH

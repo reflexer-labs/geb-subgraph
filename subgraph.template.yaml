@@ -4,26 +4,6 @@ repository: https://github.com/reflexer-labs/geb-subgraph
 schema:
   file: ./schema.graphql
 dataSources:
-  - name: GebDeploy
-    kind: ethereum/contract
-    network: {{NETWORK}}
-    source:
-      address: '{{GEB_DEPLOY}}'
-      abi: GebDeploy
-      startBlock: {{STARTING_BLOCK_NUMBER}}
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.4
-      language: wasm/assemblyscript
-      file: ./src/mappings/modules/init/geb-deployer.ts
-      entities:
-        - CDPEngine
-      abis:
-        - name: GebDeploy
-          file: ./abis/GebDeploy.json
-      callHandlers:
-        - function: deployCDPEngine()
-          handler: handleDeployCDPEngine
   - name: CDPEngine
     kind: ethereum/contract
     network: {{NETWORK}}
@@ -140,7 +120,7 @@ dataSources:
       kind: ethereum/events
       apiVersion: 0.0.4
       language: wasm/assemblyscript
-      file: ./src/mappings/modules/rates/tax-collector.ts
+      file: ./src/mappings/modules/core/tax-collector.ts
       entities:
         - CollateralType
         - SystemState
@@ -231,7 +211,7 @@ templates:
       kind: ethereum/events
       apiVersion: 0.0.4
       language: wasm/assemblyscript
-      file: ./src/mappings/modules/collateral/english-collateral-auction-house.ts
+      file: ./src/mappings/modules/auctions/english-collateral-auction-house.ts
       entities:
         - CollateralType
         - CollateralAuction

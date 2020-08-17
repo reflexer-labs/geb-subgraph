@@ -20,6 +20,7 @@ export function getSystemState(event: ethereum.Event): SystemState {
     state.proxyCount = integer.ZERO
     state.unmanagedCdpCount = integer.ZERO
     state.cdpCount = integer.ZERO
+    state.totalActiveCdpCount = integer.ZERO
 
     // System parameters
     state.globalStabilityFee = decimal.ZERO

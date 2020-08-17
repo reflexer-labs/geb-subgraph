@@ -98,7 +98,7 @@ export function handleModifyCDPCollateralization(event: ModifyCDPCollateralizati
   let deltaCollateral = event.params.deltaCollateral
   let deltaDebt = event.params.deltaDebt
 
-  let collateral = CollateralType.load(collateralType)
+  let collateral = getOrCreateCollateral(event.params.collateralType, event)
   if (collateral != null) {
     let debt = decimal.fromWad(deltaDebt)
     let collateralBalance = decimal.fromWad(deltaCollateral)
@@ -129,6 +129,10 @@ export function handleModifyCDPCollateralization(event: ModifyCDPCollateralizati
       cdp.createdAtTransaction = event.transaction.hash
 
       collateral.unmanagedCdpCount = collateral.unmanagedCdpCount.plus(integer.ONE)
+      
+      if(collateralBalance.gt(decimal.ZERO) || debt.gt(decimal.ZERO)) {
+        collateral.totalActiveCdpCount = collateral.totalActiveCdpCount.plus(integer.ONE)
+      }
 
       system.unmanagedCdpCount = system.unmanagedCdpCount.plus(integer.ONE)
     } else {
@@ -137,6 +141,11 @@ export function handleModifyCDPCollateralization(event: ModifyCDPCollateralizati
 
       cdp.collateral = cdp.collateral.plus(collateralBalance)
       cdp.debt = cdp.debt.plus(debt)
+
+      if(collateralBalance.equals(decimal.ZERO) || debt.equals(decimal.ZERO)) {
+        collateral.totalActiveCdpCount = collateral.totalActiveCdpCount.minus(integer.ONE)
+      }
+
       updateLastModifyCdp(cdp as Cdp, event)
     }
 

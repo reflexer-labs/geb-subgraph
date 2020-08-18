@@ -1,6 +1,13 @@
 import { Address, log, Bytes, ethereum } from '@graphprotocol/graph-ts'
 
-import { CollateralType, Cdp, UserProxy, InternalCollateralBalance, InternalBondBalance, InternalDebtBalance } from '../../../../generated/schema'
+import {
+  CollateralType,
+  Cdp,
+  UserProxy,
+  InternalCollateralBalance,
+  InternalBondBalance,
+  InternalDebtBalance,
+} from '../../../../generated/schema'
 
 import { getSystemState } from '../../../entities'
 
@@ -21,9 +28,20 @@ import {
 
 import * as decimal from '../../../utils/decimal'
 import * as integer from '../../../utils/integer'
-import { getOrCreateCollateral } from '../../../entities/collateral'
-import { updateLastModifySystemState, updateLastModifyCollateralType, updateLastModifyCdp } from '../../../utils/state'
-import { createBondBalance, createCollateralBalance, updateBondBalance, updateCollateralBalance } from '../../../entities/balances'
+import { getOrCreateCollateral, updateLastModifyCollateralType } from '../../../entities/collateral'
+import {
+  createBondBalance,
+  createCollateralBalance,
+  updateBondBalance,
+  updateCollateralBalance,
+  createDebtBalance,
+  updateDebtBalance,
+  getOrCreateBondBalance,
+  getOrCreateDebtBalance,
+  getOrCreateCollateralBalance,
+} from '../../../entities/balances'
+import { createUnmanagedCdp, updateCdpCollateralization } from '../../../entities/cdp'
+import { updateLastModifySystemState } from '../../../entities/system'
 
 // Register a new collateral type
 export function handleInitializeCollateralType(event: InitializeCollateralType): void {
@@ -78,42 +96,29 @@ export function handleModifyParametersCollateralTypeUint(event: ModifyParameters
 export function handleModifyCollateralBalance(event: ModifyCollateralBalance): void {
   let account = event.params.account
   let collateral = event.params.collateralType
-  let balance = InternalCollateralBalance.load(account.toHexString() + '-' + collateral.toString())
 
-  if(balance != null) {
-    updateCollateralBalance(balance, balance.balance.plus(decimal.fromWad(event.params.wad)), event)
-  } else {
-    // Create new balance
-    balance = createCollateralBalance(account, collateral, decimal.fromWad(event.params.wad) ,event)
-  }
+  let balance = getOrCreateCollateralBalance(account, collateral, event)
+  updateCollateralBalance(balance, balance.balance.plus(decimal.fromWad(event.params.wad)), event)
   balance.save()
 }
 
 // Transfer collateral between users
 export function handleTransferCollateral(event: TransferCollateral): void {
-  // TODO:
-  log.warning('TransferCollateral called but handler not implemented!', [])
+  let collateral = event.params.collateralType
+  let src = getOrCreateCollateralBalance(event.params.src, collateral, event, false)
+  let dst = getOrCreateCollateralBalance(event.params.dst, collateral, event)
+  updateCollateralBalance(src, src.balance.minus(decimal.fromWad(event.params.wad)), event)
+  updateCollateralBalance(dst, dst.balance.plus(decimal.fromWad(event.params.wad)), event)
+  src.save()
+  dst.save()
 }
 
 // Transfer reflexer bond between users
 export function handleTransferInternalCoins(event: TransferInternalCoins): void {
-  
-  let src = InternalBondBalance.load(event.params.src.toHexString())
-  let dst = InternalBondBalance.load(event.params.dst.toHexString())
-
-  if(src != null) {
-    updateBondBalance(src, src.balance.minus(decimal.fromRad(event.params.rad)), event)
-  } else { 
-    log.error( "handleTransferInternalCoins - src address does not have a balance ", [])
-  }
-
-  if(dst != null) {
-    updateBondBalance(dst, dst.balance.plus(decimal.fromRad(event.params.rad)), event)
-  } else { 
-    // Create new balance
-    dst = createBondBalance(event.params.dst, decimal.fromRad(event.params.rad), event)
-  }
-
+  let src = getOrCreateBondBalance(event.params.src, event, false)
+  let dst = getOrCreateBondBalance(event.params.dst, event)
+  updateBondBalance(src, src.balance.minus(decimal.fromRad(event.params.rad)), event)
+  updateBondBalance(dst, dst.balance.plus(decimal.fromRad(event.params.rad)), event)
   src.save()
   dst.save()
 }
@@ -129,149 +134,168 @@ export function handleModifyCDPCollateralization(event: ModifyCDPCollateralizati
   if (collateral != null) {
     let debt = decimal.fromWad(deltaDebt)
     let collateralBalance = decimal.fromWad(deltaCollateral)
-
     let cdpId = cdpAddress.toHexString() + '-' + collateralType
     let cdp = Cdp.load(cdpId)
-
     let system = getSystemState(event)
 
     if (cdp == null) {
-      log.info('Update cpd collateralization of unmanaged CDP #{}, address: {}', [
-        cdp.cdpId.toString(),
-        cdpAddress.toHexString(),
-      ])
-      // Register new unmanaged vault
-      let proxy = UserProxy.load(cdpAddress.toHexString())
-
-      cdp = new Cdp(cdpId)
-      cdp.collateralType = collateral.id
-      cdp.collateral = collateralBalance
-      cdp.debt = debt
-      cdp.cdpHandler = cdpAddress
-
-      cdp.owner = proxy != null ? Address.fromString(proxy.owner) : cdpAddress
-
-      cdp.createdAt = event.block.timestamp
-      cdp.createdAtBlock = event.block.number
-      cdp.createdAtTransaction = event.transaction.hash
-
-      collateral.unmanagedCdpCount = collateral.unmanagedCdpCount.plus(integer.ONE)
-      
-      if(collateralBalance.gt(decimal.ZERO) || debt.gt(decimal.ZERO)) {
-        system.totalActiveCdpCount = system.totalActiveCdpCount.plus(integer.ONE)
-      }
-
-      system.unmanagedCdpCount = system.unmanagedCdpCount.plus(integer.ONE)
+      log.info('New unmanaged: {}', [cdp.id])
+      // Register new unmanaged cdp
+      cdp = createUnmanagedCdp(cdpAddress, event.params.collateralType, event)
+      updateCdpCollateralization(cdp as Cdp, collateralBalance, debt, event)
     } else {
       // Update existing Vault
-      log.info('Update cpd collateralization of CDP #{}, address: ', [cdp.cdpId.toString(), cdpAddress.toHexString()])
-
-      cdp.collateral = cdp.collateral.plus(collateralBalance)
-      cdp.debt = cdp.debt.plus(debt)
-
-      if(collateralBalance.equals(decimal.ZERO) || debt.equals(decimal.ZERO)) {
-        system.totalActiveCdpCount = system.totalActiveCdpCount.minus(integer.ONE)
-      }
-
-      updateLastModifyCdp(cdp as Cdp, event)
+      log.info('Update cpd collateralization of: ', [cdp.id])
+      updateCdpCollateralization(cdp as Cdp, cdp.collateral.plus(collateralBalance), cdp.debt.plus(debt), event)
     }
-
-    collateral.debtAmount = collateral.debtAmount.plus(debt)
-    system.globalDebt = system.globalDebt.plus(debt)
-
-    updateLastModifyCollateralType(collateral as CollateralType, event)
-    updateLastModifySystemState(system, event)
-
     cdp.save()
+
+    // Update debt counter
+    collateral.debtAmount = collateral.debtAmount.plus(debt)
+    updateLastModifyCollateralType(collateral as CollateralType, event)
     collateral.save()
+    
+    system.globalDebt = system.globalDebt.plus(debt)
+    updateLastModifySystemState(system, event)
     system.save()
 
+
     // Update balances
-
-    let internalCollateralBalance = InternalCollateralBalance.load(event.params.collateralSource.toHexString() + '-' + collateralType)
-    if(internalCollateralBalance != null) {
-      updateCollateralBalance(internalCollateralBalance, internalCollateralBalance.balance.minus(decimal.fromWad(deltaCollateral)), event)
-    } else {
-      log.error(" Collateral source balance unknown", [])
-    }
-
-    let internalBondBalance = InternalBondBalance.load(event.params.debtDestination.toHexString())
-    if(internalBondBalance != null) {
-      updateBondBalance(internalBondBalance,internalBondBalance.balance.plus(decimal.fromWad(deltaDebt)), event)
-    } else {
-      internalBondBalance = createBondBalance(event.params.debtDestination, decimal.fromWad(deltaDebt), event)
-    }
-    internalBondBalance.save()
+    let internalCollateralBalance = getOrCreateCollateralBalance(
+      event.params.collateralSource,
+      event.params.collateralType,
+      event,
+      false,
+    )
+    updateCollateralBalance(
+      internalCollateralBalance,
+      internalCollateralBalance.balance.minus(decimal.fromWad(deltaCollateral)),
+      event,
+    )
     internalCollateralBalance.save()
 
-
+    let internalBondBalance = getOrCreateBondBalance(event.params.debtDestination, event)
+    updateBondBalance(internalBondBalance, internalBondBalance.balance.plus(decimal.fromWad(deltaDebt)), event)
+    internalBondBalance.save()
   }
 }
 
 // Split a CDP - binary approval or splitting/merging Vaults
 export function handleTransferCDPCollateralAndDebt(event: TransferCDPCollateralAndDebt): void {
-  // TODO:
-  log.warning('TransferCDPCollateralAndDebt called but handler not implemented!', [])
+  // Both should be non dusty so they exist
+  let srcCdp = Cdp.load(event.params.src.toHexString() + '-' + event.params.collateralType.toString()) as Cdp
+  let dstCdp = Cdp.load(event.params.src.toHexString() + '-' + event.params.collateralType.toString()) as Cdp
+
+  updateCdpCollateralization(
+    srcCdp,
+    srcCdp.collateral.minus(decimal.fromWad(event.params.deltaCollateral)),
+    srcCdp.debt.minus(decimal.fromWad(event.params.deltaDebt)),
+    event,
+  )
+
+  updateCdpCollateralization(
+    dstCdp,
+    dstCdp.collateral.plus(decimal.fromWad(event.params.deltaCollateral)),
+    dstCdp.debt.plus(decimal.fromWad(event.params.deltaDebt)),
+    event,
+  )
+
+  srcCdp.save()
+  dstCdp.save()
 }
 
 // Liquidate a CDP
 export function handleConfiscateCDPCollateralAndDebt(event: ConfiscateCDPCollateralAndDebt): void {
-  // TODO:
-  log.warning('ConfiscateCDPCollateralAndDebt called but handler not implemented!', [])
+  let collateralType = event.params.collateralType
+  let deltaDebt = decimal.fromWad(event.params.deltaCollateral)
+  let deltaCollateral = decimal.fromWad(event.params.deltaCollateral)
+
+  let cdp = Cdp.load(event.params.cdp.toHexString() + '-' + collateralType.toString())
+  cdp.collateral = cdp.collateral.plus(deltaCollateral)
+  cdp.debt = cdp.debt.plus(deltaDebt)
+  cdp.save()
+
+  let collateral = getOrCreateCollateral(collateralType, event)
+  collateral.debtAmount = collateral.debtAmount.plus(deltaDebt)
+  collateral.save()
+
+  // Check the wad rad multiplication confusion here: https://github.com/reflexer-labs/geb/blob/9501696ca6908f0a7e47f59ed1d50c34c0c6c404/src/CDPEngine.sol#L483
+  let deltaTotalIssuedDebt = deltaDebt.times(collateral.accumulatedRate)
+  let internalCollateralBalance = getOrCreateCollateralBalance(event.params.debtCounterparty, collateralType, event)
+  updateCollateralBalance(
+    internalCollateralBalance,
+    internalCollateralBalance.balance.minus(deltaTotalIssuedDebt),
+    event,
+  )
+  internalCollateralBalance.save()
+
+  let system = getSystemState(event)
+  system.globalUnbackedDebt = system.globalUnbackedDebt.minus(deltaTotalIssuedDebt)
+  system.save()
 }
 
 // Create/destroy equal quantities of reflexer bond and system debt
 export function handleSettleDebt(event: SettleDebt): void {
   let rad = decimal.fromRad(event.params.rad)
 
+  // Update debt counters
   let system = getSystemState(event)
   system.globalDebt = system.globalDebt.minus(rad)
+  system.globalUnbackedDebt = system.globalUnbackedDebt.minus(rad)
   updateLastModifySystemState(system, event)
   system.save()
+
+  // Update debt and bond balance
+  let account = event.address // msg.sender
+  let balance = getOrCreateBondBalance(account, event)
+  let debt = getOrCreateDebtBalance(account, event)
+  updateBondBalance(balance, balance.balance.minus(rad), event)
+  updateDebtBalance(debt, debt.balance.minus(rad), event)
+  balance.save()
+  debt.save()
 }
 
 // Mint unbacked reflexer bonds
 export function handleCreateUnbackedDebt(event: CreateUnbackedDebt): void {
   let rad = decimal.fromRad(event.params.rad)
 
+  // Update debt counters
   let system = getSystemState(event)
   system.globalDebt = system.globalDebt.plus(rad)
   system.globalUnbackedDebt = system.globalUnbackedDebt.plus(rad)
-
-  // TODO: update internal balance of src and dst
-
   updateLastModifySystemState(system, event)
   system.save()
+
+  // Credit the bonds
+  let balance = getOrCreateBondBalance(event.params.coinDestination, event)
+  updateBondBalance(balance, balance.balance.plus(rad), event)
+  balance.save()
+
+  // Add the debt
+  let debt = getOrCreateDebtBalance(event.params.debtDestination, event)
+  updateDebtBalance(debt, debt.balance.plus(rad), event)
+  debt.save()
 }
 
 // Modify the debt multiplier, creating/destroying corresponding debt
 export function handleUpdateAccumulatedRate(event: UpdateAccumulatedRate): void {
-  let collateralType = event.params.collateralType.toString()
   let rate = decimal.fromRay(event.params.rateMultiplier)
+  let collateral = getOrCreateCollateral(event.params.collateralType, event)
+  let rad = collateral.debtAmount.times(rate)
 
-  let collateral = CollateralType.load(collateralType)
+  // Set the new rate
+  collateral.accumulatedRate = collateral.accumulatedRate.plus(rate)
+  updateLastModifyCollateralType(collateral as CollateralType, event)
+  collateral.save()
 
-  if (collateral != null) {
-    let rad = collateral.debtAmount.times(rate)
+  // Update debt counter
+  let system = getSystemState(event)
+  system.globalDebt = system.globalDebt.plus(rad)
+  updateLastModifySystemState(system, event)
+  system.save()
 
-    // Set the new rate
-    collateral.accumulatedRate = collateral.accumulatedRate.plus(rate)
-    updateLastModifyCollateralType(collateral as CollateralType , event)
-    collateral.save()
-
-    // Update debt counter
-    let system = getSystemState(event)
-    system.globalDebt = system.globalDebt.plus(rad)
-    updateLastModifySystemState(system, event)
-    system.save()
-
-    // Send the taxes
-    let dst = InternalBondBalance.load(event.params.surplusDst.toHexString())
-    if(dst != null) {
-      updateBondBalance(dst, decimal.fromRad(event.params.dstCoinBalance), event)
-    } else {
-      createBondBalance(event.params.surplusDst, decimal.fromRad(event.params.dstCoinBalance), event)
-    }
-    
-  }
+  // Send the taxes
+  let dst = getOrCreateBondBalance(event.params.surplusDst, event)
+  updateBondBalance(dst, dst.balance.plus(decimal.fromRad(event.params.dstCoinBalance)), event)
+  dst.save()
 }

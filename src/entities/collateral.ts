@@ -3,7 +3,6 @@ import { Bytes, ethereum, BigInt, Entity } from '@graphprotocol/graph-ts'
 
 import * as decimal from '../utils/decimal'
 import * as integer from '../utils/integer'
-import { updateLastModifyCollateralType } from '../utils/state'
 
 export function getOrCreateCollateral(collateralType: Bytes, event: ethereum.Event): CollateralType {
   let collateral = CollateralType.load(collateralType.toString())
@@ -35,4 +34,10 @@ export function getOrCreateCollateral(collateralType: Bytes, event: ethereum.Eve
     collateral.save()
   }
   return collateral as CollateralType
+}
+
+export function updateLastModifyCollateralType(collateral: CollateralType, event: ethereum.Event): void {
+  collateral.modifiedAt = event.block.timestamp
+  collateral.modifiedAtBlock = event.block.number
+  collateral.modifiedAtTransaction = event.transaction.hash
 }

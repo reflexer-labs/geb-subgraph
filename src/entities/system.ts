@@ -37,3 +37,9 @@ export function getSystemState(event: ethereum.Event): SystemState {
 
   return state as SystemState
 }
+
+export function updateLastModifySystemState(system: SystemState, event: ethereum.Event): void {
+  system.modifiedAt = event.block.timestamp
+  system.modifiedAtBlock = event.block.number
+  system.modifiedAtTransaction = event.transaction.hash
+}

@@ -3,7 +3,7 @@ import { Created } from "../../../../generated/ProxyFactory/DSProxyFactory";
 import { getOrCreateUser, getSystemState } from '../../../entities'
 
 import * as integer from '../../../utils/integer'
-import { updateLastModifySystemState } from '../../../utils/state';
+import { updateLastModifySystemState } from '../../../entities/system';
 
 export function handleCreated(event: Created): void {
   let user = getOrCreateUser(event.params.owner)

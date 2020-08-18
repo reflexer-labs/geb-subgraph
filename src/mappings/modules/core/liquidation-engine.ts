@@ -11,8 +11,8 @@ import { getOrCreateCollateral, Cdp, EnglishAuctionConfiguration, EnglishCollate
 import * as decimal from '../../../utils/decimal'
 import * as integer from '../../../utils/integer'
 
-import { updateLastModifyCollateralType } from '../../../utils/state'
 import { log } from '@graphprotocol/graph-ts'
+import { updateLastModifyCollateralType } from '../../../entities/collateral'
 
 export function handleModifyParametersCollateralTypeUint(event: ModifyParametersCollateralTypeUint): void {
   let what = event.params.parameter.toString()

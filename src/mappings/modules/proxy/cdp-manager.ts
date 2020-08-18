@@ -1,4 +1,4 @@
-import { Address, dataSource, log } from '@graphprotocol/graph-ts'
+import { dataSource, log } from '@graphprotocol/graph-ts'
 
 import {
   GebCDPManager,
@@ -7,13 +7,9 @@ import {
   AllowCDP,
   AllowHandler,
 } from '../../../../generated/GebCDPManager/GebCDPManager'
-import { CollateralType, UserProxy, Cdp } from '../../../../generated/schema'
+import { CollateralType, Cdp } from '../../../../generated/schema'
 
-import { getSystemState } from '../../../entities'
-
-import * as decimal from '../../../utils/decimal'
-import * as integer from '../../../utils/integer'
-import { updateLastModifyCdp, updateLastModifyCollateralType, updateLastModifySystemState } from '../../../utils/state'
+import { updateLastModifyCdp, createManagedCdp } from '../../../entities/cdp'
 
 export function handleOpenCdp(event: OpenCdp): void {
   let manager = GebCDPManager.bind(dataSource.address())
@@ -24,38 +20,14 @@ export function handleOpenCdp(event: OpenCdp): void {
   let collateral = CollateralType.load(collateralType.toString())
 
   if (collateral != null) {
-    let proxy = UserProxy.load(event.params.own.toHexString())
-
     // Register new vault
-    let cdp = new Cdp(cdpAddress.toHexString() + '-' + collateral.id)
-    cdp.cdpId = event.params.cdp
-    cdp.collateralType = collateral.id
-    cdp.collateral = decimal.ZERO
-    cdp.debt = decimal.ZERO
-    cdp.cdpHandler = cdpAddress
-
-    cdp.owner = proxy != null ? Address.fromString(proxy.owner) : event.params.own
-
-    if (proxy != null) {
-      cdp.proxy = proxy.id
-    }
-
+    let cdp = createManagedCdp(cdpAddress, collateralType, event.params.cdp, event)
     log.info('New Manged CDP, id: #{}, owner {}, address: {}', [
       cdp.cdpId.toString(),
       cdp.owner.toHexString(),
       cdpAddress.toHexString(),
     ])
-
-    cdp.createdAt = event.block.timestamp
-    cdp.createdAtBlock = event.block.number
-    cdp.createdAtTransaction = event.transaction.hash
-
-    // Update vault counter
-    collateral.cdpCount = collateral.cdpCount.plus(integer.ONE)
-
     cdp.save()
-    updateLastModifyCollateralType(collateral as CollateralType, event)
-    collateral.save()
   } else {
     log.warning('Wrong collateral type: {}, cdp_id: {}, tx_hash: {}', [
       collateralType.toString(),
@@ -64,11 +36,6 @@ export function handleOpenCdp(event: OpenCdp): void {
     ])
   }
 
-  // Update system state
-  let system = getSystemState(event)
-  system.cdpCount = system.cdpCount.plus(integer.ONE)
-  updateLastModifySystemState(system, event)
-  system.save()
 }
 
 export function handleTransferCDPOwnership(event: TransferCDPOwnership): void {

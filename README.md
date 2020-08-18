@@ -27,7 +27,13 @@ Configure the `docker/.env` to:
 
 ```
 POSTGRES_PASSWORD=1234
+
+# For MacOS
 ETHEREUM_RPC=http://host.docker.internal:8545/
+
+#For Linux
+ETHEREUM_RPC=http://172.17.0.1:8545/
+
 NETWORK=test
 ```
 

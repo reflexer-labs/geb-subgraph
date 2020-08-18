@@ -154,11 +154,10 @@ export function handleModifyCDPCollateralization(event: ModifyCDPCollateralizati
     collateral.debtAmount = collateral.debtAmount.plus(debt)
     updateLastModifyCollateralType(collateral as CollateralType, event)
     collateral.save()
-    
+
     system.globalDebt = system.globalDebt.plus(debt)
     updateLastModifySystemState(system, event)
     system.save()
-
 
     // Update balances
     let internalCollateralBalance = getOrCreateCollateralBalance(

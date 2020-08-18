@@ -5,8 +5,11 @@ export { BigDecimal }
 export let ONE = fromNumber(1)
 export let ZERO = fromNumber(0)
 
+// @ts-ignore
 let WAD_PRECISION = <u8>18
+// @ts-ignore
 let RAY_PRECISION = <u8>27
+// @ts-ignore
 let RAD_PRECISION = <u8>45
 
 let WAD = BigInt.fromI32(10)

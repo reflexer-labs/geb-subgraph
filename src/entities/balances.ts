@@ -6,7 +6,12 @@ import * as integer from '../utils/integer'
 
 // --- Bond balance ---
 
-export function getOrCreateBondBalance(address: Bytes, event: ethereum.Event, canCreate: bool = true): InternalBondBalance {
+export function getOrCreateBondBalance(
+  address: Bytes,
+  event: ethereum.Event,
+  // @ts-ignore
+  canCreate: bool = true,
+): InternalBondBalance {
   let bal = InternalBondBalance.load(address.toHexString())
   if (bal != null) {
     return bal as InternalBondBalance
@@ -49,6 +54,7 @@ export function getOrCreateCollateralBalance(
   address: Bytes,
   collateralType: Bytes,
   event: ethereum.Event,
+  // @ts-ignore
   canCreate: bool = true,
 ): InternalCollateralBalance {
   let bal = InternalCollateralBalance.load(address.toHexString() + '-' + collateralType.toString())
@@ -70,7 +76,7 @@ export function createCollateralBalance(
 ): InternalCollateralBalance {
   let bal = new InternalCollateralBalance(address.toHexString() + '-' + collateralType.toString())
   bal.accountHandler = address
-  
+
   let proxy = UserProxy.load(address.toHexString())
   if (proxy != null) {
     bal.owner = Address.fromString(proxy.owner)
@@ -100,8 +106,12 @@ export function updateCollateralBalance(
 }
 
 // --- Debt balance ---
-
-export function getOrCreateDebtBalance(address: Bytes, event: ethereum.Event, canCreate: bool = true): InternalDebtBalance {
+export function getOrCreateDebtBalance(
+  address: Bytes,
+  event: ethereum.Event,
+  // @ts-ignore
+  canCreate: bool = true,
+): InternalDebtBalance {
   let bal = InternalDebtBalance.load(address.toHexString())
   if (bal != null) {
     return bal as InternalDebtBalance

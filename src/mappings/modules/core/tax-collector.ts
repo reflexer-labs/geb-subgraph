@@ -6,7 +6,7 @@ import { getSystemState, getOrCreateCollateral } from '../../../entities'
 import * as decimal from '../../../utils/decimal'
 
 // TODO: Authorizations
-// TODO: Tax Recipients 
+// TODO: Tax Recipients
 
 export function handleModifyParametersCollateralTypeUint(event: ModifyParametersCollateralTypeUint): void {
   let what = event.params.parameter.toString()

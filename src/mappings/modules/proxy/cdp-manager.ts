@@ -35,7 +35,6 @@ export function handleOpenCdp(event: OpenCdp): void {
       event.transaction.hash.toHexString(),
     ])
   }
-
 }
 
 export function handleTransferCDPOwnership(event: TransferCDPOwnership): void {

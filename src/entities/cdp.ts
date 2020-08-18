@@ -6,21 +6,21 @@ import * as decimal from '../utils/decimal'
 import * as integer from '../utils/integer'
 import { getSystemState, updateLastModifySystemState } from './system'
 
-export function createManagedCdp(address: Bytes, collateral: Bytes, cdpId: BigInt, event: ethereum.Event) : Cdp {
+export function createManagedCdp(address: Bytes, collateral: Bytes, cdpId: BigInt, event: ethereum.Event): Cdp {
   let collateralObj = getOrCreateCollateral(collateral, event)
   let system = getSystemState(event)
   let cdp = createCdp(address, collateral, event)
   collateralObj.cdpCount = collateralObj.unmanagedCdpCount.plus(integer.ONE)
   system.cdpCount = system.unmanagedCdpCount.plus(integer.ONE)
-  
+
   updateLastModifyCollateralType(collateralObj, event)
   updateLastModifySystemState(system, event)
 
   collateralObj.save()
   system.save()
   cdp.save()
-  
-  return cdp 
+
+  return cdp
 }
 
 export function createUnmanagedCdp(address: Bytes, collateral: Bytes, event: ethereum.Event): Cdp {
@@ -29,7 +29,7 @@ export function createUnmanagedCdp(address: Bytes, collateral: Bytes, event: eth
   let cdp = createCdp(address, collateral, event)
   collateralObj.unmanagedCdpCount = collateralObj.unmanagedCdpCount.plus(integer.ONE)
   system.unmanagedCdpCount = system.unmanagedCdpCount.plus(integer.ONE)
-  
+
   updateLastModifyCollateralType(collateralObj, event)
   updateLastModifySystemState(system, event)
 
@@ -37,7 +37,7 @@ export function createUnmanagedCdp(address: Bytes, collateral: Bytes, event: eth
   system.save()
   cdp.save()
 
-  return cdp 
+  return cdp
 }
 
 function createCdp(address: Bytes, collateral: Bytes, event: ethereum.Event): Cdp {
@@ -50,13 +50,13 @@ function createCdp(address: Bytes, collateral: Bytes, event: ethereum.Event): Cd
   cdp.debt = decimal.ZERO
   cdp.cdpHandler = address
 
-  if(proxy != null) {
+  if (proxy != null) {
     cdp.owner = Address.fromString(proxy.owner)
     cdp.proxy = proxy.id
   } else {
     cdp.owner = address
   }
-  
+
   cdp.createdAt = event.block.timestamp
   cdp.createdAtBlock = event.block.number
   cdp.createdAtTransaction = event.transaction.hash
@@ -88,6 +88,7 @@ export function updateCdpCollateralization(
   system.save()
 }
 
+// @ts-ignore
 function isEmptyCdp(cdp: Cdp): bool {
   return cdp.collateral.gt(decimal.ZERO) && cdp.debt.gt(decimal.ZERO)
 }

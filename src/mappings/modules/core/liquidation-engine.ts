@@ -4,9 +4,15 @@ import {
   Liquidate,
 } from '../../../../generated/LiquidationEngine/LiquidationEngine'
 
-import { EnglishCollateralAuctionHouse } from '../../../../generated/templates'
+import { EnglishCollateralAuctionHouse, FixDiscountCollateralAuction } from '../../../../generated/templates'
 import { EnglishCollateralAuctionHouse as EnglishCollateralAuctionHouseBind } from '../../../../generated/templates/EnglishCollateralAuctionHouse/EnglishCollateralAuctionHouse'
-import { getOrCreateCollateral, Cdp, EnglishAuctionConfiguration, EnglishCollateralAuction } from '../../../entities'
+import {
+  getOrCreateCollateral,
+  Cdp,
+  EnglishAuctionConfiguration,
+  EnglishCollateralAuction,
+  FixDiscountAuctionConfiguration,
+} from '../../../entities'
 
 import * as decimal from '../../../utils/decimal'
 import * as integer from '../../../utils/integer'
@@ -61,9 +67,25 @@ export function handleModifyParametersCollateralTypeAddress(event: ModifyParamet
       EnglishCollateralAuctionHouse.create(address)
       log.info('Start indexing english auction house: {}', [address.toHexString()])
     } else if (auctionType == 'FIXED_DISCOUNT') {
-      log.warning('Fixed discount auctions not implemented! (collateral: {})', [collateral.id])
+      // Default auction config
+      let auctionConfiguration = new FixDiscountAuctionConfiguration(collateral.id)
+      auctionConfiguration.collateralType = collateral.id
+      auctionConfiguration.minimumBid = decimal.fromNumber(5)
+      auctionConfiguration.totalAuctionLength = integer.DAY.times(integer.fromNumber(7))
+      auctionConfiguration.discount = decimal.fromNumber(0.95)
+      auctionConfiguration.lowerCollateralMedianDeviation = decimal.fromNumber(0.9)
+      auctionConfiguration.upperCollateralMedianDeviation = decimal.fromNumber(0.95)
+      auctionConfiguration.lowerSystemCoinMedianDeviation = decimal.ONE
+      auctionConfiguration.upperSystemCoinMedianDeviation = decimal.ONE
+      auctionConfiguration.minSystemCoinMedianDeviation = decimal.fromNumber(0.999)
+      auctionConfiguration.save()
+
       collateral.auctionType = 'FIXED_DISCOUNT'
-      // TODO: Fix discount auctions
+      collateral.fixDiscountAuctionConfiguration = auctionConfiguration.id
+
+      // Start indexing an instance of fix discount auction contract
+      FixDiscountCollateralAuction.create(address)
+      log.info('Start indexing fix discount auction house: {}', [address.toHexString()])
     } else {
       log.error('Unknown auction type: {} ', [auctionType as string])
     }
@@ -81,7 +103,7 @@ export function handleLiquidate(event: Liquidate): void {
 
   if (collateral.auctionType == 'ENGLISH') {
     let liquidation = new EnglishCollateralAuction(collateral.id.toString() + '-' + id.toString())
-    
+
     // TODO: I CHANGED THE ID, THIS IS WRONG! + ADDED BID COUNTER!!
     liquidation.auctionId = id
     liquidation.auctionType = collateral.auctionType

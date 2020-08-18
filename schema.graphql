@@ -187,7 +187,7 @@ type CollateralType @entity {
   englishAuctionConfiguration: EnglishAuctionConfiguration
 
   " Auction configuration (English auction only) "
-  FixDiscountAuctionConfiguration: FixDiscountAuctionConfiguration
+  fixDiscountAuctionConfiguration: FixDiscountAuctionConfiguration
 
   " Timestamp of the block in which this collateral type was added [seconds] "
   createdAt: BigInt!

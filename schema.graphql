@@ -569,8 +569,11 @@ enum EnglishBidType {
 }
 
 type EnglishAuctionBid @entity {
-  " <auction id>-<block> "
+  "<collateral type>-<auction id>-<bid number>"
   id: ID!
+
+  " Incremental id of the bid "
+  bidNumber: BigInt!
 
   " Type, either increase buy or decrease sell "
   type: EnglishBidType!
@@ -650,7 +653,7 @@ type FixDiscountAuctionConfiguration @entity {
 }
 
 type FixDiscountCollateralAuction @entity {
-  "<Collateral type>-<auction ID>- "
+  " <Collateral type>-<auction ID> "
   id: ID!
 
   " Auction incrmental id per collateral "
@@ -709,8 +712,11 @@ type FixDiscountCollateralAuction @entity {
 }
 
 type FixDiscountAuctionBatch @entity {
-  " <auction id>-<batch id> "
+  " <collateral type>-<auction id>-<batch number> "
   id: ID!
+
+  " Incremental id of the batch "
+  bidNumber: BigInt!
 
   " Auction in which the batch was sold "
   auction: FixDiscountCollateralAuction!

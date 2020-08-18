@@ -253,7 +253,7 @@ templates:
       kind: ethereum/events
       apiVersion: 0.0.4
       language: wasm/assemblyscript
-      file: ./src/mappings/modules/auctions/english-collateral-auction-house.ts
+      file: ./src/mappings/modules/auctions/discount-collateral-auction-house.ts
       entities:
         - CollateralType
         - FixDiscountCollateralAuction
@@ -267,12 +267,12 @@ templates:
           handler: handleModifyParameters
         - event: ModifyParameters(bytes32,uint256)
           handler: handleModifyParameters
+        - event: BuyCollateral(uint256,uint256,uint256)
+          handler: handleBuyCollateral
         
         # Remaining events:
         # - event: AddAuthorization(address)
         #   handler: handleAddAuthorization
-        # - event: BuyCollateral(uint256,uint256,uint256)
-        #   handler: handleBuyCollateral
         # - event: RemoveAuthorization(address)
         #   handler: handleRemoveAuthorization
         # - event: SettleAuction(uint256,uint256)

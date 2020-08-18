@@ -4,6 +4,7 @@ import {
   ModifyParameters as ModifyParametersUint,
   ModifyParameters1 as ModifyParametersAddress,
   FixedDiscountCollateralAuctionHouse,
+  BuyCollateral,
 } from '../../../../generated/templates/FixDiscountCollateralAuction/FixedDiscountCollateralAuctionHouse'
 import { dataSource } from '@graphprotocol/graph-ts'
 import { getOrCreateCollateral, FixDiscountAuctionConfiguration } from '../../../entities'
@@ -58,4 +59,8 @@ export function handleModifyParametersAddress(event: ModifyParametersAddress): v
   }
 
   config.save()
+}
+
+export function handleBuyCollateral(event: BuyCollateral): void {
+  // TODO: NEXT :) (copy code from english increase bid size)
 }

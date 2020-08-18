@@ -243,3 +243,41 @@ templates:
         #   handler: StartAuction
         # - event: TerminateAuctionPrematurely(uint256,address,uint256,uint256)
         #   handler: handleTerminateAuctionPrematurely
+  
+  - name: FixDiscountCollateralAuction
+    kind: ethereum/contract
+    network: {{NETWORK}}
+    source:
+      abi: FixedDiscountCollateralAuctionHouse
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/modules/auctions/english-collateral-auction-house.ts
+      entities:
+        - CollateralType
+        - FixDiscountCollateralAuction
+        - FixDiscountAuctionConfiguration
+        - FixDiscountAuctionBatch
+      abis:
+        - name: FixedDiscountCollateralAuctionHouse
+          file: ./abis/FixedDiscountCollateralAuctionHouse.json
+      eventHandlers:
+        - event: ModifyParameters(bytes32,address)
+          handler: handleModifyParameters
+        - event: ModifyParameters(bytes32,uint256)
+          handler: handleModifyParameters
+        
+        # Remaining events:
+        # - event: AddAuthorization(address)
+        #   handler: handleAddAuthorization
+        # - event: BuyCollateral(uint256,uint256,uint256)
+        #   handler: handleBuyCollateral
+        # - event: RemoveAuthorization(address)
+        #   handler: handleRemoveAuthorization
+        # - event: SettleAuction(uint256,uint256)
+        #   handler: handleSettleAuction
+        # - event: StartAuction(uint256,uint256,uint256,uint256,uint256,indexed address,indexed address,uint256)
+        #   handler: handleStartAuction
+        # - event: TerminateAuctionPrematurely(uint256,address,uint256)
+        #   handler: handleTerminateAuctionPrematurely

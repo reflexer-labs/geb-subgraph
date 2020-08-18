@@ -81,6 +81,8 @@ export function handleLiquidate(event: Liquidate): void {
 
   if (collateral.auctionType == 'ENGLISH') {
     let liquidation = new EnglishCollateralAuction(collateral.id.toString() + '-' + id.toString())
+    
+    // TODO: I CHANGED THE ID, THIS IS WRONG! + ADDED BID COUNTER!!
     liquidation.auctionId = id
     liquidation.auctionType = collateral.auctionType
     liquidation.collateralType = collateral.id

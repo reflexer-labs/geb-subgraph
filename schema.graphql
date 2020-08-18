@@ -1,5 +1,3 @@
-
-" GEB CDP "
 type Cdp @entity {
   " Equals to: <cdpHandler>-<CollateralType> "
   id: ID!
@@ -44,9 +42,6 @@ type Cdp @entity {
   modifiedAtTransaction: Bytes
 }
 
-"""
-CDP owner
-"""
 type User @entity {
   " Account address "
   id: ID!
@@ -58,7 +53,6 @@ type User @entity {
   proxies: [UserProxy!] @derivedFrom(field: "owner")
 }
 
-" Contract used to execute transactions and sequences of transactions on behalf of a user "
 type UserProxy @entity {
   " Proxy address "
   id: ID!
@@ -73,73 +67,70 @@ type UserProxy @entity {
   owner: User!
 }
 
-  " Provide information about the current system state and parameters "
-  type SystemState @entity {
-    " Singleton entity. Equals to 'current' "
-    id: ID!
+type SystemState @entity {
+  " Singleton entity. Equals to 'current' "
+  id: ID!
 
-    " Number of CDPs opened through the manager (CdpManager) "
-    cdpCount: BigInt!
+  " Number of CDPs opened through the manager (CdpManager) "
+  cdpCount: BigInt!
 
-    " Number of CDPs NOT opened through the manager (CdpManager) "
-    unmanagedCdpCount: BigInt!
+  " Number of CDPs NOT opened through the manager (CdpManager) "
+  unmanagedCdpCount: BigInt!
 
-    " Total number of CDPs with collateral > 0 or debt > 0" 
-    totalActiveCdpCount: BigInt!
+  " Total number of CDPs with collateral > 0 or debt > 0"
+  totalActiveCdpCount: BigInt!
 
-    " Number of user proxies created "
-    proxyCount: BigInt!
+  " Number of user proxies created "
+  proxyCount: BigInt!
 
-    " Total debt issued in bonds across all collaterals "
-    globalDebt: BigDecimal!
+  " Total debt issued in bonds across all collaterals "
+  globalDebt: BigDecimal!
 
-    " Total unbacked debt issued in bonds across all collaterals "
-    globalUnbackedDebt: BigDecimal!
+  " Total unbacked debt issued in bonds across all collaterals "
+  globalUnbackedDebt: BigDecimal!
 
-    " Total global Debt Ceiling "
-    globalDebtCeiling: BigDecimal!
+  " Total global Debt Ceiling "
+  globalDebtCeiling: BigDecimal!
 
-    " Number of collateral types registered "
-    collateralCount: BigInt!
+  " Number of collateral types registered "
+  collateralCount: BigInt!
 
-    " Base rate for stability fee per second add for all collaterals "
-    globalStabilityFee: BigDecimal!
+  " Base rate for stability fee per second add for all collaterals "
+  globalStabilityFee: BigDecimal!
 
-    " Savings Rate "
-    savingsRate: BigDecimal!
+  " Savings Rate "
+  savingsRate: BigDecimal!
 
-    " Number of collateral auctions started "
-    collateralAuctionCount: BigInt!
+  " Number of collateral auctions started "
+  collateralAuctionCount: BigInt!
 
-    " Latest redemption rate"
-    currentRedemptionRate: RedemptionRate
+  " Latest redemption rate"
+  currentRedemptionRate: RedemptionRate
 
-    " Latest redemption price "
-    currentRedemptionPrice: RedemptionPrice
+  " Latest redemption price "
+  currentRedemptionPrice: RedemptionPrice
 
-    " Timestamp of the block in which the system was created [seconds] "
-    createdAt: BigInt!
+  " Timestamp of the block in which the system was created [seconds] "
+  createdAt: BigInt!
 
-    " Block number in which the system was created "
-    createdAtBlock: BigInt!
+  " Block number in which the system was created "
+  createdAtBlock: BigInt!
 
-    " Transaction hash in which the system was created "
-    createdAtTransaction: Bytes!
+  " Transaction hash in which the system was created "
+  createdAtTransaction: Bytes!
 
-    " Timestamp of the block in which the system was last modified [seconds] "
-    modifiedAt: BigInt
+  " Timestamp of the block in which the system was last modified [seconds] "
+  modifiedAt: BigInt
 
-    " Block number in which the system was last modified "
-    modifiedAtBlock: BigInt
+  " Block number in which the system was last modified "
+  modifiedAtBlock: BigInt
 
-    " Transaction hash in which the system was last modified "
-    modifiedAtTransaction: Bytes
+  " Transaction hash in which the system was last modified "
+  modifiedAtTransaction: Bytes
 
-    # TODO: Flap and flop auctions parameters used to be here. Add the auction abstraction class.
-  }
-"""
-Collateral specific information
-"""
+  # TODO: Flap and flop auctions parameters used to be here. Add the auction abstraction class.
+}
+
 type CollateralType @entity {
   " Collateral type name "
   id: ID!
@@ -191,7 +182,6 @@ type CollateralType @entity {
 
   " Max amount of collateral to sell in one liquidation auction [collateralToSell in LiquidationEngine] "
   maxCollateralToSellInLiquidations: BigDecimal
-
 
   " Auction configuration (Fix discount auction only) "
   englishAuctionConfiguration: EnglishAuctionConfiguration
@@ -411,12 +401,8 @@ type BondExit @entity {
   createdAtTransaction: Bytes!
 }
 
-
 # --- Prices ---
 
-"""
-Collateral market price at a given block
-"""
 type CollateralPrice @entity {
   " Equals to: <block_number>-<collateral_type>"
   id: ID!
@@ -440,9 +426,6 @@ type CollateralPrice @entity {
   value: BigDecimal!
 }
 
-"""
-Reflex bond price for redemption
-"""
 type RedemptionPrice @entity {
   " Equals to: <block_number>"
   id: ID!
@@ -460,9 +443,6 @@ type RedemptionPrice @entity {
   value: BigDecimal!
 }
 
-"""
-Rate of change of the redemption price, output from the feedback mechanism.
-"""
 type RedemptionRate @entity {
   " Equals to: <block_number>"
   id: ID!
@@ -487,9 +467,8 @@ enum AuctionType {
   FIXED_DISCOUNT
 }
 
-"""
-Static enlgish auction configuration
-"""
+# --- English Auction ---
+
 type EnglishAuctionConfiguration @entity {
   " Collateral type name "
   id: ID!
@@ -503,7 +482,7 @@ type EnglishAuctionConfiguration @entity {
   " How long the auction lasts after a new bid is submitted "
   bidDuration: BigInt!
 
-    " Maximum auction length "
+  " Maximum auction length "
   totalAuctionLength: BigInt!
 
   " Minimum mandatory size of the first bid compared to collateral price coming from the oracle "
@@ -512,14 +491,8 @@ type EnglishAuctionConfiguration @entity {
   " OSM contract"
   osm: Bytes
 
-  " Oracle relay contract"
+  " Oracle relayer contract "
   oracleRelayer: Bytes
-}
-
-type FixDiscountAuctionConfiguration @entity {
-  " Collateral type name "
-  id: ID!
-  # TODO:
 }
 
 type EnglishCollateralAuction @entity {
@@ -571,10 +544,13 @@ type EnglishCollateralAuction @entity {
   " If the bough collateral was claimed by the auction winner "
   isClaimed: Boolean!
 
-  " List of individual bid (English auction only) "
+  " Total number of bids "
+  numberOfBids: BigInt!
+
+  " List of individual bid "
   englishAuctionBids: [EnglishAuctionBid!] @derivedFrom(field: "auction")
 
-  " Auction configuration (Fix discount auction only) "
+  " Auction configuration "
   englishAuctionConfiguration: EnglishAuctionConfiguration!
 
   " Timestamp of the block in which the liquidation was started "
@@ -585,8 +561,6 @@ type EnglishCollateralAuction @entity {
 
   " Transaction hash in which tthe liquidation was started "
   createdAtTransaction: Bytes!
-
-  # TODO: add currentwinner, add current current size and rename the existing InitialdebtAmount and initial collateralAmount,
 }
 
 enum EnglishBidType {
@@ -615,6 +589,140 @@ type EnglishAuctionBid @entity {
 
   " When the latest bid expires and the auction can be settled "
   bidExpiry: BigInt!
+
+  " Bidder address"
+  bidder: Bytes
+
+  " Timestamp of the block in which the liquidation was started "
+  createdAt: BigInt!
+
+  " Block number in which the liquidation was started "
+  createdAtBlock: BigInt!
+
+  " Transaction hash in which tthe liquidation was started "
+  createdAtTransaction: Bytes!
+}
+
+# --- Fix Discount Auction ---
+
+type FixDiscountAuctionConfiguration @entity {
+  " Collateral type name "
+  id: ID!
+
+  " Collateral type"
+  collateralType: CollateralType!
+
+  " Minimum acceptable bid "
+  minimumBid: BigDecimal!
+
+  " Total length of the auction "
+  totalAuctionLength: BigInt!
+
+  " Discount (compared to the system coin's current redemption price) at which collateral is being sold "
+  discount: BigDecimal!
+
+  " Max lower bound deviation that the collateral median can have compared to the OSM price "
+  lowerCollateralMedianDeviation: BigDecimal!
+
+  " Max upper bound deviation that the collateral median can have compared to the OSM price "
+  upperCollateralMedianDeviation: BigDecimal!
+
+  " Max lower bound deviation that the system coin oracle price feed can have compared to the OSM price "
+  lowerSystemCoinMedianDeviation: BigDecimal!
+
+  " Max upper bound deviation that the collateral median can have compared to the OSM price "
+  upperSystemCoinMedianDeviation: BigDecimal!
+
+  " Min deviation for the system coin median result compared to the redemption price in order to take the median into account "
+  minSystemCoinMedianDeviation: BigDecimal!
+
+  " Oracle relayer contract "
+  oracleRelayer: Bytes
+
+  " Collateral OSM contract address "
+  collateralOSM: Bytes
+
+  " Collateral Medianizer contract "
+  collateralMedian: Bytes
+
+  " Bond price Medianizer contract "
+  systemCoinOracle: Bytes
+}
+
+type FixDiscountCollateralAuction @entity {
+  "<Collateral type>-<auction ID>- "
+  id: ID!
+
+  " Auction incrmental id per collateral "
+  auctionId: BigInt!
+
+  " Type of auction contract, currently english or fix discount "
+  auctionType: AuctionType!
+
+  " Collateral type of the auction "
+  collateralType: CollateralType!
+
+  " CDP handler address in the CDP engine "
+  cdpHandler: Bytes!
+
+  " Total collateral for sale "
+  initialCollateralAmount: BigDecimal!
+
+  " Total debt of the CDP to be repaid "
+  initialDebtAmount: BigDecimal!
+
+  " Minimum amount to raise in bonds (If less is raised, unbacked debt is created) "
+  bondAmountToRaise: BigDecimal!
+
+  " Amount raised so far to repay the debt.  amountRaised <= amountToRaise < initialDebtAmount"
+  bondAmountRaised: BigDecimal!
+
+  " Collateral being sold, the remaining is returned to the owner.  collateralAmountSold <= initialCollateralAmount"
+  collateralAmountSold: BigDecimal
+
+  " Liquidated CDP "
+  cdp: Cdp!
+
+  " Hard deadline for the auction after which no more bids can be placed  "
+  auctionDeadline: BigInt!
+
+  " Address that started the auction "
+  startedBy: Bytes!
+
+  " Number of individual batch sold "
+  numberOfBids: BigInt!
+
+  # " List of individual batches sold "
+  batchSold: [FixDiscountAuctionBatch!] @derivedFrom(field: "auction")
+
+  " Auction configuration "
+  englishAuctionConfiguration: FixDiscountAuctionConfiguration!
+
+  " Timestamp of the block in which the liquidation was started "
+  createdAt: BigInt!
+
+  " Block number in which the liquidation was started "
+  createdAtBlock: BigInt!
+
+  " Transaction hash in which tthe liquidation was started "
+  createdAtTransaction: Bytes!
+}
+
+type FixDiscountAuctionBatch @entity {
+  " <auction id>-<batch id> "
+  id: ID!
+
+  " Auction in which the batch was sold "
+  auction: FixDiscountCollateralAuction!
+
+  " Collateral bought in the batch "
+  collateral: BigDecimal!
+
+  " Bond paid for the batch "
+  debtAmount: BigDecimal
+
+  " Collateral price "
+  price: BigDecimal!
 
   " Bidder address"
   bidder: Bytes

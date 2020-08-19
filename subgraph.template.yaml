@@ -98,7 +98,7 @@ dataSources:
         - name: OracleRelayer
           file: ./abis/OracleRelayer.json
       eventHandlers:
-        - event: UpdateCollateralPrice(bytes32,bytes32,uint256,uint256)
+        - event: UpdateCollateralPrice(bytes32,uint256,uint256,uint256)
           handler: handleUpdateCollateralPrice
         - event: UpdateRedemptionPrice(uint256)
           handler: handleUpdateRedemptionPrice

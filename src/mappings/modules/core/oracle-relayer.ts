@@ -17,7 +17,7 @@ import { getOrCreateCollateral } from '../../../entities/collateral'
 
 export function handleUpdateCollateralPrice(event: UpdateCollateralPrice): void {
   let collateralType = event.params.collateralType.toString()
-  let collateralPrice = bytes.toUnsignedInt(event.params.priceFeedValue)
+  let collateralPrice = decimal.fromWad(event.params.priceFeedValue)
 
   let collateral = CollateralType.load(collateralType)
 
@@ -28,7 +28,7 @@ export function handleUpdateCollateralPrice(event: UpdateCollateralPrice): void 
     price.safetyPrice = decimal.fromRay(event.params.safetyPrice)
     price.liquidationPrice = decimal.fromRay(event.params.liquidationPrice)
     price.timestamp = event.block.timestamp
-    price.value = decimal.fromWad(collateralPrice)
+    price.value = collateralPrice
     price.save()
 
     collateral.currentPrice = price.id

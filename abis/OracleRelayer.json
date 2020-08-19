@@ -118,9 +118,9 @@
       },
       {
         "indexed": false,
-        "internalType": "bytes32",
+        "internalType": "uint256",
         "name": "priceFeedValue",
-        "type": "bytes32"
+        "type": "uint256"
       },
       {
         "indexed": false,

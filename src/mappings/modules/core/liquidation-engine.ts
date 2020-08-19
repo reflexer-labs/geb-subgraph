@@ -4,13 +4,14 @@ import {
   Liquidate,
 } from '../../../../generated/LiquidationEngine/LiquidationEngine'
 
-import { EnglishCollateralAuctionHouse, FixDiscountCollateralAuction } from '../../../../generated/templates'
+import { EnglishCollateralAuctionHouse, FixDiscountCollateralAuctionHouse } from '../../../../generated/templates'
 import { EnglishCollateralAuctionHouse as EnglishCollateralAuctionHouseBind } from '../../../../generated/templates/EnglishCollateralAuctionHouse/EnglishCollateralAuctionHouse'
 import {
   getOrCreateCollateral,
   Cdp,
   EnglishAuctionConfiguration,
   EnglishCollateralAuction,
+  FixDiscountCollateralAuction,
   FixDiscountAuctionConfiguration,
 } from '../../../entities'
 
@@ -84,7 +85,7 @@ export function handleModifyParametersCollateralTypeAddress(event: ModifyParamet
       collateral.fixDiscountAuctionConfiguration = auctionConfiguration.id
 
       // Start indexing an instance of fix discount auction contract
-      FixDiscountCollateralAuction.create(address)
+      FixDiscountCollateralAuctionHouse.create(address)
       log.info('Start indexing fix discount auction house: {}', [address.toHexString()])
     } else {
       log.error('Unknown auction type: {} ', [auctionType as string])
@@ -115,7 +116,7 @@ export function handleLiquidate(event: Liquidate): void {
     liquidation.collateralAmountSold = liquidation.initialCollateralAmount
     liquidation.highestBidPrice = decimal.ZERO
     liquidation.bondAmountToRaise = decimal.fromRad(event.params.amountToRaise)
-    liquidation.startedBy = event.transaction.from
+    liquidation.startedBy = event.address
     liquidation.isClaimed = false
     liquidation.createdAt = event.block.timestamp
     liquidation.createdAtBlock = event.block.number
@@ -128,6 +129,27 @@ export function handleLiquidate(event: Liquidate): void {
 
     liquidation.save()
   } else if (collateral.auctionType == 'FIX_DISCOUNT') {
-    // TODO:
+    let liquidation = new FixDiscountCollateralAuction(collateral.id.toString() + '-' + id.toString())
+
+    liquidation.auctionId = id
+    liquidation.auctionType = collateral.auctionType
+    liquidation.collateralType = collateral.id
+    liquidation.cdpHandler = event.params.cdp
+    liquidation.initialCollateralAmount = decimal.fromWad(event.params.collateralAmount)
+    liquidation.initialDebtAmount = decimal.fromWad(event.params.debtAmount)
+    liquidation.bondAmountToRaise = decimal.fromRad(event.params.amountToRaise)
+    liquidation.bondAmountRaised = decimal.ZERO
+    liquidation.collateralAmountSold = decimal.ZERO
+    let cdp = Cdp.load(event.params.cdp.toHexString() + '-' + collateral.id)
+    liquidation.cdp = cdp.id
+    liquidation.auctionDeadline = config.totalAuctionLength.plus(event.block.timestamp)
+    liquidation.startedBy = event.address
+    liquidation.numberOfBatches = integer.ZERO
+    liquidation.fixDiscountAuctionConfiguration = collateral.id
+    liquidation.isTerminated = false
+    liquidation.createdAt = event.block.timestamp
+    liquidation.createdAtBlock = event.block.number
+    liquidation.createdAtTransaction = event.transaction.hash
+    liquidation.save()
   }
 }

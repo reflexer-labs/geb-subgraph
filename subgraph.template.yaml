@@ -244,7 +244,7 @@ templates:
         # - event: TerminateAuctionPrematurely(uint256,address,uint256,uint256)
         #   handler: handleTerminateAuctionPrematurely
   
-  - name: FixDiscountCollateralAuction
+  - name: FixDiscountCollateralAuctionHouse
     kind: ethereum/contract
     network: {{NETWORK}}
     source:

@@ -677,10 +677,10 @@ type FixDiscountCollateralAuction @entity {
   " Minimum amount to raise in bonds (If less is raised, unbacked debt is created) "
   bondAmountToRaise: BigDecimal!
 
-  " Amount raised so far to repay the debt.  amountRaised <= amountToRaise < initialDebtAmount"
+  " Amount raised so far to repay the debt. "
   bondAmountRaised: BigDecimal!
 
-  " Collateral being sold, the remaining is returned to the owner.  collateralAmountSold <= initialCollateralAmount"
+  " Cumulative collateral amount sold so far.  collateralAmountSold <= initialCollateralAmount"
   collateralAmountSold: BigDecimal
 
   " Liquidated CDP "
@@ -699,7 +699,7 @@ type FixDiscountCollateralAuction @entity {
   batchSold: [FixDiscountAuctionBatch!] @derivedFrom(field: "auction")
 
   " Auction configuration "
-  englishAuctionConfiguration: FixDiscountAuctionConfiguration!
+  fixDiscountAuctionConfiguration: FixDiscountAuctionConfiguration!
 
   " If there is still collateral to be bought in the auction "
   isTerminated: Boolean!

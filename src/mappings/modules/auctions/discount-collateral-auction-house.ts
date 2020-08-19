@@ -7,7 +7,12 @@ import {
   BuyCollateral,
 } from '../../../../generated/templates/FixDiscountCollateralAuction/FixedDiscountCollateralAuctionHouse'
 import { dataSource } from '@graphprotocol/graph-ts'
-import { getOrCreateCollateral, FixDiscountAuctionConfiguration } from '../../../entities'
+import {
+  getOrCreateCollateral,
+  FixDiscountAuctionConfiguration,
+  FixDiscountCollateralAuction,
+  FixDiscountAuctionBatch,
+} from '../../../entities'
 
 export function handleModifyParametersUint(event: ModifyParametersUint): void {
   let what = event.params.parameter.toString()
@@ -62,5 +67,31 @@ export function handleModifyParametersAddress(event: ModifyParametersAddress): v
 }
 
 export function handleBuyCollateral(event: BuyCollateral): void {
-  // TODO: NEXT :) (copy code from english increase bid size)
+  let id = event.params.id
+  let collateral = FixedDiscountCollateralAuctionHouse.bind(dataSource.address()).collateralType()
+
+  let auctionId = collateral.toString() + '-' + id.toString()
+  let auction = FixDiscountCollateralAuction.load(auctionId)
+  let batch = new FixDiscountAuctionBatch(
+    collateral.toString() + '-' + id.toString() + '-' + auction.numberOfBatches.toString(),
+  )
+
+  batch.batchNumber = auction.numberOfBatches
+  batch.auction = auctionId
+  batch.collateral = decimal.fromRad(event.params.boughtCollateral)
+  let wad = decimal.fromWad(event.params.wad)
+  let remainingToRaise = auction.bondAmountToRaise.minus(auction.bondAmountRaised)
+  batch.debtAmount = wad.gt(remainingToRaise) ? remainingToRaise : wad
+  batch.price = batch.collateral.div(batch.debtAmount)
+  batch.buyer = event.address
+  batch.createdAt = event.block.timestamp
+  batch.createdAtBlock = event.block.number
+  batch.createdAtTransaction = event.transaction.hash
+  batch.save()
+
+  auction.numberOfBatches = auction.numberOfBatches.plus(integer.ONE)
+  auction.bondAmountRaised = auction.bondAmountRaised.plus(batch.debtAmount)
+  auction.collateralAmountSold = auction.collateralAmountSold.plus(batch.collateral)
+  auction.isTerminated = auction.bondAmountRaised.equals(auction.bondAmountToRaise) ? true : false
+  auction.save()
 }

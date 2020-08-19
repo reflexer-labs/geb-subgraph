@@ -693,13 +693,16 @@ type FixDiscountCollateralAuction @entity {
   startedBy: Bytes!
 
   " Number of individual batch sold "
-  numberOfBids: BigInt!
+  numberOfBatches: BigInt!
 
   # " List of individual batches sold "
   batchSold: [FixDiscountAuctionBatch!] @derivedFrom(field: "auction")
 
   " Auction configuration "
   englishAuctionConfiguration: FixDiscountAuctionConfiguration!
+
+  " If there is still collateral to be bought in the auction "
+  isTerminated: Boolean!
 
   " Timestamp of the block in which the liquidation was started "
   createdAt: BigInt!
@@ -716,7 +719,7 @@ type FixDiscountAuctionBatch @entity {
   id: ID!
 
   " Incremental id of the batch "
-  bidNumber: BigInt!
+  batchNumber: BigInt!
 
   " Auction in which the batch was sold "
   auction: FixDiscountCollateralAuction!
@@ -725,13 +728,13 @@ type FixDiscountAuctionBatch @entity {
   collateral: BigDecimal!
 
   " Bond paid for the batch "
-  debtAmount: BigDecimal
+  debtAmount: BigDecimal!
 
   " Collateral price "
   price: BigDecimal!
 
   " Bidder address"
-  bidder: Bytes
+  buyer: Bytes!
 
   " Timestamp of the block in which the liquidation was started "
   createdAt: BigInt!

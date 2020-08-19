@@ -1,6 +1,6 @@
-import { ethereum } from '@graphprotocol/graph-ts'
+import { ethereum, dataSource } from '@graphprotocol/graph-ts'
 
-import { SystemState } from '../../generated/schema'
+import { SystemState, AccountingEngine } from '../../generated/schema'
 
 import * as decimal from '../utils/decimal'
 import * as integer from '../utils/integer'
@@ -42,4 +42,30 @@ export function updateLastModifySystemState(system: SystemState, event: ethereum
   system.modifiedAt = event.block.timestamp
   system.modifiedAtBlock = event.block.number
   system.modifiedAtTransaction = event.transaction.hash
+}
+
+export function getAccountingEngine(event: ethereum.Event): AccountingEngine {
+  let engine = AccountingEngine.load('current')
+
+  if (engine == null) {
+    let engineContract = AccountingEngine.bind(dataSource.address)
+    engine.totalQueuedDebt = decimal.ZERO
+    engine.totalOnAuctionDebt = decimal.ZERO
+    engine.surplusAuctionDelay = integer.ZERO
+    engine.popDebtDelay = integer.ZERO
+    engine.initialDebtAuctionMintedTokens = decimal.ZERO
+    engine.debtAuctionBidSize = decimal.ZERO
+    engine.surplusAuctionAmountToSell = decimal.ZERO
+    engine.surplusBuffer = decimal.ZERO
+    engine.disableCooldown = integer.ZERO
+    engine.contractEnabled = true
+    engine.cdpEngine = engineContract.cdpEngine()
+    engine.surplusAuctionHouse = engineContract.surplusAuctionHouse()
+    engine.debtAuctionHouse = engineContract.debtAuctionHouse()
+    engine.protocolTokenAuthority = engineContract.protocolTokenAuthority()
+    engine.postSettlementSurplusDrain = engineContract.postSettlementSurplusDrain()
+
+  }
+
+  return engine as AccountingEngine
 }

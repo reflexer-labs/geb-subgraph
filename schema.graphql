@@ -208,6 +208,71 @@ type CollateralType @entity {
   modifiedAtTransaction: Bytes
 }
 
+type AccountingEngine @entity {
+  " current "
+  id: ID!
+
+  " Total debt in the queue (that the system tries to cover with collateral auctions) "
+  totalQueuedDebt: BigDecimal!
+
+  " Total debt being auctioned in DebtAuctionHouse (printing protocol tokens for coins that will settle the debt) "
+  totalOnAuctionDebt: BigDecimal!
+
+  " When the last surplus auction was triggered; enforces a delay in case we use DEX surplus auctions "
+  lastSurplusAuctionTime: BigInt
+
+  " Delay between surplus auctions "
+  surplusAuctionDelay: BigInt!
+
+  " Delay after which debt can be popped from debtQueue "
+  popDebtDelay: BigInt!
+
+  " Amount of protocol tokens to be minted post-auction "
+  initialDebtAuctionMintedTokens: BigDecimal!
+
+  " Amount of debt sold in one debt auction (initial coin bid for initialDebtAuctionMintedTokens protocol tokens) "
+  debtAuctionBidSize: BigDecimal!
+
+  " Amount of surplus stability fees sold in one surplus auction "
+  surplusAuctionAmountToSell: BigDecimal!
+
+  " Amount of stability fees that need to accrue in this contract before any surplus auction can start "
+  surplusBuffer: BigDecimal!
+
+  " Time to wait (post settlement) until any remaining surpluscan be transferred to the settlement auctioneer "
+  disableCooldown: BigInt!
+
+  " When the contract was disabled "
+  disableTimestamp: BigInt
+
+  " Whether this contract is enabled or not "
+  contractEnabled: Boolean!
+
+  " CDP database "
+  cdpEngine: Bytes!
+
+  " Contract that handles auctions for surplus stability fees (sell coins for protocol tokens that are then burned) "
+  surplusAuctionHouse: Bytes!
+
+  " Contract that handles auctions for debt that couldn't be covered by collateral auctions (it prints protocol tokens in exchange for coins that will settle the debt) "
+  debtAuctionHouse: Bytes!
+
+  " Permissions registry for who can burn and mint protocol tokens "
+  protocolTokenAuthority: Bytes!
+
+  " Contract that auctions extra surplus after settlement is triggered "
+  postSettlementSurplusDrain: Bytes!
+
+  " Timestamp of the block in which the Accounting engine was last modified [seconds] "
+  modifiedAt: BigInt
+
+  " Block number in which the Accounting engine was last modified "
+  modifiedAtBlock: BigInt
+
+  " Transaction hash in which the Accounting engine was last modified "
+  modifiedAtTransaction: Bytes
+}
+
 # --- Balances & Deposits/Withdrawals ---
 
 type InternalCollateralBalance @entity {

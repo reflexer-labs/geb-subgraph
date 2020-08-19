@@ -223,7 +223,10 @@ dataSources:
         - name: AccountingEngine
           file: ./abis/AccountingEngine.json
       eventHandlers:
-        
+        - event: ModifyParameters(bytes32,address)
+          handler: handleModifyParametersAddress
+        - event: ModifyParameters(bytes32,uint256)
+          handler: handleModifyParametersUint
         # Remaining events:
         # - event: AddAuthorization(address)
         #   handler: handleAddAuthorization
@@ -235,10 +238,6 @@ dataSources:
         #   handler: handleCancelAuctionedDebtWithSurplus
         # - event: DisableContract(uint256,uint256,uint256,uint256)
         #   handler: handleDisableContract
-        # - event: ModifyParameters(bytes32,address)
-        #   handler: handleModifyParameters
-        # - event: ModifyParameters(bytes32,uint256)
-        #   handler: handleModifyParameters
         # - event: PopDebtFromQueue(uint256,uint256,uint256)
         #   handler: handlePopDebtFromQueue
         # - event: PushDebtToQueue(uint256,uint256,uint256)

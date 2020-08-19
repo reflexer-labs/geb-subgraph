@@ -5,7 +5,7 @@ import {
   ModifyParameters1 as ModifyParametersAddress,
   FixedDiscountCollateralAuctionHouse,
   BuyCollateral,
-} from '../../../../generated/templates/FixDiscountCollateralAuction/FixedDiscountCollateralAuctionHouse'
+} from '../../../../generated/templates/FixDiscountCollateralAuctionHouse/FixedDiscountCollateralAuctionHouse'
 import { dataSource } from '@graphprotocol/graph-ts'
 import {
   getOrCreateCollateral,

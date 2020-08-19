@@ -93,7 +93,7 @@ export function handleIncreaseBidSize(event: IncreaseBidSize): void {
   let id = event.params.id
   let collateral = EnglishCollateralAuctionHouse.bind(dataSource.address()).collateralType()
 
-  let auctionId = id.toString() + '-' + collateral.toString()
+  let auctionId = collateral.toString() + '-' + id.toString()
   let auction = EnglishCollateralAuction.load(auctionId)
   let bid = new EnglishAuctionBid(collateral.toString() + '-' + id.toString() + '-' + auction.numberOfBids.toString())
 

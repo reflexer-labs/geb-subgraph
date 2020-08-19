@@ -222,9 +222,9 @@ templates:
           file: ./abis/EnglishCollateralAuctionHouse.json
       eventHandlers:
         - event: DecreaseSoldAmount(uint256,address,uint256,uint256,uint256)
-          handler: DecreaseSoldAmount
+          handler: handleDecreaseSoldAmount
         - event: IncreaseBidSize(uint256,address,uint256,uint256,uint256)
-          handler: IncreaseBidSize
+          handler: handleIncreaseBidSize
         - event: ModifyParameters(bytes32,address)
           handler: handleModifyParametersAddress
         - event: ModifyParameters(bytes32,uint256)
@@ -234,13 +234,13 @@ templates:
         
         # Remaining events:
         # - event: AddAuthorization(address)
-        #   handler: AddAuthorization
+        #   handler: handleAddAuthorization
         # - event: RemoveAuthorization(address)
-        #   handler: RemoveAuthorization
+        #   handler: handleRemoveAuthorization
         # - event: RestartAuction(uint256,uint256)
-        #   handler: RestartAuction
+        #   handler: handleRestartAuction
         # - event: StartAuction(uint256,uint256,uint256,uint256,uint256,indexed address,indexed address,uint256)
-        #   handler: StartAuction
+        #   handler: handleStartAuction
         # - event: TerminateAuctionPrematurely(uint256,address,uint256,uint256)
         #   handler: handleTerminateAuctionPrematurely
   

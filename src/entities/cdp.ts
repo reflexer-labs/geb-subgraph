@@ -10,6 +10,7 @@ export function createManagedCdp(address: Bytes, collateral: Bytes, cdpId: BigIn
   let collateralObj = getOrCreateCollateral(collateral, event)
   let system = getSystemState(event)
   let cdp = createCdp(address, collateral, event)
+  cdp.cdpId = cdpId
   collateralObj.cdpCount = collateralObj.unmanagedCdpCount.plus(integer.ONE)
   system.cdpCount = system.unmanagedCdpCount.plus(integer.ONE)
 

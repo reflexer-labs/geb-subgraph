@@ -48,6 +48,7 @@ dataSources:
           handler: handleCreateUnbackedDebt
         - event: UpdateAccumulatedRate(bytes32,address,int256,uint256,uint256)
           handler: handleUpdateAccumulatedRate
+  
   - name: GebCDPManager
     kind: ethereum/contract
     network: {{NETWORK}}
@@ -132,6 +133,28 @@ dataSources:
           handler: handleModifyParametersCollateralTypeUint
         - event: ModifyParameters(bytes32,uint256) # Type 1
           handler: handleModifyParametersUint
+        
+        # Remaining events
+        # - event: AddAuthorization(address)
+        #   handle: handleAddAuthorization
+        # - event: AddSecondaryReceiver(bytes32,uint256,uint256,uint256,uint256)
+        #   handle: handleAddSecondaryReceiver
+        # - event: CollectTax(bytes32,uint256,int256)
+        #   handle: handleCollectTax
+        # - event: DistributeTax(bytes32,address,int256)
+        #   handle: handleDistributeTax
+        # - event: InitializeCollateralType(bytes32)
+        #   handle: handleInitializeCollateralType
+        # - event: ModifyParameters(bytes32,address)
+        #   handle: handleModifyParameters
+        # - event: ModifyParameters(bytes32,uint256,uint256)
+        #   handle: handleModifyParameters
+        # - event: ModifyParameters(bytes32,uint256,uint256,address)
+        #   handle: handleModifyParameters
+        # - event: ModifySecondaryReceiver(bytes32,uint256,uint256,uint256,uint256)
+        #   handle: handleModifySecondaryReceiver
+        # - event: RemoveAuthorization(address)
+        #   handle: handleRemoveAuthorization
   
   - name: LiquidationEngine
     kind: ethereum/contract
@@ -180,6 +203,52 @@ dataSources:
         #   handler: handleRemoveAuthorization
         # - event: SaveCDP(indexed bytes32,indexed address,uint256)
         #   handler: handleSaveCDP
+  
+  - name: AccountingEngine
+    kind: ethereum/contract
+    network: {{NETWORK}}
+    source:
+      address: '{{GEB_ACCOUNTING_ENGINE}}'
+      abi: AccountingEngine
+      startBlock: {{STARTING_BLOCK_NUMBER}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/modules/core/accounting-engine.ts
+      entities:
+        - CollateralType
+        - SystemState
+      abis:
+        - name: AccountingEngine
+          file: ./abis/AccountingEngine.json
+      eventHandlers:
+        
+        # Remaining events:
+        # - event: AddAuthorization(address)
+        #   handler: handleAddAuthorization
+        # - event: AuctionDebt(uint256,uint256,uint256)
+        #   handler: handleAuctionDebt
+        # - event: AuctionSurplus(uint256,uint256,uint256)
+        #   handler: handleAuctionSurplus
+        # - event: CancelAuctionedDebtWithSurplus(uint256,uint256,uint256,uint256)
+        #   handler: handleCancelAuctionedDebtWithSurplus
+        # - event: DisableContract(uint256,uint256,uint256,uint256)
+        #   handler: handleDisableContract
+        # - event: ModifyParameters(bytes32,address)
+        #   handler: handleModifyParameters
+        # - event: ModifyParameters(bytes32,uint256)
+        #   handler: handleModifyParameters
+        # - event: PopDebtFromQueue(uint256,uint256,uint256)
+        #   handler: handlePopDebtFromQueue
+        # - event: PushDebtToQueue(uint256,uint256,uint256)
+        #   handler: handlePushDebtToQueue
+        # - event: RemoveAuthorization(address)
+        #   handler: handleRemoveAuthorization
+        # - event: SettleDebt(uint256,uint256,uint256)
+        #   handler: handleSettleDebt
+        # - event: TransferPostSettlementSurplus(address,uint256,uint256)
+        #   handler: handleTransferPostSettlementSurplus
 
   - name: ProxyFactory
     kind: ethereum/contract
@@ -264,9 +333,9 @@ templates:
           file: ./abis/FixedDiscountCollateralAuctionHouse.json
       eventHandlers:
         - event: ModifyParameters(bytes32,address)
-          handler: handleModifyParameters
+          handler: handleModifyParametersAddress
         - event: ModifyParameters(bytes32,uint256)
-          handler: handleModifyParameters
+          handler: handleModifyParametersUint
         - event: BuyCollateral(uint256,uint256,uint256)
           handler: handleBuyCollateral
         

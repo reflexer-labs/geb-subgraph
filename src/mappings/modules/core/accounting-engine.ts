@@ -3,6 +3,8 @@ import * as integer from '../../../utils/integer'
 import {
   ModifyParameters as ModifyParametersUint,
   ModifyParameters1 as ModifyParametersAddress,
+  AuctionDebt,
+  AuctionSurplus,
 } from '../../../../generated/AccountingEngine/AccountingEngine'
 import { getAccountingEngine } from '../../../entities/system'
 
@@ -42,4 +44,11 @@ export function handleModifyParametersUint(event: ModifyParametersUint): void {
   } else if (what == 'disableCooldown') {
     accounting.disableCooldown = data
   }
+}
+
+export function handleAuctionDebt(event: AuctionDebt): void {
+  // TODO:
+}
+export function handleAuctionSurplus(event: AuctionSurplus): void {
+  // TODO:
 }

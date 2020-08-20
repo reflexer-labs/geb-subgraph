@@ -533,7 +533,7 @@ enum AuctionType {
 }
 
 type EnglishAuctionConfiguration @entity {
-  " Collateral type name OR 'debt' OR 'surplus-pre' OR 'surplus-post' "
+  " Collateral type name OR 'DEBT' OR 'SURPLUS_PRE' OR 'SURPLUS_POST' "
   id: ID!
 
   " Collateral type"
@@ -617,7 +617,7 @@ enum EnglishBidType {
 }
 
 type EnglishAuction @entity {
-  " <collateral type OR 'debt' OR 'surplus-pre' OR 'surplus-post'>-<auction id> "
+  " <collateral type OR 'DEBBT' OR 'SURPLUS_PRE' OR 'SURPLUS_POST'>-<auction id> "
   id: ID!
 
   " Auction incrmental id per collateral "

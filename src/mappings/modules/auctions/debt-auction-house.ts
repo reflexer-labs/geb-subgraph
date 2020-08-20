@@ -3,19 +3,17 @@ import {
   DecreaseSoldAmount,
   RestartAuction,
   SettleAuction,
-  DebtAuctionHouse,
 } from '../../../../generated/templates/DebtAuctionHouse/DebtAuctionHouse'
 import { EnglishAuctionConfiguration, EnglishAuctionBid, EnglishAuction } from '../../../entities'
 import { dataSource, log, BigInt } from '@graphprotocol/graph-ts'
 
 import * as decimal from '../../../utils/decimal'
 import * as integer from '../../../utils/integer'
-import { EnglishCollateralAuctionHouse } from '../../../../generated/templates'
 
 export function handleModifyParametersUint(event: ModifyParametersUint): void {
   let what = event.params.parameter.toString()
 
-  let config = EnglishAuctionConfiguration.load('debt')
+  let config = EnglishAuctionConfiguration.load('DEBT')
   let val = event.params.data
 
   if (what == 'bidIncrease') {

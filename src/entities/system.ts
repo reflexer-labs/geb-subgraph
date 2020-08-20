@@ -2,6 +2,8 @@ import { ethereum, dataSource } from '@graphprotocol/graph-ts'
 
 import { SystemState, AccountingEngine } from '../../generated/schema'
 
+import { AccountingEngine as  AccountingEngineBind } from "../../generated/AccountingEngine/AccountingEngine";
+
 import * as decimal from '../utils/decimal'
 import * as integer from '../utils/integer'
 
@@ -48,7 +50,7 @@ export function getAccountingEngine(event: ethereum.Event): AccountingEngine {
   let engine = AccountingEngine.load('current')
 
   if (engine == null) {
-    let engineContract = AccountingEngine.bind(dataSource.address)
+    let engineContract = AccountingEngineBind.bind(dataSource.address())
     engine.totalQueuedDebt = decimal.ZERO
     engine.totalOnAuctionDebt = decimal.ZERO
     engine.surplusAuctionDelay = integer.ZERO

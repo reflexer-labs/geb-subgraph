@@ -13,7 +13,7 @@ import {
   EnglishAuction,
   getOrCreateCollateral,
 } from '../../../entities'
-import { dataSource, log } from '@graphprotocol/graph-ts'
+import { dataSource, BigDecimal } from '@graphprotocol/graph-ts'
 
 import * as decimal from '../../../utils/decimal'
 import * as integer from '../../../utils/integer'
@@ -70,7 +70,7 @@ export function handleDecreaseSoldAmount(event: DecreaseSoldAmount): void {
   bid.type = 'DECREASE_SOLD'
   bid.auction = auctionId
   bid.sellAmount = decimal.fromRad(event.params.amountToBuy)
-  bid.buyAmount = auction.targetAmount
+  bid.buyAmount = auction.targetAmount as BigDecimal
   bid.price = bid.sellAmount.div(bid.buyAmount)
   bid.bidder = event.params.highBidder
   bid.createdAt = event.block.timestamp

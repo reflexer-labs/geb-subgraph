@@ -1,0 +1,77 @@
+import {
+  ModifyParameters as ModifyParametersUint,
+  DecreaseSoldAmount,
+  RestartAuction,
+  SettleAuction,
+  DebtAuctionHouse,
+} from '../../../../generated/templates/DebtAuctionHouse/DebtAuctionHouse'
+import { EnglishAuctionConfiguration, EnglishAuctionBid, EnglishAuction } from '../../../entities'
+import { dataSource, log, BigInt } from '@graphprotocol/graph-ts'
+
+import * as decimal from '../../../utils/decimal'
+import * as integer from '../../../utils/integer'
+import { EnglishCollateralAuctionHouse } from '../../../../generated/templates'
+
+export function handleModifyParametersUint(event: ModifyParametersUint): void {
+  let what = event.params.parameter.toString()
+
+  let config = EnglishAuctionConfiguration.load('debt')
+  let val = event.params.data
+
+  if (what == 'bidIncrease') {
+    config.bidIncrease = decimal.fromWad(val)
+  } else if (what == 'bidDuration') {
+    config.bidDuration = val
+  } else if (what == 'totalAuctionLength') {
+    config.totalAuctionLength = val
+  } else if (what == 'amountSoldIncrease') {
+    config.DEBT_amountSoldIncrease = decimal.fromWad(val)
+  }
+
+  config.save()
+}
+
+export function handleDecreaseSoldAmount(event: DecreaseSoldAmount): void {
+  let id = event.params.id
+  let auction = EnglishAuction.load(auctionId(event.params.id))
+  let bid = new EnglishAuctionBid(bidAuctionId(event.params.id, auction.auctionId))
+
+  bid.bidNumber = auction.numberOfBids
+  bid.type = 'DECREASE_SOLD'
+  bid.auction = auction.id
+  bid.sellAmount = decimal.fromRad(event.params.amountToBuy)
+  bid.buyAmount = auction.buyInitialAmount
+  bid.price = bid.sellAmount.div(bid.buyAmount)
+  bid.bidder = event.params.highBidder
+  bid.createdAt = event.block.timestamp
+  bid.createdAtBlock = event.block.number
+  bid.createdAtTransaction = event.transaction.hash
+  bid.save()
+
+  auction.numberOfBids = auction.numberOfBids.plus(integer.ONE)
+  auction.auctionDeadline = event.params.bidExpiry
+  auction.sellAmount = bid.sellAmount
+  auction.price = bid.price
+  auction.winner = bid.bidder
+  auction.save()
+}
+
+export function handleRestartAuction(event: RestartAuction): void {
+  let auction = EnglishAuction.load(auctionId(event.params.id))
+  auction.auctionDeadline = event.params.auctionDeadline
+  auction.save()
+}
+
+export function handleSettleAuction(event: SettleAuction): void {
+  let auction = EnglishAuction.load(auctionId(event.params.id))
+  auction.isClaimed = true
+  auction.save()
+}
+
+function auctionId(auctionId: BigInt): string {
+  return 'DEBT-' + auctionId.toString()
+}
+
+function bidAuctionId(auctionId: BigInt, bidNumber: BigInt): string {
+  return 'DEBT-' + auctionId.toString() + '-' + bidNumber.toString()
+}

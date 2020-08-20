@@ -445,12 +445,12 @@ templates:
         - name: DebtAuctionHouse
           file: ./abis/DebtAuctionHouse.json
       eventHandlers:
-        - event: ModifyParameters(bytes32,address)
-          handler: handleModifyParametersAddress
         - event: ModifyParameters(bytes32,uint256)
           handler: handleModifyParametersUint
         
         # Remaining events:
+        # - event: ModifyParameters(bytes32,address)
+        #   handler: handleModifyParametersAddress
         # - event: AddAuthorization(address)
         #   handler: handleAddAuthorization
         # - event: DecreaseSoldAmount(uint256,address,uint256,uint256,uint256)

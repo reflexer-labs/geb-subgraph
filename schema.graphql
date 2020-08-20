@@ -532,91 +532,59 @@ enum AuctionType {
   FIXED_DISCOUNT
 }
 
-# --- English Auction ---
-
 type EnglishAuctionConfiguration @entity {
-  " Collateral type name "
+  " Collateral type name OR 'debt' OR 'surplus-pre' OR 'surplus-post' "
   id: ID!
 
   " Collateral type"
-  collateralType: CollateralType!
+  LIQUIDATION_collateralType: CollateralType
 
   " Minimum bid increase ratio i.g: 1.05 means 5% bid increase minimum "
   bidIncrease: BigDecimal!
 
   " How long the auction lasts after a new bid is submitted "
-  bidDuration: BigInt!
+  bidDuration: BigInt
 
   " Maximum auction length "
   totalAuctionLength: BigInt!
 
   " Minimum mandatory size of the first bid compared to collateral price coming from the oracle "
-  bidToMarketPriceRatio: BigDecimal!
+  LIQUIDATION_bidToMarketPriceRatio: BigDecimal
 
   " OSM contract"
-  osm: Bytes
+  LIQUIDATION_osm: Bytes
 
   " Oracle relayer contract "
-  oracleRelayer: Bytes
+  LIQUIDATION_oracleRelayer: Bytes
+
+  " Amount sold increased upon auction restart (Debt auction only) "
+  DEBT_amountSoldIncrease: BigDecimal
 }
 
-type EnglishCollateralAuction @entity {
-  "<Collateral type>-<auction ID>- "
+type EnglishAuctionBid @entity {
+  "<collateral type id OR 'DEBT' OR 'SURPLUS_PRE' OR 'SURPLUS_POST'>-<auction id>-<bid number>"
   id: ID!
 
-  " Auction incrmental id per collateral "
-  auctionId: BigInt!
+  " Incremental id of the bid "
+  bidNumber: BigInt!
 
-  " Type of auction contract, currently english or fix discount "
-  auctionType: AuctionType!
+  " Type, either increase buy or decrease sell "
+  type: EnglishBidType!
 
-  " Collateral type of the auction "
-  collateralType: CollateralType!
+  " Auction to which the bid belongs if it's a bid on a collateral auction"
+  auction: EnglishAuction
 
-  " CDP handler address in the CDP engine "
-  cdpHandler: Bytes!
+  " How many token we are selling in the auction "
+  sellAmount: BigDecimal!
 
-  " Total collateral for sale "
-  initialCollateralAmount: BigDecimal!
+  " How many token we are buying in the auction "
+  buyAmount: BigDecimal!
 
-  " Total debt of the CDP to be repaid "
-  initialDebtAmount: BigDecimal!
+  " Collateral price ( sellAmount / buyAMount ) "
+  price: BigDecimal!
 
-  " Minimum amount to raise in bonds (If less is raised, unbacked debt is created) "
-  bondAmountToRaise: BigDecimal!
-
-  " Amount raised so far to repay the debt.  amountRaised <= amountToRaise < initialDebtAmount"
-  bondAmountRaised: BigDecimal!
-
-  " Collateral being sold, the remaining is returned to the owner.  collateralAmountSold <= initialCollateralAmount"
-  collateralAmountSold: BigDecimal
-
-  " Best bid price at which the collateral is being sold "
-  highestBidPrice: BigDecimal!
-
-  " Bidder currently winning the auction "
-  highestBidder: Bytes
-
-  " Liquidated CDP "
-  cdp: Cdp!
-
-  " Hard deadline for the auction after which no more bids can be placed  "
-  auctionDeadline: BigInt!
-
-  " Address that started the auction "
-  startedBy: Bytes!
-
-  " If the bough collateral was claimed by the auction winner "
-  isClaimed: Boolean!
-
-  " Total number of bids "
-  numberOfBids: BigInt!
-
-  " List of individual bid "
-  englishAuctionBids: [EnglishAuctionBid!] @derivedFrom(field: "auction")
-
-  " Auction configuration "
-  englishAuctionConfiguration: EnglishAuctionConfiguration!
+  " Bidder address"
+  bidder: Bytes
 
   " Timestamp of the block in which the liquidation was started "
   createdAt: BigInt!
@@ -628,38 +596,83 @@ type EnglishCollateralAuction @entity {
   createdAtTransaction: Bytes!
 }
 
-enum EnglishBidType {
-  DecreaseSoldAmount
-  IncreaseBidSize
+# --- English Auction ---
+
+enum EnglishAuctionType {
+  LIQUIDATION
+  DEBT
+  SURPLUS_PRE
+  SURPLUS_POST
 }
 
-type EnglishAuctionBid @entity {
-  "<collateral type>-<auction id>-<bid number>"
+enum AuctionToken {
+  BOND
+  COLLATERAL
+  PROTOCOL_TOKEN
+}
+
+enum EnglishBidType {
+  INCREASE_BUY
+  DECREASE_SOLD
+}
+
+type EnglishAuction @entity {
+  " <collateral type OR 'debt' OR 'surplus-pre' OR 'surplus-post'>-<auction id> "
   id: ID!
 
-  " Incremental id of the bid "
-  bidNumber: BigInt!
+  " Auction incrmental id per collateral "
+  auctionId: BigInt!
 
-  " Type, either increase buy or decrease sell "
-  type: EnglishBidType!
+  " Whether it's a liquidation, surplus auction or debt auction "
+  englishAuctionType: EnglishAuctionType!
 
-  " Auction to which the bid belongs "
-  auction: EnglishCollateralAuction!
+  " Token being sold "
+  sellToken: AuctionToken!
 
-  " How many reflex bonds are offerd for the auctioned batch "
-  bondAmountRaised: BigDecimal!
+  " Token being bought "
+  buyToken: AuctionToken!
 
-  " Size of the auction batch the auctioned batch in collateral "
-  collateralAmountSold: BigDecimal!
+  " Amount of token that the system is selling a the start of the auction  "
+  sellInitialAmount: BigDecimal!
 
-  " Collateral price "
-  price: BigDecimal!
+  " Amount of token that the system is buying a the start of the auction  "
+  buyInitialAmount: BigDecimal!
 
-  " When the latest bid expires and the auction can be settled "
-  bidExpiry: BigInt!
+  " Amount of token that the system is currently selling in the auction "
+  sellAmount: BigDecimal!
 
-  " Bidder address"
-  bidder: Bytes
+  " Amount of token that the system is currently buying in the auction "
+  buyAmount: BigDecimal!
+
+  " Sell price ( sellAmount / buyAMount ) of the best offer "
+  price: BigDecimal
+
+  " For collateral auctions only! Threshold of buyToken between which the system increase the amount of buyToken and which it start to drecrease to amount of sellToken "
+  targetAmount: BigDecimal
+
+  " Auction winner "
+  winner: Bytes
+
+  " Address that started the auction "
+  startedBy: Bytes!
+
+  " If the bough Tokens was claimed by the auction winner "
+  isClaimed: Boolean!
+
+  " Total number of bids "
+  numberOfBids: BigInt!
+
+  " Deadline for the auction after which no more bids can be placed. Note: A new bid can postpone the deadline  "
+  auctionDeadline: BigInt!
+
+  " List of individual bid "
+  englishAuctionBids: [EnglishAuctionBid!] @derivedFrom(field: "auction")
+
+  " Auction configuration "
+  englishAuctionConfiguration: EnglishAuctionConfiguration!
+
+  " Liquidation only! CDP that got liquidated "
+  cdp: Cdp
 
   " Timestamp of the block in which the liquidation was started "
   createdAt: BigInt!

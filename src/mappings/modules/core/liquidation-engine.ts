@@ -10,9 +10,9 @@ import {
   getOrCreateCollateral,
   Cdp,
   EnglishAuctionConfiguration,
-  EnglishCollateralAuction,
   FixDiscountCollateralAuction,
   FixDiscountAuctionConfiguration,
+  EnglishAuction,
 } from '../../../entities'
 
 import * as decimal from '../../../utils/decimal'
@@ -56,8 +56,8 @@ export function handleModifyParametersCollateralTypeAddress(event: ModifyParamet
       let auctionConfiguration = new EnglishAuctionConfiguration(collateral.id)
       auctionConfiguration.bidIncrease = decimal.fromNumber(1.05)
       auctionConfiguration.bidDuration = integer.HOUR.times(integer.fromNumber(3)) // 3 hours
-      auctionConfiguration.bidToMarketPriceRatio = decimal.ZERO
-      auctionConfiguration.collateralType = collateral.id
+      auctionConfiguration.LIQUIDATION_bidToMarketPriceRatio = decimal.ZERO
+      auctionConfiguration.LIQUIDATION_collateralType = collateral.id
       auctionConfiguration.totalAuctionLength = integer.DAY.times(integer.fromNumber(2)) // 2 days
       auctionConfiguration.save()
 
@@ -103,19 +103,18 @@ export function handleLiquidate(event: Liquidate): void {
   log.info('Start liquidation id {} of collateral {}', [id.toString(), collateral.id])
 
   if (collateral.auctionType == 'ENGLISH') {
-    let liquidation = new EnglishCollateralAuction(collateral.id.toString() + '-' + id.toString())
+    let liquidation = new EnglishAuction(collateral.id.toString() + '-' + id.toString())
 
     liquidation.auctionId = id
     liquidation.numberOfBids = integer.ZERO
-    liquidation.auctionType = collateral.auctionType
-    liquidation.collateralType = collateral.id
-    liquidation.cdpHandler = event.params.cdp
-    liquidation.initialCollateralAmount = decimal.fromWad(event.params.collateralAmount)
-    liquidation.initialDebtAmount = decimal.fromWad(event.params.debtAmount)
-    liquidation.bondAmountRaised = decimal.ZERO
-    liquidation.collateralAmountSold = liquidation.initialCollateralAmount
-    liquidation.highestBidPrice = decimal.ZERO
-    liquidation.bondAmountToRaise = decimal.fromRad(event.params.amountToRaise)
+    liquidation.englishAuctionType = 'LIQUIDATION'
+    liquidation.buyToken = 'BOND'
+    liquidation.sellToken = 'COLLATERAL'
+    liquidation.sellInitialAmount = decimal.fromWad(event.params.collateralAmount)
+    liquidation.buyInitialAmount = decimal.ZERO
+    liquidation.sellAmount = liquidation.sellInitialAmount
+    liquidation.buyAmount = liquidation.buyInitialAmount
+    liquidation.targetAmount = decimal.fromRad(event.params.amountToRaise)
     liquidation.startedBy = event.address
     liquidation.isClaimed = false
     liquidation.createdAt = event.block.timestamp

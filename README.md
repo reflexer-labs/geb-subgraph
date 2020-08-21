@@ -2,6 +2,11 @@
 
 The Graph protocol subgraph for GEB
 
+```
+git clone https://github.com/reflexer-labs/geb-subgraph
+cd geb-subgraph
+git submodule update --init --recursive
+```
 ## Hosted service
 
 Deploy the subgraph on the hosted Graph protocol service.

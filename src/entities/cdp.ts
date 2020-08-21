@@ -1,16 +1,47 @@
 import { Bytes, ethereum, Address, BigInt } from '@graphprotocol/graph-ts'
-import { Cdp, UserProxy } from '../../generated/schema'
+import { Cdp, UserProxy, CdpHandlerOwner } from '../../generated/schema'
 import { getOrCreateCollateral, updateLastModifyCollateralType } from './collateral'
 
 import * as decimal from '../utils/decimal'
 import * as integer from '../utils/integer'
 import { getSystemState, updateLastModifySystemState } from './system'
+import { getOrCreateUser } from './user'
 
-export function createManagedCdp(address: Bytes, collateral: Bytes, cdpId: BigInt, event: ethereum.Event): Cdp {
+// There is 4 different CDP ownership relation possible:
+// 1. Owner -> CDPEngine
+// 2. Owner -> CDPManager -> CDPEngine
+// 3. Owner -> Proxy -> CDPEngine
+// 4. Owner -> Proxy -> CDPManager -> CDPEngine (Like on Oasis)
+
+export function createManagedCdp(
+  cdpHandler: Bytes,
+  owner: Bytes,
+  collateral: Bytes,
+  cdpId: BigInt,
+  event: ethereum.Event,
+): Cdp {
   let collateralObj = getOrCreateCollateral(collateral, event)
   let system = getSystemState(event)
-  let cdp = createCdp(address, collateral, event)
+  let cdp = createCdp(cdpHandler, collateral, event)
   cdp.cdpId = cdpId
+
+  // Ownership detection for managed CDPs (See explanations above)
+  let proxy = UserProxy.load(owner.toHexString())
+  if (proxy != null) {
+    // Case 4
+    cdp.owner = proxy.owner
+    cdp.proxy = proxy.id
+  } else {
+    // Case 2
+    cdp.owner = getOrCreateUser(owner).id
+  }
+
+  // Add an entry to the reverse lookup data structure
+  let handlerOwner = new CdpHandlerOwner(cdpHandler.toHexString())
+  handlerOwner.owner = cdp.owner
+  handlerOwner.save()
+
+  // Increase CDP counters
   collateralObj.cdpCount = collateralObj.unmanagedCdpCount.plus(integer.ONE)
   system.cdpCount = system.unmanagedCdpCount.plus(integer.ONE)
 
@@ -24,10 +55,28 @@ export function createManagedCdp(address: Bytes, collateral: Bytes, cdpId: BigIn
   return cdp
 }
 
-export function createUnmanagedCdp(address: Bytes, collateral: Bytes, event: ethereum.Event): Cdp {
+export function createUnmanagedCdp(cdpHandler: Bytes, collateral: Bytes, event: ethereum.Event): Cdp {
   let collateralObj = getOrCreateCollateral(collateral, event)
   let system = getSystemState(event)
-  let cdp = createCdp(address, collateral, event)
+  let cdp = createCdp(cdpHandler, collateral, event)
+
+  // Ownership detection for unmanaged CDP (See explanation above)
+  let proxy = UserProxy.load(cdpHandler.toHexString())
+  if (proxy != null) {
+    // Case 3
+    cdp.owner = proxy.owner
+    cdp.proxy = proxy.id
+  } else {
+    // Case 1
+    cdp.owner = getOrCreateUser(cdpHandler).id
+  }
+
+  // Add an entry to the reverse lookup data structure
+  let handlerOwner = new CdpHandlerOwner(cdpHandler.toHexString())
+  handlerOwner.owner = cdp.owner
+  handlerOwner.save()
+
+  // Increase CDP counters
   collateralObj.unmanagedCdpCount = collateralObj.unmanagedCdpCount.plus(integer.ONE)
   system.unmanagedCdpCount = system.unmanagedCdpCount.plus(integer.ONE)
 
@@ -41,23 +90,14 @@ export function createUnmanagedCdp(address: Bytes, collateral: Bytes, event: eth
   return cdp
 }
 
-function createCdp(address: Bytes, collateral: Bytes, event: ethereum.Event): Cdp {
-  let id = address.toHexString() + '-' + collateral.toString()
-  let proxy = UserProxy.load(address.toHexString())
+function createCdp(cdpHandler: Bytes, collateral: Bytes, event: ethereum.Event): Cdp {
+  let id = cdpHandler.toHexString() + '-' + collateral.toString()
 
   let cdp = new Cdp(id)
   cdp.collateralType = collateral.toString()
   cdp.collateral = decimal.ZERO
   cdp.debt = decimal.ZERO
-  cdp.cdpHandler = address
-
-  if (proxy != null) {
-    cdp.owner = Address.fromString(proxy.owner)
-    cdp.proxy = proxy.id
-  } else {
-    cdp.owner = address
-  }
-
+  cdp.cdpHandler = cdpHandler
   cdp.createdAt = event.block.timestamp
   cdp.createdAtBlock = event.block.number
   cdp.createdAtTransaction = event.transaction.hash

@@ -1,8 +1,18 @@
 import { Bytes, BigDecimal, ethereum, Address, log } from '@graphprotocol/graph-ts'
-import { UserProxy, InternalBondBalance, InternalCollateralBalance, InternalDebtBalance } from '../../generated/schema'
+import {
+  UserProxy,
+  InternalBondBalance,
+  InternalCollateralBalance,
+  InternalDebtBalance,
+  Cdp,
+  CdpHandlerOwner,
+  User,
+} from '../../generated/schema'
 
 import * as decimal from '../utils/decimal'
 import * as integer from '../utils/integer'
+import { getOrCreateUser, findUltimateOwner } from './user'
+import { findProxy } from '../mappings/modules/proxy/proxy-factory'
 
 // --- Bond balance ---
 
@@ -26,13 +36,8 @@ export function getOrCreateBondBalance(
 export function createBondBalance(address: Bytes, balance: BigDecimal, event: ethereum.Event): InternalBondBalance {
   let bal = new InternalBondBalance(address.toHexString())
   bal.accountHandler = address
-  let proxy = UserProxy.load(address.toHexString())
-  if (proxy != null) {
-    bal.owner = Address.fromString(proxy.owner)
-    bal.proxy = proxy.address.toHexString()
-  } else {
-    bal.owner = address
-  }
+  bal.owner = getOrCreateUser(findUltimateOwner(address)).id
+  bal.proxy = findProxy(address).id
   bal.balance = balance
   bal.createdAt = event.block.timestamp
   bal.createdAtBlock = event.block.number
@@ -76,15 +81,8 @@ export function createCollateralBalance(
 ): InternalCollateralBalance {
   let bal = new InternalCollateralBalance(address.toHexString() + '-' + collateralType.toString())
   bal.accountHandler = address
-
-  let proxy = UserProxy.load(address.toHexString())
-  if (proxy != null) {
-    bal.owner = Address.fromString(proxy.owner)
-    bal.proxy = proxy.address.toHexString()
-  } else {
-    bal.owner = address
-  }
-
+  bal.owner = getOrCreateUser(findUltimateOwner(address)).id
+  bal.proxy = findProxy(address).id
   bal.collateralType = collateralType.toString()
   bal.balance = balance
   bal.createdAt = event.block.timestamp
@@ -126,7 +124,7 @@ export function getOrCreateDebtBalance(
 export function createDebtBalance(address: Bytes, balance: BigDecimal, event: ethereum.Event): InternalDebtBalance {
   let bal = new InternalDebtBalance(address.toHexString())
   bal.accountHandler = address
-  bal.owner = address
+  bal.owner = address.toHexString()
   bal.balance = balance
   bal.createdAt = event.block.timestamp
   bal.createdAtBlock = event.block.number

@@ -1,3 +1,5 @@
+# --- Accounts & Users ---
+
 type Cdp @entity {
   " Equals to: <cdpHandler>-<CollateralType> "
   id: ID!
@@ -18,7 +20,7 @@ type Cdp @entity {
   cdpHandler: Bytes!
 
   " Address of CDP owner (top level ownership)"
-  owner: Bytes!
+  owner: User!
 
   " Optional, address of the proxy if the owner is using a proxy "
   proxy: UserProxy
@@ -43,6 +45,8 @@ type Cdp @entity {
 }
 
 type User @entity {
+  # End user of the system listing its CDPs, balances, proxies, etc...
+
   " Account address "
   id: ID!
 
@@ -51,6 +55,18 @@ type User @entity {
 
   " Up to one per collateral type"
   proxies: [UserProxy!] @derivedFrom(field: "owner")
+
+  " Cdp owned "
+  cdps: [Cdp!] @derivedFrom(field: "owner")
+
+  " List of collateral balances "
+  collateralBalance: [InternalCollateralBalance!] @derivedFrom(field: "owner")
+  
+  " List of bonds balances "
+  bondBalance: [InternalBondBalance!] @derivedFrom(field: "owner")
+  
+  " List of debt balances "
+  debtBalance: [InternalDebtBalance!] @derivedFrom(field: "owner")
 }
 
 type UserProxy @entity {
@@ -67,69 +83,17 @@ type UserProxy @entity {
   owner: User!
 }
 
-type SystemState @entity {
-  " Singleton entity. Equals to 'current' "
+type CdpHandlerOwner @entity {
+  # To lookup the owner of a cdpHandler, only for managed CDPs
+
+  " CdpHandler address "
   id: ID!
 
-  " Number of CDPs opened through the manager (CdpManager) "
-  cdpCount: BigInt!
-
-  " Number of CDPs NOT opened through the manager (CdpManager) "
-  unmanagedCdpCount: BigInt!
-
-  " Total number of CDPs with collateral > 0 or debt > 0"
-  totalActiveCdpCount: BigInt!
-
-  " Number of user proxies created "
-  proxyCount: BigInt!
-
-  " Total debt issued in bonds across all collaterals "
-  globalDebt: BigDecimal!
-
-  " Total unbacked debt issued in bonds across all collaterals "
-  globalUnbackedDebt: BigDecimal!
-
-  " Total global Debt Ceiling "
-  globalDebtCeiling: BigDecimal!
-
-  " Number of collateral types registered "
-  collateralCount: BigInt!
-
-  " Base rate for stability fee per second add for all collaterals "
-  globalStabilityFee: BigDecimal!
-
-  " Savings Rate "
-  savingsRate: BigDecimal!
-
-  " Number of collateral auctions started "
-  collateralAuctionCount: BigInt!
-
-  " Latest redemption rate"
-  currentRedemptionRate: RedemptionRate
-
-  " Latest redemption price "
-  currentRedemptionPrice: RedemptionPrice
-
-  " Timestamp of the block in which the system was created [seconds] "
-  createdAt: BigInt!
-
-  " Block number in which the system was created "
-  createdAtBlock: BigInt!
-
-  " Transaction hash in which the system was created "
-  createdAtTransaction: Bytes!
-
-  " Timestamp of the block in which the system was last modified [seconds] "
-  modifiedAt: BigInt
-
-  " Block number in which the system was last modified "
-  modifiedAtBlock: BigInt
-
-  " Transaction hash in which the system was last modified "
-  modifiedAtTransaction: Bytes
-
-  # TODO: Flap and flop auctions parameters used to be here. Add the auction abstraction class.
+  " Owner of the cdpHandler address (If owned by a proxy this will be the proxy's owner)"
+  owner: User!
 }
+
+# --- System state --
 
 type CollateralType @entity {
   " Collateral type name "
@@ -208,6 +172,70 @@ type CollateralType @entity {
   modifiedAtTransaction: Bytes
 }
 
+type SystemState @entity {
+  " Singleton entity. Equals to 'current' "
+  id: ID!
+
+  " Number of CDPs opened through the manager (CdpManager) "
+  cdpCount: BigInt!
+
+  " Number of CDPs NOT opened through the manager (CdpManager) "
+  unmanagedCdpCount: BigInt!
+
+  " Total number of CDPs with collateral > 0 or debt > 0"
+  totalActiveCdpCount: BigInt!
+
+  " Number of user proxies created "
+  proxyCount: BigInt!
+
+  " Total debt issued in bonds across all collaterals "
+  globalDebt: BigDecimal!
+
+  " Total unbacked debt issued in bonds across all collaterals "
+  globalUnbackedDebt: BigDecimal!
+
+  " Total global Debt Ceiling "
+  globalDebtCeiling: BigDecimal!
+
+  " Number of collateral types registered "
+  collateralCount: BigInt!
+
+  " Base rate for stability fee per second add for all collaterals "
+  globalStabilityFee: BigDecimal!
+
+  " Savings Rate "
+  savingsRate: BigDecimal!
+
+  " Number of collateral auctions started "
+  collateralAuctionCount: BigInt!
+
+  " Latest redemption rate"
+  currentRedemptionRate: RedemptionRate
+
+  " Latest redemption price "
+  currentRedemptionPrice: RedemptionPrice
+
+  " Timestamp of the block in which the system was created [seconds] "
+  createdAt: BigInt!
+
+  " Block number in which the system was created "
+  createdAtBlock: BigInt!
+
+  " Transaction hash in which the system was created "
+  createdAtTransaction: Bytes!
+
+  " Timestamp of the block in which the system was last modified [seconds] "
+  modifiedAt: BigInt
+
+  " Block number in which the system was last modified "
+  modifiedAtBlock: BigInt
+
+  " Transaction hash in which the system was last modified "
+  modifiedAtTransaction: Bytes
+
+  # TODO: Flap and flop auctions parameters used to be here. Add the auction abstraction class.
+}
+
 type AccountingEngine @entity {
   " current "
   id: ID!
@@ -283,7 +311,7 @@ type InternalCollateralBalance @entity {
   accountHandler: Bytes!
 
   " Ultimate owner of the balance (The accountHandler or the Proxy)"
-  owner: Bytes!
+  owner: User!
 
   " Collateral type of the balance "
   collateralType: CollateralType!
@@ -327,7 +355,7 @@ type InternalBondBalance @entity {
   accountHandler: Bytes!
 
   " Ultimate owner of the balance (The accountHandler or the Proxy)"
-  owner: Bytes!
+  owner: User!
 
   " Proxy address if the balance belongs to a proxy "
   proxy: UserProxy
@@ -368,7 +396,7 @@ type InternalDebtBalance @entity {
   accountHandler: Bytes!
 
   " Ultimate owner of the balance (The accountHandler or the Proxy)"
-  owner: Bytes!
+  owner: User!
 
   " Actual balance "
   balance: BigDecimal!

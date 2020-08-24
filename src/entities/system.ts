@@ -46,7 +46,7 @@ export function updateLastModifySystemState(system: SystemState, event: ethereum
   system.modifiedAtTransaction = event.transaction.hash
 }
 
-export function getAccountingEngine(event: ethereum.Event): AccountingEngine {
+export function getOrCreateAccountingEngine(event: ethereum.Event): AccountingEngine {
   let engine = AccountingEngine.load('current')
 
   if (engine == null) {

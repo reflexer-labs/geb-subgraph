@@ -7,17 +7,13 @@ import {
   RestartAuction,
   SettleAuction,
 } from '../../../../generated/templates/EnglishCollateralAuctionHouse/EnglishCollateralAuctionHouse'
-import {
-  EnglishAuctionConfiguration,
-  EnglishAuctionBid,
-  EnglishAuction,
-  getOrCreateCollateral,
-} from '../../../entities'
+import { EnglishAuctionBid, EnglishAuction, getOrCreateCollateral } from '../../../entities'
 import { dataSource, BigDecimal } from '@graphprotocol/graph-ts'
 
 import * as decimal from '../../../utils/decimal'
 import * as integer from '../../../utils/integer'
 import * as enums from '../../../utils/enums'
+import { getOrCreateEnglishAuctionConfiguration } from '../../../entities/auctions'
 
 export function handleModifyParametersAddress(event: ModifyParametersAddress): void {
   let what = event.params.parameter.toString()
@@ -25,7 +21,7 @@ export function handleModifyParametersAddress(event: ModifyParametersAddress): v
     EnglishCollateralAuctionHouse.bind(dataSource.address()).collateralType(),
     event,
   )
-  let config = EnglishAuctionConfiguration.load(collateral.id)
+  let config = getOrCreateEnglishAuctionConfiguration(dataSource.address(), collateral.id)
   let address = event.params.data
 
   if (what == 'oracleRelayer') {
@@ -43,7 +39,7 @@ export function handleModifyParametersUint(event: ModifyParametersUint): void {
     EnglishCollateralAuctionHouse.bind(dataSource.address()).collateralType(),
     event,
   )
-  let config = EnglishAuctionConfiguration.load(collateral.id)
+  let config = getOrCreateEnglishAuctionConfiguration(dataSource.address(), collateral.id)
   let val = event.params.data
 
   if (what == 'bidIncrease') {

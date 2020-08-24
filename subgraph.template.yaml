@@ -217,11 +217,18 @@ dataSources:
       language: wasm/assemblyscript
       file: ./src/mappings/modules/core/accounting-engine.ts
       entities:
-        - CollateralType
         - SystemState
+        - EnglishAuctionConfiguration
+        - AccountingEngine 
+        - EnglishAuction
       abis:
         - name: AccountingEngine
           file: ./abis/AccountingEngine.json
+        - name: DebtAuctionHouse
+          file: ./abis/DebtAuctionHouse.json
+        - name: PreSettlementSurplusAuctionHouse
+          file: ./abis/PreSettlementSurplusAuctionHouse.json
+        
       eventHandlers:
         - event: ModifyParameters(bytes32,address)
           handler: handleModifyParametersAddress

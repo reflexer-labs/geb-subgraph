@@ -21,6 +21,7 @@ import * as integer from '../../../utils/integer'
 import { log } from '@graphprotocol/graph-ts'
 import { updateLastModifyCollateralType } from '../../../entities/collateral'
 import * as enums from '../../../utils/enums'
+import { getOrCreateEnglishAuctionConfiguration } from '../../../entities/auctions'
 
 export function handleModifyParametersCollateralTypeUint(event: ModifyParametersCollateralTypeUint): void {
   let what = event.params.parameter.toString()
@@ -54,17 +55,7 @@ export function handleModifyParametersCollateralTypeAddress(event: ModifyParamet
       log.info('English auction set for collateral {}', [collateral.id])
 
       // Default auction config
-      let auctionConfiguration = EnglishAuctionConfiguration.load(collateral.id)
-      if (auctionConfiguration == null) {
-        auctionConfiguration = new EnglishAuctionConfiguration(collateral.id)
-      }
-
-      auctionConfiguration.bidIncrease = decimal.fromNumber(1.05)
-      auctionConfiguration.bidDuration = integer.HOUR.times(integer.fromNumber(3)) // 3 hours
-      auctionConfiguration.LIQUIDATION_bidToMarketPriceRatio = decimal.ZERO
-      auctionConfiguration.LIQUIDATION_collateralType = collateral.id
-      auctionConfiguration.totalAuctionLength = integer.DAY.times(integer.fromNumber(2)) // 2 days
-      auctionConfiguration.save()
+      let auctionConfiguration = getOrCreateEnglishAuctionConfiguration(address, collateral.id)
 
       collateral.auctionType = enums.AuctionType_ENGLISH
       collateral.englishAuctionConfiguration = auctionConfiguration.id
@@ -110,7 +101,10 @@ export function handleLiquidate(event: Liquidate): void {
   log.info('Start liquidation id {} of collateral {}', [id.toString(), collateral.id])
 
   if (collateral.auctionType == enums.AuctionType_ENGLISH) {
-    let config = EnglishAuctionConfiguration.load(collateral.id)
+    let config = getOrCreateEnglishAuctionConfiguration(
+      collateral.collateralAuctionHouseAddress,
+      enums.EnglishAuctionType_LIQUIDATION,
+    )
 
     if (config == null) {
       log.error('handleLiquidate - auction configuration {} not found', [collateral.id])

@@ -10,11 +10,12 @@ import { dataSource, log, BigInt } from '@graphprotocol/graph-ts'
 import * as decimal from '../../../utils/decimal'
 import * as integer from '../../../utils/integer'
 import * as enums from '../../../utils/enums'
+import { getOrCreateEnglishAuctionConfiguration } from '../../../entities/auctions'
 
 export function handleModifyParametersUint(event: ModifyParametersUint): void {
   let what = event.params.parameter.toString()
 
-  let config = EnglishAuctionConfiguration.load(enums.EnglishAuctionType_DEBT)
+  let config = getOrCreateEnglishAuctionConfiguration(dataSource.address(), enums.EnglishAuctionType_DEBT)
   let val = event.params.data
 
   if (what == 'bidIncrease') {

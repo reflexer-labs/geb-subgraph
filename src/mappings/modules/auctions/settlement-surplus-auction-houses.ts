@@ -13,19 +13,20 @@ import {
 } from '../../../../generated/templates/PreSettlementSurplusAuctionHouse/PreSettlementSurplusAuctionHouse'
 
 import { EnglishAuctionConfiguration, EnglishAuctionBid, EnglishAuction } from '../../../entities'
-import { BigInt, ethereum, BigDecimal, Bytes } from '@graphprotocol/graph-ts'
+import { BigInt, ethereum, BigDecimal, Bytes, dataSource } from '@graphprotocol/graph-ts'
 
 import * as decimal from '../../../utils/decimal'
 import * as integer from '../../../utils/integer'
 import * as enums from '../../../utils/enums'
+import { getOrCreateEnglishAuctionConfiguration } from '../../../entities/auctions'
 
 export function handleModifyParametersPost(event: ModifyParametersPost): void {
-  let config = EnglishAuctionConfiguration.load(enums.EnglishAuctionType_SURPLUS_POST) as EnglishAuctionConfiguration
+  let config = getOrCreateEnglishAuctionConfiguration(dataSource.address(), enums.EnglishAuctionType_SURPLUS_POST)
   modifyParameter(config, event.params.parameter.toString(), event.params.data)
 }
 
 export function handleModifyParametersPre(event: ModifyParametersPre): void {
-  let config = EnglishAuctionConfiguration.load(enums.EnglishAuctionType_SURPLUS_PRE) as EnglishAuctionConfiguration
+  let config = getOrCreateEnglishAuctionConfiguration(dataSource.address(), enums.EnglishAuctionType_SURPLUS_PRE)
   modifyParameter(config, event.params.parameter.toString(), event.params.data)
 }
 

@@ -144,14 +144,13 @@ export function handleLiquidate(event: Liquidate): void {
     let liquidation = new FixDiscountCollateralAuction(collateral.id.toString() + '-' + id.toString())
 
     liquidation.auctionId = id
-    liquidation.auctionType = collateral.auctionType
     liquidation.collateralType = collateral.id
     liquidation.safeHandler = event.params.safe
-    liquidation.initialCollateralAmount = decimal.fromWad(event.params.collateralAmount)
-    liquidation.initialDebtAmount = decimal.fromWad(event.params.debtAmount)
-    liquidation.bondAmountToRaise = decimal.fromRad(event.params.amountToRaise)
-    liquidation.bondAmountRaised = decimal.ZERO
-    liquidation.collateralAmountSold = decimal.ZERO
+    liquidation.sellInitialAmount = decimal.fromWad(event.params.collateralAmount)
+    liquidation.buyInitialAmount = decimal.fromWad(event.params.debtAmount)
+    liquidation.target = decimal.fromRad(event.params.amountToRaise)
+    liquidation.buyAmount = decimal.ZERO
+    liquidation.sellAmount = decimal.ZERO
     let safe = Safe.load(event.params.safe.toHexString() + '-' + collateral.id)
     liquidation.safe = safe.id
     liquidation.auctionDeadline = config.totalAuctionLength.plus(event.block.timestamp)

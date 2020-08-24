@@ -3,10 +3,7 @@ import { Address, log, Bytes, ethereum } from '@graphprotocol/graph-ts'
 import {
   CollateralType,
   Safe,
-  UserProxy,
-  InternalCollateralBalance,
-  InternalBondBalance,
-  InternalDebtBalance,
+  ModifySAFECollateralization as ModifySAFECollateralizationEntity,
 } from '../../../../generated/schema'
 
 import { getSystemState } from '../../../entities'
@@ -18,23 +15,21 @@ import {
   ModifyCollateralBalance,
   TransferCollateral,
   TransferInternalCoins,
-  ModifySAFECollateralization,
   TransferSAFECollateralAndDebt,
   ConfiscateSAFECollateralAndDebt,
   SettleDebt,
   CreateUnbackedDebt,
   UpdateAccumulatedRate,
+  ModifySAFECollateralization,
 } from '../../../../generated/SAFEEngine/SAFEEngine'
 
 import * as decimal from '../../../utils/decimal'
 import * as integer from '../../../utils/integer'
 import { getOrCreateCollateral, updateLastModifyCollateralType } from '../../../entities/collateral'
 import {
-  createBondBalance,
-  createCollateralBalance,
+
   updateBondBalance,
   updateCollateralBalance,
-  createDebtBalance,
   updateDebtBalance,
   getOrCreateBondBalance,
   getOrCreateDebtBalance,
@@ -42,6 +37,7 @@ import {
 } from '../../../entities/balances'
 import { createUnmanagedSafe, updateSafeCollateralization } from '../../../entities/safe'
 import { updateLastModifySystemState } from '../../../entities/system'
+import { eventUid } from '../../../utils/ethereum'
 
 // Register a new collateral type
 export function handleInitializeCollateralType(event: InitializeCollateralType): void {
@@ -127,13 +123,13 @@ export function handleTransferInternalCoins(event: TransferInternalCoins): void 
 export function handleModifySAFECollateralization(event: ModifySAFECollateralization): void {
   let collateralType = event.params.collateralType.toString()
   let safeAddress = event.params.safe
-  let deltaCollateral = event.params.deltaCollateral
-  let deltaDebt = event.params.deltaDebt
+  let deltaCollateral = decimal.fromWad(event.params.deltaCollateral)
+  let deltaDebt = decimal.fromWad(event.params.deltaDebt)
 
   let collateral = getOrCreateCollateral(event.params.collateralType, event)
   if (collateral != null) {
-    let debt = decimal.fromWad(deltaDebt)
-    let collateralBalance = decimal.fromWad(deltaCollateral)
+    let debt = deltaDebt
+    let collateralBalance = deltaCollateral
     let safeId = safeAddress.toHexString() + '-' + collateralType
     let safe = Safe.load(safeId)
     let system = getSystemState(event)
@@ -166,16 +162,24 @@ export function handleModifySAFECollateralization(event: ModifySAFECollateraliza
       event,
       false,
     )
-    updateCollateralBalance(
-      internalCollateralBalance,
-      internalCollateralBalance.balance.minus(decimal.fromWad(deltaCollateral)),
-      event,
-    )
+    updateCollateralBalance(internalCollateralBalance, internalCollateralBalance.balance.minus(deltaCollateral), event)
     internalCollateralBalance.save()
 
     let internalBondBalance = getOrCreateBondBalance(event.params.debtDestination, event)
-    updateBondBalance(internalBondBalance, internalBondBalance.balance.plus(decimal.fromWad(deltaDebt)), event)
+    updateBondBalance(internalBondBalance, internalBondBalance.balance.plus(deltaDebt), event)
     internalBondBalance.save()
+
+    // Create a new modify collateralization update
+    let update = new ModifySAFECollateralizationEntity(eventUid(event))
+    update.safe = safe.id
+    update.safeHandler = safeAddress
+    update.collateralType = collateral.id
+    update.deltaCollateral = deltaCollateral
+    update.deltaDebt = deltaDebt
+    update.createdAt = event.block.timestamp
+    update.createdAtBlock = event.block.number
+    update.createdAtTransaction = event.transaction.hash
+    update.save()
   }
 }
 

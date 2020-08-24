@@ -72,9 +72,9 @@ export function handleBuyCollateral(event: BuyCollateral): void {
 
   let auctionId = collateral.toString() + '-' + id.toString()
   let auction = FixDiscountCollateralAuction.load(auctionId)
-  
-  if(auction == null) {
-    log.error("handleBuyCollateral - auction {} not found.", [auctionId])
+
+  if (auction == null) {
+    log.error('handleBuyCollateral - auction {} not found.', [auctionId])
   }
 
   let batch = new FixDiscountAuctionBatch(
@@ -83,20 +83,20 @@ export function handleBuyCollateral(event: BuyCollateral): void {
 
   batch.batchNumber = auction.numberOfBatches
   batch.auction = auctionId
-  batch.collateral = decimal.fromRad(event.params.boughtCollateral)
+  let remainingToRaise = auction.target.minus(auction.buyAmount)
   let wad = decimal.fromWad(event.params.wad)
-  let remainingToRaise = auction.bondAmountToRaise.minus(auction.bondAmountRaised)
-  batch.debtAmount = wad.gt(remainingToRaise) ? remainingToRaise : wad
-  batch.price = batch.collateral.div(batch.debtAmount)
-  batch.buyer = event.address
+  batch.buyAmount = wad.gt(remainingToRaise) ? remainingToRaise : wad
+  batch.sellAmount = decimal.fromRad(event.params.boughtCollateral)
+  batch.price = batch.sellAmount.div(batch.buyAmount)
+  batch.buyer = event.transaction.from
   batch.createdAt = event.block.timestamp
   batch.createdAtBlock = event.block.number
   batch.createdAtTransaction = event.transaction.hash
   batch.save()
 
   auction.numberOfBatches = auction.numberOfBatches.plus(integer.ONE)
-  auction.bondAmountRaised = auction.bondAmountRaised.plus(batch.debtAmount)
-  auction.collateralAmountSold = auction.collateralAmountSold.plus(batch.collateral)
-  auction.isTerminated = auction.bondAmountRaised.equals(auction.bondAmountToRaise) ? true : false
+  auction.buyAmount = auction.buyAmount.plus(batch.buyAmount)
+  auction.sellAmount = auction.sellAmount.plus(batch.sellAmount)
+  auction.isTerminated = auction.sellAmount.equals(decimal.ZERO) ? true : false
   auction.save()
 }

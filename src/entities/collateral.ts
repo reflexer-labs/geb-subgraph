@@ -1,5 +1,5 @@
 import { CollateralType } from '../../generated/schema'
-import { Bytes, ethereum, BigInt, Entity } from '@graphprotocol/graph-ts'
+import { Bytes, ethereum, BigInt, Entity, Address } from '@graphprotocol/graph-ts'
 
 import * as decimal from '../utils/decimal'
 import * as integer from '../utils/integer'
@@ -18,6 +18,9 @@ export function getOrCreateCollateral(collateralType: Bytes, event: ethereum.Eve
     collateral.liquidationPenalty = decimal.ZERO
     collateral.liquidationCRatio = decimal.ZERO
     collateral.safetyCRatio = decimal.ZERO
+    collateral.collateralAuctionHouseAddress = Address.fromHexString(
+      '0x0000000000000000000000000000000000000000',
+    ) as Bytes
 
     collateral.accumulatedRate = decimal.fromRay(BigInt.fromI32(10).pow(27))
 

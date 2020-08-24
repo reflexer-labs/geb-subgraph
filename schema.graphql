@@ -1,4 +1,4 @@
-# --- Accounts & Users ---
+# --- Safes & Users ---
 
 type Safe @entity {
   " Equals to: <safeHandler>-<CollateralType> "
@@ -42,6 +42,15 @@ type Safe @entity {
 
   " Transaction hash in which this Safe was last modified "
   modifiedAtTransaction: Bytes
+
+  " List of changes in collateralization "
+  modifySAFECollateralization: [ModifySAFECollateralization!] @derivedFrom(field: "safe")
+
+  " English Liquidations auctions of the safe "
+  liquidationFixedDiscount: [FixDiscountCollateralAuction!] @derivedFrom(field: "safe")
+
+  " English Liquidations auctions of the safe "
+  liquidationEnglish: [EnglishAuction!] @derivedFrom(field: "safe")
 }
 
 type User @entity {
@@ -67,6 +76,18 @@ type User @entity {
 
   " List of debt balances "
   debtBalance: [InternalDebtBalance!] @derivedFrom(field: "owner")
+
+  " List of collateral deposits made into the system "
+  collateralJoin: CollateralJoin @derivedFrom(field: "owner")
+
+  " List of collateral withdrawals made into the system "
+  collateralExit: CollateralExit @derivedFrom(field: "owner")
+
+  " List of bond deposits made into the system "
+  bondJoin: BondJoin @derivedFrom(field: "owner")
+
+  " List of bond withdrawals made into the system "
+  bondExit: BondExit @derivedFrom(field: "owner")
 }
 
 type UserProxy @entity {
@@ -91,6 +112,35 @@ type SafeHandlerOwner @entity {
 
   " Owner of the safeHandler address (If owned by a proxy this will be the proxy's owner)"
   owner: User!
+}
+
+type ModifySAFECollateralization @entity {
+  "<TX hash>-<Log index>"
+  id: ID!
+
+  " Safe modified "
+  safe: Safe!
+
+  " safeHandler address (ownership at the SAFEEngine level) "
+  safeHandler: Bytes!
+
+  " Collateral type of the modification "
+  collateralType: CollateralType!
+
+  " Change in collateral "
+  deltaCollateral: BigDecimal!
+
+  " Change in debt "
+  deltaDebt: BigDecimal!
+
+  " Timestamp of the block in which this Safe was opened [seconds] "
+  createdAt: BigInt!
+
+  " Block number in which this Safe was opened "
+  createdAtBlock: BigInt!
+
+  " Transaction hash in which this Safe was opened "
+  createdAtTransaction: Bytes!
 }
 
 # --- System state --
@@ -139,7 +189,7 @@ type CollateralType @entity {
   liquidationPenalty: BigDecimal!
 
   " Address of the liquidation auction smart contract "
-  collateralAuctionHouseAddress: Bytes
+  collateralAuctionHouseAddress: Bytes!
 
   " Type of collateral auction "
   auctionType: AuctionType
@@ -421,11 +471,17 @@ type InternalDebtBalance @entity {
 }
 
 type CollateralJoin @entity {
-  " <Collateral type>-<TX hash> "
+  "<TX hash>-<Log index>"
   id: ID!
 
   " Join amount "
   amount: Bytes!
+
+  " Safe handler owning the balance at the SAFEEninge level "
+  safeHandler: Bytes
+
+  " End user address owning the changed balance "
+  owner: User!
 
   " Collateral type of the Join "
   collateralType: CollateralType!
@@ -441,11 +497,17 @@ type CollateralJoin @entity {
 }
 
 type CollateralExit @entity {
-  " <Collateral type>-<TX hash> "
+  "<TX hash>-<Log index>"
   id: ID!
 
   " Exit amount "
   amount: Bytes!
+
+  " Safe handler owning the balance at the SAFEEninge level "
+  safeHandler: Bytes
+
+  " End user address owning the changed balance "
+  owner: User!
 
   " Collateral type of the Exit "
   collateralType: CollateralType!
@@ -461,11 +523,17 @@ type CollateralExit @entity {
 }
 
 type BondJoin @entity {
-  " <Collateral type>-<TX hash> "
+  "<TX hash>-<Log index>"
   id: ID!
 
   " Join amount "
   amount: Bytes!
+
+  " Safe handler owning the balance at the SAFEEninge level "
+  safeHandler: Bytes
+
+  " End user address owning the changed balance "
+  owner: User!
 
   " Timestamp of the block in which this Safe was opened [seconds] "
   createdAt: BigInt!
@@ -478,11 +546,17 @@ type BondJoin @entity {
 }
 
 type BondExit @entity {
-  " <Collateral type>-<TX hash> "
+  "<TX hash>-<Log index>"
   id: ID!
 
   " Exit amount "
   amount: Bytes!
+
+  " Safe handler owning the balance at the SAFEEninge level "
+  safeHandler: Bytes
+
+  " End user address owning the changed balance "
+  owner: User!
 
   " Timestamp of the block in which this Safe was opened [seconds] "
   createdAt: BigInt!
@@ -766,29 +840,26 @@ type FixDiscountCollateralAuction @entity {
   " Auction incrmental id per collateral "
   auctionId: BigInt!
 
-  " Type of auction contract, currently english or fix discount "
-  auctionType: AuctionType!
-
   " Collateral type of the auction "
   collateralType: CollateralType!
 
   " Safe handler address in the Safe engine "
   safeHandler: Bytes!
 
-  " Total collateral for sale "
-  initialCollateralAmount: BigDecimal!
+  " Total collateral for sale a the start of the auction "
+  sellInitialAmount: BigDecimal!
 
-  " Total debt of the Safe to be repaid "
-  initialDebtAmount: BigDecimal!
+  " Minimum of bonds to be bough, define the floor price "
+  buyInitialAmount: BigDecimal!
 
   " Minimum amount to raise in bonds (If less is raised, unbacked debt is created) "
-  bondAmountToRaise: BigDecimal!
+  target: BigDecimal!
 
   " Amount raised so far to repay the debt. "
-  bondAmountRaised: BigDecimal!
+  buyAmount: BigDecimal!
 
   " Cumulative collateral amount sold so far.  collateralAmountSold <= initialCollateralAmount"
-  collateralAmountSold: BigDecimal
+  sellAmount: BigDecimal
 
   " Liquidated Safe "
   safe: Safe!
@@ -831,11 +902,11 @@ type FixDiscountAuctionBatch @entity {
   " Auction in which the batch was sold "
   auction: FixDiscountCollateralAuction!
 
-  " Collateral bought in the batch "
-  collateral: BigDecimal!
+  " bonds bought in the batch "
+  buyAmount: BigDecimal!
 
-  " Bond paid for the batch "
-  debtAmount: BigDecimal!
+  " collateral sold in the batch "
+  sellAmount: BigDecimal!
 
   " Collateral price "
   price: BigDecimal!

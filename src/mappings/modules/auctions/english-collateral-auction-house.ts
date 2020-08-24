@@ -17,6 +17,7 @@ import { dataSource, BigDecimal } from '@graphprotocol/graph-ts'
 
 import * as decimal from '../../../utils/decimal'
 import * as integer from '../../../utils/integer'
+import * as enums from '../../../utils/enums'
 
 export function handleModifyParametersAddress(event: ModifyParametersAddress): void {
   let what = event.params.parameter.toString()
@@ -67,7 +68,7 @@ export function handleDecreaseSoldAmount(event: DecreaseSoldAmount): void {
   let bid = new EnglishAuctionBid(collateral.toString() + '-' + id.toString() + '-' + auction.numberOfBids.toString())
 
   bid.bidNumber = auction.numberOfBids
-  bid.type = 'DECREASE_SOLD'
+  bid.type = enums.EnglishBidType_DECREASE_SOLD
   bid.auction = auctionId
   bid.sellAmount = decimal.fromRad(event.params.amountToBuy)
   bid.buyAmount = auction.targetAmount as BigDecimal
@@ -95,7 +96,7 @@ export function handleIncreaseBidSize(event: IncreaseBidSize): void {
   let bid = new EnglishAuctionBid(collateral.toString() + '-' + id.toString() + '-' + auction.numberOfBids.toString())
 
   bid.bidNumber = auction.numberOfBids
-  bid.type = 'INCREASE_BUY'
+  bid.type = enums.EnglishBidType_INCREASE_BUY
   bid.auction = auctionId
   bid.sellAmount = auction.sellInitialAmount
   bid.buyAmount = decimal.fromRad(event.params.rad)

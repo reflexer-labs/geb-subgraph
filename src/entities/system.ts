@@ -51,6 +51,7 @@ export function getAccountingEngine(event: ethereum.Event): AccountingEngine {
 
   if (engine == null) {
     let engineContract = AccountingEngineBind.bind(dataSource.address())
+    engine = new AccountingEngine('current')
     engine.totalQueuedDebt = decimal.ZERO
     engine.totalOnAuctionDebt = decimal.ZERO
     engine.surplusAuctionDelay = integer.ZERO

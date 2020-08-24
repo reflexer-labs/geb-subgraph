@@ -17,14 +17,15 @@ import { BigInt, ethereum, BigDecimal, Bytes } from '@graphprotocol/graph-ts'
 
 import * as decimal from '../../../utils/decimal'
 import * as integer from '../../../utils/integer'
+import * as enums from '../../../utils/enums'
 
 export function handleModifyParametersPost(event: ModifyParametersPost): void {
-  let config = EnglishAuctionConfiguration.load('SURPLUS_POST') as EnglishAuctionConfiguration
+  let config = EnglishAuctionConfiguration.load(enums.EnglishAuctionType_SURPLUS_POST) as EnglishAuctionConfiguration
   modifyParameter(config, event.params.parameter.toString(), event.params.data)
 }
 
 export function handleModifyParametersPre(event: ModifyParametersPre): void {
-  let config = EnglishAuctionConfiguration.load('SURPLUS_PRE') as EnglishAuctionConfiguration
+  let config = EnglishAuctionConfiguration.load(enums.EnglishAuctionType_SURPLUS_PRE) as EnglishAuctionConfiguration
   modifyParameter(config, event.params.parameter.toString(), event.params.data)
 }
 
@@ -75,7 +76,7 @@ function increaseBidSize(
   let bid = new EnglishAuctionBid(bidAuctionId(id, auction.auctionId, isPre))
 
   bid.bidNumber = auction.numberOfBids
-  bid.type = 'INCREASE_BUY'
+  bid.type = enums.EnglishBidType_INCREASE_BUY
   bid.auction = auction.id
   bid.sellAmount = auction.sellInitialAmount
   bid.buyAmount = bidAmount
@@ -123,9 +124,13 @@ function settleAuction(id: BigInt, isPre: boolean): void {
 }
 
 function auctionId(auctionId: BigInt, isPre: boolean): string {
-  return isPre ? 'SURPLUS_PRE-' : 'SURPLUS_POST-' + auctionId.toString()
+  return isPre
+    ? enums.EnglishAuctionType_SURPLUS_PRE
+    : enums.EnglishAuctionType_SURPLUS_POST + '-' + auctionId.toString()
 }
 
 function bidAuctionId(auctionId: BigInt, bidNumber: BigInt, isPre: boolean): string {
-  return isPre ? 'SURPLUS_PRE-' : 'SURPLUS_POST-' + auctionId.toString() + '-' + bidNumber.toString()
+  return isPre
+    ? enums.EnglishAuctionType_SURPLUS_PRE
+    : enums.EnglishAuctionType_SURPLUS_POST + '-' + auctionId.toString() + '-' + bidNumber.toString()
 }

@@ -20,6 +20,7 @@ import * as integer from '../../../utils/integer'
 
 import { log } from '@graphprotocol/graph-ts'
 import { updateLastModifyCollateralType } from '../../../entities/collateral'
+import * as enums from '../../../utils/enums'
 
 export function handleModifyParametersCollateralTypeUint(event: ModifyParametersCollateralTypeUint): void {
   let what = event.params.parameter.toString()
@@ -49,7 +50,7 @@ export function handleModifyParametersCollateralTypeAddress(event: ModifyParamet
     let auctionHouse = EnglishCollateralAuctionHouseBind.bind(address)
     let auctionType = auctionHouse.AUCTION_TYPE().toString()
 
-    if (auctionType == 'ENGLISH') {
+    if (auctionType == enums.AuctionType_ENGLISH) {
       log.info('English auction set for collateral {}', [collateral.id])
 
       // Default auction config
@@ -65,13 +66,13 @@ export function handleModifyParametersCollateralTypeAddress(event: ModifyParamet
       auctionConfiguration.totalAuctionLength = integer.DAY.times(integer.fromNumber(2)) // 2 days
       auctionConfiguration.save()
 
-      collateral.auctionType = 'ENGLISH'
+      collateral.auctionType = enums.AuctionType_ENGLISH
       collateral.englishAuctionConfiguration = auctionConfiguration.id
 
       // Start indexing an instance of english auction contract
       EnglishCollateralAuctionHouse.create(address)
       log.info('Start indexing english auction house: {}', [address.toHexString()])
-    } else if (auctionType == 'FIXED_DISCOUNT') {
+    } else if (auctionType == enums.AuctionType_FIXED_DISCOUNT) {
       // Default auction config
       let auctionConfiguration = FixDiscountAuctionConfiguration.load(collateral.id)
       if (auctionConfiguration == null) {
@@ -88,7 +89,7 @@ export function handleModifyParametersCollateralTypeAddress(event: ModifyParamet
       auctionConfiguration.minSystemCoinMedianDeviation = decimal.fromNumber(0.999)
       auctionConfiguration.save()
 
-      collateral.auctionType = 'FIXED_DISCOUNT'
+      collateral.auctionType = enums.AuctionType_FIXED_DISCOUNT
       collateral.fixDiscountAuctionConfiguration = auctionConfiguration.id
 
       // Start indexing an instance of fix discount auction contract
@@ -108,7 +109,7 @@ export function handleLiquidate(event: Liquidate): void {
   let collateral = getOrCreateCollateral(event.params.collateralType, event)
   log.info('Start liquidation id {} of collateral {}', [id.toString(), collateral.id])
 
-  if (collateral.auctionType == 'ENGLISH') {
+  if (collateral.auctionType == enums.AuctionType_ENGLISH) {
     let config = EnglishAuctionConfiguration.load(collateral.id)
 
     if (config == null) {
@@ -119,9 +120,9 @@ export function handleLiquidate(event: Liquidate): void {
 
     liquidation.auctionId = id
     liquidation.numberOfBids = integer.ZERO
-    liquidation.englishAuctionType = 'LIQUIDATION'
-    liquidation.buyToken = 'BOND'
-    liquidation.sellToken = 'COLLATERAL'
+    liquidation.englishAuctionType = enums.EnglishAuctionType_LIQUIDATION
+    liquidation.buyToken = enums.AuctionToken_BOND
+    liquidation.sellToken = enums.AuctionToken_COLLATERAL
     liquidation.sellInitialAmount = decimal.fromWad(event.params.collateralAmount)
     liquidation.buyInitialAmount = decimal.ZERO
     liquidation.sellAmount = liquidation.sellInitialAmount
@@ -139,7 +140,7 @@ export function handleLiquidate(event: Liquidate): void {
     liquidation.safe = safe.id
 
     liquidation.save()
-  } else if (collateral.auctionType == 'FIXED_DISCOUNT') {
+  } else if (collateral.auctionType == enums.AuctionType_FIXED_DISCOUNT) {
     let config = FixDiscountAuctionConfiguration.load(collateral.id)
 
     if (config == null) {

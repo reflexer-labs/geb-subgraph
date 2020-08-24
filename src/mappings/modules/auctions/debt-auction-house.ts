@@ -9,11 +9,12 @@ import { dataSource, log, BigInt } from '@graphprotocol/graph-ts'
 
 import * as decimal from '../../../utils/decimal'
 import * as integer from '../../../utils/integer'
+import * as enums from '../../../utils/enums'
 
 export function handleModifyParametersUint(event: ModifyParametersUint): void {
   let what = event.params.parameter.toString()
 
-  let config = EnglishAuctionConfiguration.load('DEBT')
+  let config = EnglishAuctionConfiguration.load(enums.EnglishAuctionType_DEBT)
   let val = event.params.data
 
   if (what == 'bidIncrease') {
@@ -35,7 +36,7 @@ export function handleDecreaseSoldAmount(event: DecreaseSoldAmount): void {
   let bid = new EnglishAuctionBid(bidAuctionId(event.params.id, auction.auctionId))
 
   bid.bidNumber = auction.numberOfBids
-  bid.type = 'DECREASE_SOLD'
+  bid.type = enums.EnglishBidType_DECREASE_SOLD
   bid.auction = auction.id
   bid.sellAmount = decimal.fromRad(event.params.amountToBuy)
   bid.buyAmount = auction.buyInitialAmount
@@ -67,9 +68,9 @@ export function handleSettleAuction(event: SettleAuction): void {
 }
 
 function auctionId(auctionId: BigInt): string {
-  return 'DEBT-' + auctionId.toString()
+  return enums.EnglishAuctionType_DEBT + '-' + auctionId.toString()
 }
 
 function bidAuctionId(auctionId: BigInt, bidNumber: BigInt): string {
-  return 'DEBT-' + auctionId.toString() + '-' + bidNumber.toString()
+  return enums.EnglishAuctionType_DEBT + '-' + auctionId.toString() + '-' + bidNumber.toString()
 }

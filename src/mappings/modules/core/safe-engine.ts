@@ -206,7 +206,7 @@ export function handleTransferSAFECollateralAndDebt(event: TransferSAFECollatera
 // Liquidate a SAFE
 export function handleConfiscateSAFECollateralAndDebt(event: ConfiscateSAFECollateralAndDebt): void {
   let collateralType = event.params.collateralType
-  let deltaDebt = decimal.fromWad(event.params.deltaCollateral)
+  let deltaDebt = decimal.fromWad(event.params.deltaDebt)
   let deltaCollateral = decimal.fromWad(event.params.deltaCollateral)
 
   let safe = Safe.load(event.params.safe.toHexString() + '-' + collateralType.toString())

@@ -1,4 +1,4 @@
-import { UserProxy, User, CdpHandlerOwner } from '../../../../generated/schema'
+import { UserProxy, User, SafeHandlerOwner } from '../../../../generated/schema'
 import { Created } from '../../../../generated/ProxyFactory/DSProxyFactory'
 import { getOrCreateUser, getSystemState } from '../../../entities'
 
@@ -29,7 +29,7 @@ export function findProxy(address: Bytes): UserProxy {
   if (proxy) {
     return proxy as UserProxy
   } else {
-    let handler = CdpHandlerOwner.load(address.toHexString())
+    let handler = SafeHandlerOwner.load(address.toHexString())
     if (handler) {
       proxy = UserProxy.load(handler.owner)
       return proxy as UserProxy

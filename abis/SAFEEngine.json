@@ -29,7 +29,7 @@
         "type": "address"
       }
     ],
-    "name": "ApproveCDPModification",
+    "name": "ApproveSAFEModification",
     "type": "event"
   },
   {
@@ -44,7 +44,7 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "cdp",
+        "name": "safe",
         "type": "address"
       },
       {
@@ -78,7 +78,7 @@
         "type": "uint256"
       }
     ],
-    "name": "ConfiscateCDPCollateralAndDebt",
+    "name": "ConfiscateSAFECollateralAndDebt",
     "type": "event"
   },
   {
@@ -146,7 +146,7 @@
         "type": "address"
       }
     ],
-    "name": "DenyCDPModification",
+    "name": "DenySAFEModification",
     "type": "event"
   },
   {
@@ -166,67 +166,6 @@
       }
     ],
     "name": "InitializeCollateralType",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "bytes32",
-        "name": "collateralType",
-        "type": "bytes32"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "cdp",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "collateralSource",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "debtDestination",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "int256",
-        "name": "deltaCollateral",
-        "type": "int256"
-      },
-      {
-        "indexed": false,
-        "internalType": "int256",
-        "name": "deltaDebt",
-        "type": "int256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "lockedCollateral",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "generatedDebt",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "globalDebt",
-        "type": "uint256"
-      }
-    ],
-    "name": "ModifyCDPCollateralization",
     "type": "event"
   },
   {
@@ -303,6 +242,67 @@
     "inputs": [
       {
         "indexed": false,
+        "internalType": "bytes32",
+        "name": "collateralType",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "safe",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "collateralSource",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "debtDestination",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "int256",
+        "name": "deltaCollateral",
+        "type": "int256"
+      },
+      {
+        "indexed": false,
+        "internalType": "int256",
+        "name": "deltaDebt",
+        "type": "int256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "lockedCollateral",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "generatedDebt",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "globalDebt",
+        "type": "uint256"
+      }
+    ],
+    "name": "ModifySAFECollateralization",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
         "internalType": "address",
         "name": "account",
         "type": "address"
@@ -346,67 +346,6 @@
       }
     ],
     "name": "SettleDebt",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "bytes32",
-        "name": "collateralType",
-        "type": "bytes32"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "src",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "dst",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "int256",
-        "name": "deltaCollateral",
-        "type": "int256"
-      },
-      {
-        "indexed": false,
-        "internalType": "int256",
-        "name": "deltaDebt",
-        "type": "int256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "srcLockedCollateral",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "srcGeneratedDebt",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "dstLockedCollateral",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "dstGeneratedDebt",
-        "type": "uint256"
-      }
-    ],
-    "name": "TransferCDPCollateralAndDebt",
     "type": "event"
   },
   {
@@ -477,6 +416,67 @@
       {
         "indexed": false,
         "internalType": "address",
+        "name": "src",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "dst",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "int256",
+        "name": "deltaCollateral",
+        "type": "int256"
+      },
+      {
+        "indexed": false,
+        "internalType": "int256",
+        "name": "deltaDebt",
+        "type": "int256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "srcLockedCollateral",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "srcGeneratedDebt",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "dstLockedCollateral",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "dstGeneratedDebt",
+        "type": "uint256"
+      }
+    ],
+    "name": "TransferSAFECollateralAndDebt",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "collateralType",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
         "name": "surplusDst",
         "type": "address"
       },
@@ -515,7 +515,7 @@
     "inputs": [
       { "internalType": "address", "name": "account", "type": "address" }
     ],
-    "name": "approveCDPModification",
+    "name": "approveSAFEModification",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -529,38 +529,11 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "cdp", "type": "address" },
+      { "internalType": "address", "name": "safe", "type": "address" },
       { "internalType": "address", "name": "account", "type": "address" }
     ],
-    "name": "canModifyCDP",
+    "name": "canModifySAFE",
     "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "address", "name": "", "type": "address" },
-      { "internalType": "address", "name": "", "type": "address" }
-    ],
-    "name": "cdpRights",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "bytes32", "name": "", "type": "bytes32" },
-      { "internalType": "address", "name": "", "type": "address" }
-    ],
-    "name": "cdps",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "lockedCollateral",
-        "type": "uint256"
-      },
-      { "internalType": "uint256", "name": "generatedDebt", "type": "uint256" }
-    ],
     "stateMutability": "view",
     "type": "function"
   },
@@ -600,7 +573,7 @@
         "name": "collateralType",
         "type": "bytes32"
       },
-      { "internalType": "address", "name": "cdp", "type": "address" },
+      { "internalType": "address", "name": "safe", "type": "address" },
       {
         "internalType": "address",
         "name": "collateralCounterparty",
@@ -614,7 +587,7 @@
       { "internalType": "int256", "name": "deltaCollateral", "type": "int256" },
       { "internalType": "int256", "name": "deltaDebt", "type": "int256" }
     ],
-    "name": "confiscateCDPCollateralAndDebt",
+    "name": "confiscateSAFECollateralAndDebt",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -656,7 +629,7 @@
     "inputs": [
       { "internalType": "address", "name": "account", "type": "address" }
     ],
-    "name": "denyCDPModification",
+    "name": "denySAFEModification",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -705,32 +678,6 @@
         "name": "collateralType",
         "type": "bytes32"
       },
-      { "internalType": "address", "name": "cdp", "type": "address" },
-      {
-        "internalType": "address",
-        "name": "collateralSource",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "debtDestination",
-        "type": "address"
-      },
-      { "internalType": "int256", "name": "deltaCollateral", "type": "int256" },
-      { "internalType": "int256", "name": "deltaDebt", "type": "int256" }
-    ],
-    "name": "modifyCDPCollateralization",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "collateralType",
-        "type": "bytes32"
-      },
       { "internalType": "address", "name": "account", "type": "address" },
       { "internalType": "int256", "name": "wad", "type": "int256" }
     ],
@@ -766,11 +713,64 @@
   },
   {
     "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "collateralType",
+        "type": "bytes32"
+      },
+      { "internalType": "address", "name": "safe", "type": "address" },
+      {
+        "internalType": "address",
+        "name": "collateralSource",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "debtDestination",
+        "type": "address"
+      },
+      { "internalType": "int256", "name": "deltaCollateral", "type": "int256" },
+      { "internalType": "int256", "name": "deltaDebt", "type": "int256" }
+    ],
+    "name": "modifySAFECollateralization",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
       { "internalType": "address", "name": "account", "type": "address" }
     ],
     "name": "removeAuthorization",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "", "type": "address" },
+      { "internalType": "address", "name": "", "type": "address" }
+    ],
+    "name": "safeRights",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "bytes32", "name": "", "type": "bytes32" },
+      { "internalType": "address", "name": "", "type": "address" }
+    ],
+    "name": "safes",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "lockedCollateral",
+        "type": "uint256"
+      },
+      { "internalType": "uint256", "name": "generatedDebt", "type": "uint256" }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -799,23 +799,6 @@
       },
       { "internalType": "address", "name": "src", "type": "address" },
       { "internalType": "address", "name": "dst", "type": "address" },
-      { "internalType": "int256", "name": "deltaCollateral", "type": "int256" },
-      { "internalType": "int256", "name": "deltaDebt", "type": "int256" }
-    ],
-    "name": "transferCDPCollateralAndDebt",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "collateralType",
-        "type": "bytes32"
-      },
-      { "internalType": "address", "name": "src", "type": "address" },
-      { "internalType": "address", "name": "dst", "type": "address" },
       { "internalType": "uint256", "name": "wad", "type": "uint256" }
     ],
     "name": "transferCollateral",
@@ -830,6 +813,23 @@
       { "internalType": "uint256", "name": "rad", "type": "uint256" }
     ],
     "name": "transferInternalCoins",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "collateralType",
+        "type": "bytes32"
+      },
+      { "internalType": "address", "name": "src", "type": "address" },
+      { "internalType": "address", "name": "dst", "type": "address" },
+      { "internalType": "int256", "name": "deltaCollateral", "type": "int256" },
+      { "internalType": "int256", "name": "deltaDebt", "type": "int256" }
+    ],
+    "name": "transferSAFECollateralAndDebt",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

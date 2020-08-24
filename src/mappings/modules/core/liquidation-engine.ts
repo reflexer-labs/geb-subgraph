@@ -1,6 +1,6 @@
 import {
-  ModifyParameters1 as ModifyParametersCollateralTypeUint,
-  ModifyParameters2 as ModifyParametersCollateralTypeAddress,
+  ModifyParameters2 as ModifyParametersCollateralTypeUint,
+  ModifyParameters3 as ModifyParametersCollateralTypeAddress,
   Liquidate,
 } from '../../../../generated/LiquidationEngine/LiquidationEngine'
 
@@ -8,7 +8,7 @@ import { EnglishCollateralAuctionHouse, FixDiscountCollateralAuctionHouse } from
 import { EnglishCollateralAuctionHouse as EnglishCollateralAuctionHouseBind } from '../../../../generated/templates/EnglishCollateralAuctionHouse/EnglishCollateralAuctionHouse'
 import {
   getOrCreateCollateral,
-  Cdp,
+  Safe,
   EnglishAuctionConfiguration,
   FixDiscountCollateralAuction,
   FixDiscountAuctionConfiguration,
@@ -123,8 +123,8 @@ export function handleLiquidate(event: Liquidate): void {
     liquidation.englishAuctionConfiguration = collateral.id
     liquidation.auctionDeadline = config.totalAuctionLength.plus(event.block.timestamp)
 
-    let cdp = Cdp.load(event.params.cdp.toHexString() + '-' + collateral.id)
-    liquidation.cdp = cdp.id
+    let safe = Safe.load(event.params.safe.toHexString() + '-' + collateral.id)
+    liquidation.safe = safe.id
 
     liquidation.save()
   } else if (collateral.auctionType == 'FIX_DISCOUNT') {
@@ -133,14 +133,14 @@ export function handleLiquidate(event: Liquidate): void {
     liquidation.auctionId = id
     liquidation.auctionType = collateral.auctionType
     liquidation.collateralType = collateral.id
-    liquidation.cdpHandler = event.params.cdp
+    liquidation.safeHandler = event.params.safe
     liquidation.initialCollateralAmount = decimal.fromWad(event.params.collateralAmount)
     liquidation.initialDebtAmount = decimal.fromWad(event.params.debtAmount)
     liquidation.bondAmountToRaise = decimal.fromRad(event.params.amountToRaise)
     liquidation.bondAmountRaised = decimal.ZERO
     liquidation.collateralAmountSold = decimal.ZERO
-    let cdp = Cdp.load(event.params.cdp.toHexString() + '-' + collateral.id)
-    liquidation.cdp = cdp.id
+    let safe = Safe.load(event.params.safe.toHexString() + '-' + collateral.id)
+    liquidation.safe = safe.id
     liquidation.auctionDeadline = config.totalAuctionLength.plus(event.block.timestamp)
     liquidation.startedBy = event.address
     liquidation.numberOfBatches = integer.ZERO

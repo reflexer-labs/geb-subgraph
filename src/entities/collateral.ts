@@ -24,8 +24,8 @@ export function getOrCreateCollateral(collateralType: Bytes, event: ethereum.Eve
     collateral.stabilityFee = decimal.ONE
     collateral.stabilityFeeLastUpdatedAt = event.block.timestamp
 
-    collateral.unmanagedCdpCount = integer.ZERO
-    collateral.cdpCount = integer.ZERO
+    collateral.unmanagedSafeCount = integer.ZERO
+    collateral.safeCount = integer.ZERO
 
     collateral.createdAt = event.block.timestamp
     collateral.createdAtBlock = event.block.number

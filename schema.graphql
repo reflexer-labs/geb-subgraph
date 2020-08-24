@@ -1,51 +1,51 @@
 # --- Accounts & Users ---
 
-type Cdp @entity {
-  " Equals to: <cdpHandler>-<CollateralType> "
+type Safe @entity {
+  " Equals to: <safeHandler>-<CollateralType> "
   id: ID!
 
-  " CDP ID if this CDP was created through the manager (GebCdpManager) "
-  cdpId: BigInt
+  " Safe ID if this Safe was created through the manager (GebSafeManager) "
+  safeId: BigInt
 
-  " Collateral type associated to this cdp "
+  " Collateral type associated to this safe "
   collateralType: CollateralType!
 
-  " Assets locked as collateral (cdpCollateral) "
+  " Assets locked as collateral (safeCollateral) "
   collateral: BigDecimal!
 
   " Outstanding debt "
   debt: BigDecimal!
 
-  " cdpHandler address (ownership at the CDPEngine level) "
-  cdpHandler: Bytes!
+  " safeHandler address (ownership at the SAFEEngine level) "
+  safeHandler: Bytes!
 
-  " Address of CDP owner (top level ownership)"
+  " Address of Safe owner (top level ownership)"
   owner: User!
 
   " Optional, address of the proxy if the owner is using a proxy "
   proxy: UserProxy
 
-  " Timestamp of the block in which this CDP was opened [seconds] "
+  " Timestamp of the block in which this Safe was opened [seconds] "
   createdAt: BigInt!
 
-  " Block number in which this CDP was opened "
+  " Block number in which this Safe was opened "
   createdAtBlock: BigInt!
 
-  " Transaction hash in which this CDP was opened "
+  " Transaction hash in which this Safe was opened "
   createdAtTransaction: Bytes!
 
-  " Timestamp of the block in which this CDP was last modified [seconds] "
+  " Timestamp of the block in which this Safe was last modified [seconds] "
   modifiedAt: BigInt
 
-  " Block number in which this CDP was last modified "
+  " Block number in which this Safe was last modified "
   modifiedAtBlock: BigInt
 
-  " Transaction hash in which this CDP was last modified "
+  " Transaction hash in which this Safe was last modified "
   modifiedAtTransaction: Bytes
 }
 
 type User @entity {
-  # End user of the system listing its CDPs, balances, proxies, etc...
+  # End user of the system listing its Safes, balances, proxies, etc...
 
   " Account address "
   id: ID!
@@ -56,15 +56,15 @@ type User @entity {
   " Up to one per collateral type"
   proxies: [UserProxy!] @derivedFrom(field: "owner")
 
-  " Cdp owned "
-  cdps: [Cdp!] @derivedFrom(field: "owner")
+  " Safe owned "
+  safes: [Safe!] @derivedFrom(field: "owner")
 
   " List of collateral balances "
   collateralBalance: [InternalCollateralBalance!] @derivedFrom(field: "owner")
-  
+
   " List of bonds balances "
   bondBalance: [InternalBondBalance!] @derivedFrom(field: "owner")
-  
+
   " List of debt balances "
   debtBalance: [InternalDebtBalance!] @derivedFrom(field: "owner")
 }
@@ -83,13 +83,13 @@ type UserProxy @entity {
   owner: User!
 }
 
-type CdpHandlerOwner @entity {
-  # To lookup the owner of a cdpHandler, only for managed CDPs
+type SafeHandlerOwner @entity {
+  # To lookup the owner of a safeHandler, only for managed Safes
 
-  " CdpHandler address "
+  " SafeHandler address "
   id: ID!
 
-  " Owner of the cdpHandler address (If owned by a proxy this will be the proxy's owner)"
+  " Owner of the safeHandler address (If owned by a proxy this will be the proxy's owner)"
   owner: User!
 }
 
@@ -102,7 +102,7 @@ type CollateralType @entity {
   " Debt ceiling [bond] (line) "
   debtCeiling: BigDecimal!
 
-  " Min debt per CDP [bond] "
+  " Min debt per Safe [bond] "
   debtFloor: BigDecimal!
 
   " Current market price [USD] "
@@ -117,7 +117,7 @@ type CollateralType @entity {
   " collateral price with safety margin. Used to limit the amount of debt that can be generated per one unit of collateral "
   safetyCRatio: BigDecimal!
 
-  " Collateral price with safety margin. Used only in LiquidationEngine when a CDP is liquidated "
+  " Collateral price with safety margin. Used only in LiquidationEngine when a Safe is liquidated "
   liquidationCRatio: BigDecimal!
 
   " OSM contract address for the colateral (price source)"
@@ -129,11 +129,11 @@ type CollateralType @entity {
   " Time of the last stability fee update "
   stabilityFeeLastUpdatedAt: BigInt!
 
-  " Number of CDP NOT opened through the manager (CdpManager) "
-  unmanagedCdpCount: BigInt!
+  " Number of Safe NOT opened through the manager (SafeManager) "
+  unmanagedSafeCount: BigInt!
 
-  " Number of CDPs opened through the manager (CdpManager) "
-  cdpCount: BigInt!
+  " Number of Safes opened through the manager (SafeManager) "
+  safeCount: BigInt!
 
   " Penalty applied to every liquidation involving this collateral type "
   liquidationPenalty: BigDecimal!
@@ -176,14 +176,14 @@ type SystemState @entity {
   " Singleton entity. Equals to 'current' "
   id: ID!
 
-  " Number of CDPs opened through the manager (CdpManager) "
-  cdpCount: BigInt!
+  " Number of Safes opened through the manager (SafeManager) "
+  safeCount: BigInt!
 
-  " Number of CDPs NOT opened through the manager (CdpManager) "
-  unmanagedCdpCount: BigInt!
+  " Number of Safes NOT opened through the manager (SafeManager) "
+  unmanagedSafeCount: BigInt!
 
-  " Total number of CDPs with collateral > 0 or debt > 0"
-  totalActiveCdpCount: BigInt!
+  " Total number of Safes with collateral > 0 or debt > 0"
+  totalActiveSafeCount: BigInt!
 
   " Number of user proxies created "
   proxyCount: BigInt!
@@ -276,8 +276,8 @@ type AccountingEngine @entity {
   " Whether this contract is enabled or not "
   contractEnabled: Boolean!
 
-  " CDP database "
-  cdpEngine: Bytes!
+  " Safe database "
+  safeEngine: Bytes!
 
   " Contract that handles auctions for surplus stability fees (sell coins for protocol tokens that are then burned) "
   surplusAuctionHouse: Bytes!
@@ -307,7 +307,7 @@ type InternalCollateralBalance @entity {
   " Equals to: <accountHandler>-<CollateralType> "
   id: ID!
 
-  " Account ownership at the CDPengine level "
+  " Account ownership at the Safeengine level "
   accountHandler: Bytes!
 
   " Ultimate owner of the balance (The accountHandler or the Proxy)"
@@ -328,22 +328,22 @@ type InternalCollateralBalance @entity {
   " List of Collateral Exits (= withdrawals)"
   exits: [CollateralExit!]
 
-  " Timestamp of the block in which this CDP was opened [seconds] "
+  " Timestamp of the block in which this Safe was opened [seconds] "
   createdAt: BigInt!
 
-  " Block number in which this CDP was opened "
+  " Block number in which this Safe was opened "
   createdAtBlock: BigInt!
 
-  " Transaction hash in which this CDP was opened "
+  " Transaction hash in which this Safe was opened "
   createdAtTransaction: Bytes!
 
-  " Timestamp of the block in which this CDP was last modified [seconds] "
+  " Timestamp of the block in which this Safe was last modified [seconds] "
   modifiedAt: BigInt
 
-  " Block number in which this CDP was last modified "
+  " Block number in which this Safe was last modified "
   modifiedAtBlock: BigInt
 
-  " Transaction hash in which this CDP was last modified "
+  " Transaction hash in which this Safe was last modified "
   modifiedAtTransaction: Bytes
 }
 
@@ -351,7 +351,7 @@ type InternalBondBalance @entity {
   " Equals to: <accountHandler> "
   id: ID!
 
-  " Account ownership at the CDPengine level "
+  " Account ownership at the Safeengine level "
   accountHandler: Bytes!
 
   " Ultimate owner of the balance (The accountHandler or the Proxy)"
@@ -369,22 +369,22 @@ type InternalBondBalance @entity {
   " List of Collateral Exits (= withdrawals)"
   exits: [BondExit!]
 
-  " Timestamp of the block in which this CDP was opened [seconds] "
+  " Timestamp of the block in which this Safe was opened [seconds] "
   createdAt: BigInt!
 
-  " Block number in which this CDP was opened "
+  " Block number in which this Safe was opened "
   createdAtBlock: BigInt!
 
-  " Transaction hash in which this CDP was opened "
+  " Transaction hash in which this Safe was opened "
   createdAtTransaction: Bytes!
 
-  " Timestamp of the block in which this CDP was last modified [seconds] "
+  " Timestamp of the block in which this Safe was last modified [seconds] "
   modifiedAt: BigInt
 
-  " Block number in which this CDP was last modified "
+  " Block number in which this Safe was last modified "
   modifiedAtBlock: BigInt
 
-  " Transaction hash in which this CDP was last modified "
+  " Transaction hash in which this Safe was last modified "
   modifiedAtTransaction: Bytes
 }
 
@@ -392,7 +392,7 @@ type InternalDebtBalance @entity {
   " Equals to: <accountHandler> "
   id: ID!
 
-  " Account ownership at the CDPengine level "
+  " Account ownership at the Safeengine level "
   accountHandler: Bytes!
 
   " Ultimate owner of the balance (The accountHandler or the Proxy)"
@@ -401,22 +401,22 @@ type InternalDebtBalance @entity {
   " Actual balance "
   balance: BigDecimal!
 
-  " Timestamp of the block in which this CDP was opened [seconds] "
+  " Timestamp of the block in which this Safe was opened [seconds] "
   createdAt: BigInt!
 
-  " Block number in which this CDP was opened "
+  " Block number in which this Safe was opened "
   createdAtBlock: BigInt!
 
-  " Transaction hash in which this CDP was opened "
+  " Transaction hash in which this Safe was opened "
   createdAtTransaction: Bytes!
 
-  " Timestamp of the block in which this CDP was last modified [seconds] "
+  " Timestamp of the block in which this Safe was last modified [seconds] "
   modifiedAt: BigInt
 
-  " Block number in which this CDP was last modified "
+  " Block number in which this Safe was last modified "
   modifiedAtBlock: BigInt
 
-  " Transaction hash in which this CDP was last modified "
+  " Transaction hash in which this Safe was last modified "
   modifiedAtTransaction: Bytes
 }
 
@@ -430,13 +430,13 @@ type CollateralJoin @entity {
   " Collateral type of the Join "
   collateralType: CollateralType!
 
-  " Timestamp of the block in which this CDP was opened [seconds] "
+  " Timestamp of the block in which this Safe was opened [seconds] "
   createdAt: BigInt!
 
-  " Block number in which this CDP was opened "
+  " Block number in which this Safe was opened "
   createdAtBlock: BigInt!
 
-  " Transaction hash in which this CDP was opened "
+  " Transaction hash in which this Safe was opened "
   createdAtTransaction: Bytes!
 }
 
@@ -450,13 +450,13 @@ type CollateralExit @entity {
   " Collateral type of the Exit "
   collateralType: CollateralType!
 
-  " Timestamp of the block in which this CDP was opened [seconds] "
+  " Timestamp of the block in which this Safe was opened [seconds] "
   createdAt: BigInt!
 
-  " Block number in which this CDP was opened "
+  " Block number in which this Safe was opened "
   createdAtBlock: BigInt!
 
-  " Transaction hash in which this CDP was opened "
+  " Transaction hash in which this Safe was opened "
   createdAtTransaction: Bytes!
 }
 
@@ -467,13 +467,13 @@ type BondJoin @entity {
   " Join amount "
   amount: Bytes!
 
-  " Timestamp of the block in which this CDP was opened [seconds] "
+  " Timestamp of the block in which this Safe was opened [seconds] "
   createdAt: BigInt!
 
-  " Block number in which this CDP was opened "
+  " Block number in which this Safe was opened "
   createdAtBlock: BigInt!
 
-  " Transaction hash in which this CDP was opened "
+  " Transaction hash in which this Safe was opened "
   createdAtTransaction: Bytes!
 }
 
@@ -484,17 +484,18 @@ type BondExit @entity {
   " Exit amount "
   amount: Bytes!
 
-  " Timestamp of the block in which this CDP was opened [seconds] "
+  " Timestamp of the block in which this Safe was opened [seconds] "
   createdAt: BigInt!
 
-  " Block number in which this CDP was opened "
+  " Block number in which this Safe was opened "
   createdAtBlock: BigInt!
 
-  " Transaction hash in which this CDP was opened "
+  " Transaction hash in which this Safe was opened "
   createdAtTransaction: Bytes!
 }
 
 # --- Prices ---
+# TODO: Do not use block as ID (Can be several update per block)
 
 type CollateralPrice @entity {
   " Equals to: <block_number>-<collateral_type>"
@@ -512,7 +513,7 @@ type CollateralPrice @entity {
   " Price of the collateral discounted by the redemptionPrice and safetyCRatio, price used for bonds mint and redemption "
   safetyPrice: BigDecimal!
 
-  " Price of the collateral discounted by the redemptionPrice an liquidationCRatio, price at which a cdp gets liquidated "
+  " Price of the collateral discounted by the redemptionPrice an liquidationCRatio, price at which a safe gets liquidated "
   liquidationPrice: BigDecimal!
 
   " Collateral price in USD "
@@ -699,8 +700,8 @@ type EnglishAuction @entity {
   " Auction configuration "
   englishAuctionConfiguration: EnglishAuctionConfiguration!
 
-  " Liquidation only! CDP that got liquidated "
-  cdp: Cdp
+  " Liquidation only! Safe that got liquidated "
+  safe: Safe
 
   " Timestamp of the block in which the liquidation was started "
   createdAt: BigInt!
@@ -771,13 +772,13 @@ type FixDiscountCollateralAuction @entity {
   " Collateral type of the auction "
   collateralType: CollateralType!
 
-  " CDP handler address in the CDP engine "
-  cdpHandler: Bytes!
+  " Safe handler address in the Safe engine "
+  safeHandler: Bytes!
 
   " Total collateral for sale "
   initialCollateralAmount: BigDecimal!
 
-  " Total debt of the CDP to be repaid "
+  " Total debt of the Safe to be repaid "
   initialDebtAmount: BigDecimal!
 
   " Minimum amount to raise in bonds (If less is raised, unbacked debt is created) "
@@ -789,8 +790,8 @@ type FixDiscountCollateralAuction @entity {
   " Cumulative collateral amount sold so far.  collateralAmountSold <= initialCollateralAmount"
   collateralAmountSold: BigDecimal
 
-  " Liquidated CDP "
-  cdp: Cdp!
+  " Liquidated Safe "
+  safe: Safe!
 
   " Hard deadline for the auction after which no more bids can be placed  "
   auctionDeadline: BigInt!

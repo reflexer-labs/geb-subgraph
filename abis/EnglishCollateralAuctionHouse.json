@@ -1,7 +1,12 @@
 [
   {
     "inputs": [
-      { "internalType": "address", "name": "cdpEngine_", "type": "address" },
+      { "internalType": "address", "name": "safeEngine_", "type": "address" },
+      {
+        "internalType": "address",
+        "name": "liquidationEngine_",
+        "type": "address"
+      },
       {
         "internalType": "bytes32",
         "name": "collateralType_",
@@ -365,19 +370,6 @@
   },
   {
     "inputs": [],
-    "name": "cdpEngine",
-    "outputs": [
-      {
-        "internalType": "contract CDPEngineLike",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "collateralType",
     "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
     "stateMutability": "view",
@@ -410,6 +402,19 @@
     "name": "increaseBidSize",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "liquidationEngine",
+    "outputs": [
+      {
+        "internalType": "contract LiquidationEngineLike",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -475,6 +480,19 @@
     "name": "restartAuction",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "safeEngine",
+    "outputs": [
+      {
+        "internalType": "contract SAFEEngineLike",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {

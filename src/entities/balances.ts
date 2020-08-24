@@ -4,8 +4,8 @@ import {
   InternalBondBalance,
   InternalCollateralBalance,
   InternalDebtBalance,
-  Cdp,
-  CdpHandlerOwner,
+  Safe,
+  SafeHandlerOwner,
   User,
 } from '../../generated/schema'
 

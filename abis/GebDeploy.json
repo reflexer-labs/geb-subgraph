@@ -1,42 +1,5 @@
 [
   {
-    "anonymous": true,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "bytes4",
-        "name": "sig",
-        "type": "bytes4"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "usr",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "arg1",
-        "type": "bytes32"
-      },
-      {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "arg2",
-        "type": "bytes32"
-      },
-      {
-        "indexed": false,
-        "internalType": "bytes",
-        "name": "data",
-        "type": "bytes"
-      }
-    ],
-    "name": "LogNote",
-    "type": "event"
-  },
-  {
     "anonymous": false,
     "inputs": [
       {
@@ -114,28 +77,6 @@
     "name": "authority",
     "outputs": [
       { "internalType": "contract DSAuthority", "name": "", "type": "address" }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "cdpEngine",
-    "outputs": [
-      { "internalType": "contract CDPEngine", "name": "", "type": "address" }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "cdpEngineFactory",
-    "outputs": [
-      {
-        "internalType": "contract CDPEngineFactory",
-        "name": "",
-        "type": "address"
-      }
     ],
     "stateMutability": "view",
     "type": "function"
@@ -268,13 +209,6 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "deployCDPEngine",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "inputs": [
       { "internalType": "string", "name": "name", "type": "string" },
       { "internalType": "string", "name": "symbol", "type": "string" },
@@ -337,6 +271,13 @@
       }
     ],
     "name": "deployPause",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "deploySAFEEngine",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -431,6 +372,16 @@
   },
   {
     "inputs": [{ "internalType": "address", "name": "usr", "type": "address" }],
+    "name": "giveControl",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "usr", "type": "address" },
+      { "internalType": "address", "name": "target", "type": "address" }
+    ],
     "name": "giveControl",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -613,6 +564,28 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "safeEngine",
+    "outputs": [
+      { "internalType": "contract SAFEEngine", "name": "", "type": "address" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "safeEngineFactory",
+    "outputs": [
+      {
+        "internalType": "contract SAFEEngineFactory",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "contract DSAuthority",
@@ -628,8 +601,8 @@
   {
     "inputs": [
       {
-        "internalType": "contract CDPEngineFactory",
-        "name": "cdpEngineFactory_",
+        "internalType": "contract SAFEEngineFactory",
+        "name": "safeEngineFactory_",
         "type": "address"
       },
       {
@@ -798,6 +771,16 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "usr", "type": "address" },
+      { "internalType": "address", "name": "target", "type": "address" }
+    ],
+    "name": "takeControl",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {

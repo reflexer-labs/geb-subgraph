@@ -2,7 +2,7 @@ import { ethereum, dataSource } from '@graphprotocol/graph-ts'
 
 import { SystemState, AccountingEngine } from '../../generated/schema'
 
-import { AccountingEngine as  AccountingEngineBind } from "../../generated/AccountingEngine/AccountingEngine";
+import { AccountingEngine as AccountingEngineBind } from '../../generated/AccountingEngine/AccountingEngine'
 
 import * as decimal from '../utils/decimal'
 import * as integer from '../utils/integer'
@@ -20,9 +20,9 @@ export function getSystemState(event: ethereum.Event): SystemState {
     state.collateralCount = integer.ZERO
     state.collateralAuctionCount = integer.ZERO
     state.proxyCount = integer.ZERO
-    state.unmanagedCdpCount = integer.ZERO
-    state.cdpCount = integer.ZERO
-    state.totalActiveCdpCount = integer.ZERO
+    state.unmanagedSafeCount = integer.ZERO
+    state.safeCount = integer.ZERO
+    state.totalActiveSafeCount = integer.ZERO
 
     // System parameters
     state.globalStabilityFee = decimal.ZERO
@@ -61,12 +61,11 @@ export function getAccountingEngine(event: ethereum.Event): AccountingEngine {
     engine.surplusBuffer = decimal.ZERO
     engine.disableCooldown = integer.ZERO
     engine.contractEnabled = true
-    engine.cdpEngine = engineContract.cdpEngine()
+    engine.safeEngine = engineContract.safeEngine()
     engine.surplusAuctionHouse = engineContract.surplusAuctionHouse()
     engine.debtAuctionHouse = engineContract.debtAuctionHouse()
     engine.protocolTokenAuthority = engineContract.protocolTokenAuthority()
     engine.postSettlementSurplusDrain = engineContract.postSettlementSurplusDrain()
-
   }
 
   return engine as AccountingEngine

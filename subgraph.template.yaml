@@ -4,25 +4,25 @@ repository: https://github.com/reflexer-labs/geb-subgraph
 schema:
   file: ./schema.graphql
 dataSources:
-  - name: CDPEngine
+  - name: SAFEEngine
     kind: ethereum/contract
     network: {{NETWORK}}
     source:
-      address: '{{GEB_CDP_ENGINE}}'
-      abi: CDPEngine
+      address: '{{GEB_SAFE_ENGINE}}'
+      abi: SAFEEngine
       startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
       language: wasm/assemblyscript
-      file: ./src/mappings/modules/core/cdp-engine.ts
+      file: ./src/mappings/modules/core/safe-engine.ts
       entities:
         - CollateralType
         - SystemState
-        - Cdp
+        - Safe
       abis:
-        - name: CDPEngine
-          file: ./abis/CDPEngine.json
+        - name: SAFEEngine
+          file: ./abis/SAFEEngine.json
       eventHandlers:
         - event: InitializeCollateralType(bytes32)
           handler: handleInitializeCollateralType
@@ -36,12 +36,12 @@ dataSources:
           handler: handleTransferCollateral
         - event: TransferInternalCoins(address,address,uint256)
           handler: handleTransferInternalCoins
-        - event: ModifyCDPCollateralization(bytes32,address,address,address,int256,int256,uint256,uint256,uint256)
-          handler: handleModifyCDPCollateralization
-        - event: TransferCDPCollateralAndDebt(bytes32,address,address,int256,int256,uint256,uint256,uint256,uint256)
-          handler: handleTransferCDPCollateralAndDebt
-        - event: ConfiscateCDPCollateralAndDebt(bytes32,address,address,address,int256,int256,uint256)
-          handler: handleConfiscateCDPCollateralAndDebt
+        - event: ModifySAFECollateralization(bytes32,address,address,address,int256,int256,uint256,uint256,uint256)
+          handler: handleModifySAFECollateralization
+        - event: TransferSAFECollateralAndDebt(bytes32,address,address,int256,int256,uint256,uint256,uint256,uint256)
+          handler: handleTransferSAFECollateralAndDebt
+        - event: ConfiscateSAFECollateralAndDebt(bytes32,address,address,address,int256,int256,uint256)
+          handler: handleConfiscateSAFECollateralAndDebt
         - event: SettleDebt(uint256,uint256,uint256,uint256,uint256)
           handler: handleSettleDebt
         - event: CreateUnbackedDebt(address,address,uint256,uint256,uint256,uint256,uint256)
@@ -49,35 +49,35 @@ dataSources:
         - event: UpdateAccumulatedRate(bytes32,address,int256,uint256,uint256)
           handler: handleUpdateAccumulatedRate
   
-  - name: GebCDPManager
+  - name: GebSafeManager
     kind: ethereum/contract
     network: {{NETWORK}}
     source:
-      address: '{{CDP_MANAGER}}'
-      abi: GebCDPManager
+      address: '{{SAFE_MANAGER}}'
+      abi: GebSafeManager
       startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
       language: wasm/assemblyscript
-      file: ./src/mappings/modules/proxy/cdp-manager.ts
+      file: ./src/mappings/modules/proxy/safe-manager.ts
       entities:
         - CollateralType
         - SystemState
-        - Cdp
+        - Safe
       abis:
-        - name: GebCDPManager
-          file: ./abis/GebCDPManager.json
+        - name: GebSafeManager
+          file: ./abis/GebSafeManager.json
       eventHandlers:
-        - event: OpenCdp(indexed address,indexed address,indexed uint256)
-          handler: handleOpenCdp
-        - event: TransferCDPOwnership(address,uint256,address)
-          handler: handleTransferCDPOwnership
-        - event: AllowCDP(address,uint256,address,uint256)
-          handler: handleAllowCDP
+        - event: OpenSAFE(indexed address,indexed address,indexed uint256)
+          handler: handleOpenSAFE
+        - event: TransferSAFEOwnership(address,uint256,address)
+          handler: handleTransferSAFEOwnership
+        - event: AllowSAFE(address,uint256,address,uint256)
+          handler: handleAllowSAFE
         - event: AllowHandler(address,address,uint256)
           handler: handleAllowHandler
-        # Other events in CDPManager are handled by CDPEngine
+        # Other events in SAFEManager are handled by SAFEEngine
 
   - name: OracleRelayer
     kind: ethereum/contract
@@ -94,7 +94,7 @@ dataSources:
       entities:
         - CollateralType
         - SystemState
-        - Cdp
+        - Safe
       abis:
         - name: OracleRelayer
           file: ./abis/OracleRelayer.json
@@ -189,20 +189,20 @@ dataSources:
         # Remaining events:
         # - event: AddAuthorization(address)
         #   handler: handleAddAuthorization
-        # - event: ConnectCDPSaviour(address)
-        #   handler: handleConnectCDPSaviour
+        # - event: ConnectSAFESaviour(address)
+        #   handler: handleConnectSAFESaviour
         # - event: DisableContract()
         #   handler: handleDisableContract
-        # - event: DisconnectCDPSaviour(address)
-        #   handler: handleDisconnectCDPSaviour
-        # - event: FailedCDPSave(bytes)
-        #   handler: handleFailedCDPSave
-        # - event: ProtectCDP(bytes32,address,address)
-        #   handler: handleProtectCDP
+        # - event: DisconnectSAFESaviour(address)
+        #   handler: handleDisconnectSAFESaviour
+        # - event: FailedSAFESave(bytes)
+        #   handler: handleFailedSAFESave
+        # - event: ProtectSAFE(bytes32,address,address)
+        #   handler: handleProtectSAFE
         # - event: RemoveAuthorization(address)
         #   handler: handleRemoveAuthorization
-        # - event: SaveCDP(indexed bytes32,indexed address,uint256)
-        #   handler: handleSaveCDP
+        # - event: SaveSAFE(indexed bytes32,indexed address,uint256)
+        #   handler: handleSaveSAFE
   
   - name: AccountingEngine
     kind: ethereum/contract

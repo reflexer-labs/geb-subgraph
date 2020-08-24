@@ -1,0 +1,74 @@
+import { dataSource, log } from '@graphprotocol/graph-ts'
+
+import {
+  GebSafeManager,
+  TransferSAFEOwnership,
+  OpenSAFE,
+  AllowSAFE,
+  AllowHandler,
+} from '../../../../generated/GebSafeManager/GebSafeManager'
+import {
+  CollateralType,
+  Safe,
+  InternalBondBalance,
+  InternalDebtBalance,
+  InternalCollateralBalance,
+} from '../../../../generated/schema'
+
+import { updateLastModifySafe, createManagedSafe } from '../../../entities/safe'
+import { findUltimateOwner } from '../../../entities/user'
+
+export function handleOpenSAFE(event: OpenSAFE): void {
+  let manager = GebSafeManager.bind(dataSource.address())
+
+  let collateralType = manager.collateralTypes(event.params.safe)
+  let safeAddress = manager.safes(event.params.safe)
+
+  let collateral = CollateralType.load(collateralType.toString())
+
+  if (collateral != null) {
+    // Register new vault
+    let safe = createManagedSafe(safeAddress, event.params.own, collateralType, event.params.safe, event)
+    log.info('New Manged SAFE, id: #{}, owner {}, address: {}', [
+      safe.safeId.toString(),
+      safe.owner,
+      safeAddress.toHexString(),
+    ])
+    safe.save()
+  } else {
+    log.warning('Wrong collateral type: {}, safe_id: {}, tx_hash: {}', [
+      collateralType.toString(),
+      event.params.safe.toString(),
+      event.transaction.hash.toHexString(),
+    ])
+  }
+}
+
+export function handleTransferSAFEOwnership(event: TransferSAFEOwnership): void {
+  let manager = GebSafeManager.bind(dataSource.address())
+  let collateralType = manager.collateralTypes(event.params.safe)
+  let collateral = CollateralType.load(collateralType.toString())
+  let safeHandler = manager.safes(event.params.safe)
+  let safe = Safe.load(safeHandler.toHexString() + '-' + collateral.id)
+  safe.owner = findUltimateOwner(event.params.dst).toHexString()
+  updateLastModifySafe(safe as Safe, event)
+  safe.save()
+
+  // Transfers balances ownership
+  let bondBalance = InternalBondBalance.load(safeHandler.toHexString())
+  if (bondBalance) bondBalance.owner = safe.owner
+  let debtBalance = InternalDebtBalance.load(safeHandler.toHexString())
+  if (debtBalance) debtBalance.owner = safe.owner
+  let collateralBalance = InternalCollateralBalance.load(safeHandler.toHexString() + '-' + collateralType.toString())
+  if (collateralBalance) collateralBalance.owner = safe.owner
+}
+
+export function handleAllowSAFE(event: AllowSAFE): void {
+  // TODO:
+  log.warning('AllowSAFE not implemented', [])
+}
+
+export function handleAllowHandler(event: AllowHandler): void {
+  // TODO:
+  log.warning('AllowHandler not implemented', [])
+}

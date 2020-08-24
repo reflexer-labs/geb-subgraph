@@ -1,41 +1,10 @@
 [
   {
     "inputs": [
-      { "internalType": "address", "name": "cdpEngine_", "type": "address" }
+      { "internalType": "address", "name": "safeEngine_", "type": "address" }
     ],
     "stateMutability": "nonpayable",
     "type": "constructor"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "sender",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "cdp",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "usr",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "ok",
-        "type": "uint256"
-      }
-    ],
-    "name": "AllowCDP",
-    "type": "event"
   },
   {
     "anonymous": false,
@@ -73,6 +42,37 @@
       },
       {
         "indexed": false,
+        "internalType": "uint256",
+        "name": "safe",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "usr",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "ok",
+        "type": "uint256"
+      }
+    ],
+    "name": "AllowSAFE",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "sender",
+        "type": "address"
+      },
+      {
+        "indexed": false,
         "internalType": "address",
         "name": "src",
         "type": "address"
@@ -80,7 +80,7 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "cdp",
+        "name": "safe",
         "type": "uint256"
       }
     ],
@@ -99,7 +99,7 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "cdp",
+        "name": "safe",
         "type": "uint256"
       },
       {
@@ -115,7 +115,7 @@
         "type": "int256"
       }
     ],
-    "name": "ModifyCDPCollateralization",
+    "name": "ModifySAFECollateralization",
     "type": "event"
   },
   {
@@ -130,17 +130,17 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "cdpSrc",
+        "name": "safeSrc",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "cdpDst",
+        "name": "safeDst",
         "type": "uint256"
       }
     ],
-    "name": "MoveCDP",
+    "name": "MoveSAFE",
     "type": "event"
   },
   {
@@ -161,11 +161,11 @@
       {
         "indexed": true,
         "internalType": "uint256",
-        "name": "cdp",
+        "name": "safe",
         "type": "uint256"
       }
     ],
-    "name": "OpenCdp",
+    "name": "OpenSAFE",
     "type": "event"
   },
   {
@@ -180,7 +180,7 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "cdp",
+        "name": "safe",
         "type": "uint256"
       },
       {
@@ -196,7 +196,7 @@
         "type": "address"
       }
     ],
-    "name": "ProtectCDP",
+    "name": "ProtectSAFE",
     "type": "event"
   },
   {
@@ -211,7 +211,7 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "cdp",
+        "name": "safe",
         "type": "uint256"
       },
       {
@@ -236,32 +236,7 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "cdp",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "dst",
-        "type": "address"
-      }
-    ],
-    "name": "TransferCDPOwnership",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "sender",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "cdp",
+        "name": "safe",
         "type": "uint256"
       },
       {
@@ -298,7 +273,7 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "cdp",
+        "name": "safe",
         "type": "uint256"
       },
       {
@@ -329,7 +304,7 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "cdp",
+        "name": "safe",
         "type": "uint256"
       },
       {
@@ -349,15 +324,29 @@
     "type": "event"
   },
   {
+    "anonymous": false,
     "inputs": [
-      { "internalType": "uint256", "name": "cdp", "type": "uint256" },
-      { "internalType": "address", "name": "usr", "type": "address" },
-      { "internalType": "uint256", "name": "ok", "type": "uint256" }
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "sender",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "safe",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "dst",
+        "type": "address"
+      }
     ],
-    "name": "allowCDP",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "name": "TransferSAFEOwnership",
+    "type": "event"
   },
   {
     "inputs": [
@@ -371,51 +360,13 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "", "type": "address" },
-      { "internalType": "uint256", "name": "", "type": "uint256" },
-      { "internalType": "address", "name": "", "type": "address" }
+      { "internalType": "uint256", "name": "safe", "type": "uint256" },
+      { "internalType": "address", "name": "usr", "type": "address" },
+      { "internalType": "uint256", "name": "ok", "type": "uint256" }
     ],
-    "name": "cdpCan",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [{ "internalType": "address", "name": "", "type": "address" }],
-    "name": "cdpCount",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "cdpEngine",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "name": "cdpList",
-    "outputs": [
-      { "internalType": "uint256", "name": "prev", "type": "uint256" },
-      { "internalType": "uint256", "name": "next", "type": "uint256" }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "cdpi",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "name": "cdps",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
-    "stateMutability": "view",
+    "name": "allowSAFE",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -428,7 +379,7 @@
   {
     "inputs": [
       { "internalType": "address", "name": "src", "type": "address" },
-      { "internalType": "uint256", "name": "cdp", "type": "uint256" }
+      { "internalType": "uint256", "name": "safe", "type": "uint256" }
     ],
     "name": "enterSystem",
     "outputs": [],
@@ -437,7 +388,7 @@
   },
   {
     "inputs": [{ "internalType": "address", "name": "", "type": "address" }],
-    "name": "firstCDPID",
+    "name": "firstSAFEID",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
@@ -454,28 +405,28 @@
   },
   {
     "inputs": [{ "internalType": "address", "name": "", "type": "address" }],
-    "name": "lastCDPID",
+    "name": "lastSAFEID",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "cdp", "type": "uint256" },
+      { "internalType": "uint256", "name": "safe", "type": "uint256" },
       { "internalType": "int256", "name": "deltaCollateral", "type": "int256" },
       { "internalType": "int256", "name": "deltaDebt", "type": "int256" }
     ],
-    "name": "modifyCDPCollateralization",
+    "name": "modifySAFECollateralization",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "cdpSrc", "type": "uint256" },
-      { "internalType": "uint256", "name": "cdpDst", "type": "uint256" }
+      { "internalType": "uint256", "name": "safeSrc", "type": "uint256" },
+      { "internalType": "uint256", "name": "safeDst", "type": "uint256" }
     ],
-    "name": "moveCDP",
+    "name": "moveSAFE",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -489,21 +440,21 @@
       },
       { "internalType": "address", "name": "usr", "type": "address" }
     ],
-    "name": "openCDP",
+    "name": "openSAFE",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "name": "ownsCDP",
+    "name": "ownsSAFE",
     "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "cdp", "type": "uint256" },
+      { "internalType": "uint256", "name": "safe", "type": "uint256" },
       {
         "internalType": "address",
         "name": "liquidationEngine",
@@ -511,14 +462,14 @@
       },
       { "internalType": "address", "name": "saviour", "type": "address" }
     ],
-    "name": "protectCDP",
+    "name": "protectSAFE",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "cdp", "type": "uint256" },
+      { "internalType": "uint256", "name": "safe", "type": "uint256" },
       { "internalType": "address", "name": "dst", "type": "address" }
     ],
     "name": "quitSystem",
@@ -528,17 +479,56 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "cdp", "type": "uint256" },
-      { "internalType": "address", "name": "dst", "type": "address" }
+      { "internalType": "address", "name": "", "type": "address" },
+      { "internalType": "uint256", "name": "", "type": "uint256" },
+      { "internalType": "address", "name": "", "type": "address" }
     ],
-    "name": "transferCDPOwnership",
-    "outputs": [],
-    "stateMutability": "nonpayable",
+    "name": "safeCan",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "name": "safeCount",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "safeEngine",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "name": "safeList",
+    "outputs": [
+      { "internalType": "uint256", "name": "prev", "type": "uint256" },
+      { "internalType": "uint256", "name": "next", "type": "uint256" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "safei",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "name": "safes",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "cdp", "type": "uint256" },
+      { "internalType": "uint256", "name": "safe", "type": "uint256" },
       { "internalType": "address", "name": "dst", "type": "address" },
       { "internalType": "uint256", "name": "wad", "type": "uint256" }
     ],
@@ -554,7 +544,7 @@
         "name": "collateralType",
         "type": "bytes32"
       },
-      { "internalType": "uint256", "name": "cdp", "type": "uint256" },
+      { "internalType": "uint256", "name": "safe", "type": "uint256" },
       { "internalType": "address", "name": "dst", "type": "address" },
       { "internalType": "uint256", "name": "wad", "type": "uint256" }
     ],
@@ -565,11 +555,21 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "cdp", "type": "uint256" },
+      { "internalType": "uint256", "name": "safe", "type": "uint256" },
       { "internalType": "address", "name": "dst", "type": "address" },
       { "internalType": "uint256", "name": "rad", "type": "uint256" }
     ],
     "name": "transferInternalCoins",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "safe", "type": "uint256" },
+      { "internalType": "address", "name": "dst", "type": "address" }
+    ],
+    "name": "transferSAFEOwnership",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

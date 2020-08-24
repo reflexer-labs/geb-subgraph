@@ -2,7 +2,7 @@ import { Address, log, Bytes, ethereum } from '@graphprotocol/graph-ts'
 
 import {
   CollateralType,
-  Cdp,
+  Safe,
   UserProxy,
   InternalCollateralBalance,
   InternalBondBalance,
@@ -18,13 +18,13 @@ import {
   ModifyCollateralBalance,
   TransferCollateral,
   TransferInternalCoins,
-  ModifyCDPCollateralization,
-  TransferCDPCollateralAndDebt,
-  ConfiscateCDPCollateralAndDebt,
+  ModifySAFECollateralization,
+  TransferSAFECollateralAndDebt,
+  ConfiscateSAFECollateralAndDebt,
   SettleDebt,
   CreateUnbackedDebt,
   UpdateAccumulatedRate,
-} from '../../../../generated/CDPEngine/CDPEngine'
+} from '../../../../generated/SAFEEngine/SAFEEngine'
 
 import * as decimal from '../../../utils/decimal'
 import * as integer from '../../../utils/integer'
@@ -40,7 +40,7 @@ import {
   getOrCreateDebtBalance,
   getOrCreateCollateralBalance,
 } from '../../../entities/balances'
-import { createUnmanagedCdp, updateCdpCollateralization } from '../../../entities/cdp'
+import { createUnmanagedSafe, updateSafeCollateralization } from '../../../entities/safe'
 import { updateLastModifySystemState } from '../../../entities/system'
 
 // Register a new collateral type
@@ -123,10 +123,10 @@ export function handleTransferInternalCoins(event: TransferInternalCoins): void 
   dst.save()
 }
 
-// Create or modify a CDP
-export function handleModifyCDPCollateralization(event: ModifyCDPCollateralization): void {
+// Create or modify a SAFE
+export function handleModifySAFECollateralization(event: ModifySAFECollateralization): void {
   let collateralType = event.params.collateralType.toString()
-  let cdpAddress = event.params.cdp
+  let safeAddress = event.params.safe
   let deltaCollateral = event.params.deltaCollateral
   let deltaDebt = event.params.deltaDebt
 
@@ -134,21 +134,21 @@ export function handleModifyCDPCollateralization(event: ModifyCDPCollateralizati
   if (collateral != null) {
     let debt = decimal.fromWad(deltaDebt)
     let collateralBalance = decimal.fromWad(deltaCollateral)
-    let cdpId = cdpAddress.toHexString() + '-' + collateralType
-    let cdp = Cdp.load(cdpId)
+    let safeId = safeAddress.toHexString() + '-' + collateralType
+    let safe = Safe.load(safeId)
     let system = getSystemState(event)
 
-    if (cdp == null) {
-      log.info('New unmanaged: {}', [cdp.id])
-      // Register new unmanaged cdp
-      cdp = createUnmanagedCdp(cdpAddress, event.params.collateralType, event)
-      updateCdpCollateralization(cdp as Cdp, collateralBalance, debt, event)
+    if (safe == null) {
+      log.info('New unmanaged: {}', [safe.id])
+      // Register new unmanaged safe
+      safe = createUnmanagedSafe(safeAddress, event.params.collateralType, event)
+      updateSafeCollateralization(safe as Safe, collateralBalance, debt, event)
     } else {
       // Update existing Vault
-      log.info('Update cpd collateralization of: ', [cdp.id])
-      updateCdpCollateralization(cdp as Cdp, cdp.collateral.plus(collateralBalance), cdp.debt.plus(debt), event)
+      log.info('Update cpd collateralization of: ', [safe.id])
+      updateSafeCollateralization(safe as Safe, safe.collateral.plus(collateralBalance), safe.debt.plus(debt), event)
     }
-    cdp.save()
+    safe.save()
 
     // Update debt counter
     collateral.debtAmount = collateral.debtAmount.plus(debt)
@@ -179,46 +179,46 @@ export function handleModifyCDPCollateralization(event: ModifyCDPCollateralizati
   }
 }
 
-// Split a CDP - binary approval or splitting/merging Vaults
-export function handleTransferCDPCollateralAndDebt(event: TransferCDPCollateralAndDebt): void {
+// Split a SAFE - binary approval or splitting/merging Vaults
+export function handleTransferSAFECollateralAndDebt(event: TransferSAFECollateralAndDebt): void {
   // Both should be non dusty so they exist
-  let srcCdp = Cdp.load(event.params.src.toHexString() + '-' + event.params.collateralType.toString()) as Cdp
-  let dstCdp = Cdp.load(event.params.src.toHexString() + '-' + event.params.collateralType.toString()) as Cdp
+  let srcSafe = Safe.load(event.params.src.toHexString() + '-' + event.params.collateralType.toString()) as Safe
+  let dstSafe = Safe.load(event.params.src.toHexString() + '-' + event.params.collateralType.toString()) as Safe
 
-  updateCdpCollateralization(
-    srcCdp,
-    srcCdp.collateral.minus(decimal.fromWad(event.params.deltaCollateral)),
-    srcCdp.debt.minus(decimal.fromWad(event.params.deltaDebt)),
+  updateSafeCollateralization(
+    srcSafe,
+    srcSafe.collateral.minus(decimal.fromWad(event.params.deltaCollateral)),
+    srcSafe.debt.minus(decimal.fromWad(event.params.deltaDebt)),
     event,
   )
 
-  updateCdpCollateralization(
-    dstCdp,
-    dstCdp.collateral.plus(decimal.fromWad(event.params.deltaCollateral)),
-    dstCdp.debt.plus(decimal.fromWad(event.params.deltaDebt)),
+  updateSafeCollateralization(
+    dstSafe,
+    dstSafe.collateral.plus(decimal.fromWad(event.params.deltaCollateral)),
+    dstSafe.debt.plus(decimal.fromWad(event.params.deltaDebt)),
     event,
   )
 
-  srcCdp.save()
-  dstCdp.save()
+  srcSafe.save()
+  dstSafe.save()
 }
 
-// Liquidate a CDP
-export function handleConfiscateCDPCollateralAndDebt(event: ConfiscateCDPCollateralAndDebt): void {
+// Liquidate a SAFE
+export function handleConfiscateSAFECollateralAndDebt(event: ConfiscateSAFECollateralAndDebt): void {
   let collateralType = event.params.collateralType
   let deltaDebt = decimal.fromWad(event.params.deltaCollateral)
   let deltaCollateral = decimal.fromWad(event.params.deltaCollateral)
 
-  let cdp = Cdp.load(event.params.cdp.toHexString() + '-' + collateralType.toString())
-  cdp.collateral = cdp.collateral.plus(deltaCollateral)
-  cdp.debt = cdp.debt.plus(deltaDebt)
-  cdp.save()
+  let safe = Safe.load(event.params.safe.toHexString() + '-' + collateralType.toString())
+  safe.collateral = safe.collateral.plus(deltaCollateral)
+  safe.debt = safe.debt.plus(deltaDebt)
+  safe.save()
 
   let collateral = getOrCreateCollateral(collateralType, event)
   collateral.debtAmount = collateral.debtAmount.plus(deltaDebt)
   collateral.save()
 
-  // Check the wad rad multiplication confusion here: https://github.com/reflexer-labs/geb/blob/9501696ca6908f0a7e47f59ed1d50c34c0c6c404/src/CDPEngine.sol#L483
+  // Check the wad rad multiplication confusion here: https://github.com/reflexer-labs/geb/blob/9501696ca6908f0a7e47f59ed1d50c34c0c6c404/src/SAFEEngine.sol#L483
   let deltaTotalIssuedDebt = deltaDebt.times(collateral.accumulatedRate)
   let internalCollateralBalance = getOrCreateCollateralBalance(event.params.debtCounterparty, collateralType, event)
   updateCollateralBalance(

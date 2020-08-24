@@ -1,7 +1,7 @@
 [
   {
     "inputs": [
-      { "internalType": "address", "name": "cdpEngine_", "type": "address" }
+      { "internalType": "address", "name": "safeEngine_", "type": "address" }
     ],
     "stateMutability": "nonpayable",
     "type": "constructor"
@@ -29,7 +29,7 @@
         "type": "address"
       }
     ],
-    "name": "ConnectCDPSaviour",
+    "name": "ConnectSAFESaviour",
     "type": "event"
   },
   {
@@ -48,7 +48,7 @@
         "type": "address"
       }
     ],
-    "name": "DisconnectCDPSaviour",
+    "name": "DisconnectSAFESaviour",
     "type": "event"
   },
   {
@@ -61,7 +61,7 @@
         "type": "bytes"
       }
     ],
-    "name": "FailedCDPSave",
+    "name": "FailedSAFESave",
     "type": "event"
   },
   {
@@ -76,7 +76,7 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "cdp",
+        "name": "safe",
         "type": "address"
       },
       {
@@ -124,6 +124,25 @@
       },
       {
         "indexed": false,
+        "internalType": "uint256",
+        "name": "data",
+        "type": "uint256"
+      }
+    ],
+    "name": "ModifyParameters",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "parameter",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
         "internalType": "address",
         "name": "data",
         "type": "address"
@@ -194,7 +213,7 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "cdp",
+        "name": "safe",
         "type": "address"
       },
       {
@@ -204,7 +223,7 @@
         "type": "address"
       }
     ],
-    "name": "ProtectCDP",
+    "name": "ProtectSAFE",
     "type": "event"
   },
   {
@@ -232,7 +251,7 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "cdp",
+        "name": "safe",
         "type": "address"
       },
       {
@@ -242,7 +261,20 @@
         "type": "uint256"
       }
     ],
-    "name": "SaveCDP",
+    "name": "SaveSAFE",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "currentOnAuctionSystemCoins",
+        "type": "uint256"
+      }
+    ],
+    "name": "UpdateCurrentOnAuctionSystemCoins",
     "type": "event"
   },
   {
@@ -275,31 +307,11 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "cdpEngine",
-    "outputs": [
-      {
-        "internalType": "contract CDPEngineLike",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [{ "internalType": "address", "name": "", "type": "address" }],
-    "name": "cdpSaviours",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       { "internalType": "bytes32", "name": "", "type": "bytes32" },
       { "internalType": "address", "name": "", "type": "address" }
     ],
-    "name": "chosenCDPSaviour",
+    "name": "chosenSAFESaviour",
     "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
@@ -320,7 +332,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "collateralToSell",
+        "name": "liquidationQuantity",
         "type": "uint256"
       }
     ],
@@ -331,7 +343,7 @@
     "inputs": [
       { "internalType": "address", "name": "saviour", "type": "address" }
     ],
-    "name": "connectCDPSaviour",
+    "name": "connectSAFESaviour",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -339,6 +351,13 @@
   {
     "inputs": [],
     "name": "contractEnabled",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "currentOnAuctionSystemCoins",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
@@ -354,7 +373,7 @@
     "inputs": [
       { "internalType": "address", "name": "saviour", "type": "address" }
     ],
-    "name": "disconnectCDPSaviour",
+    "name": "disconnectSAFESaviour",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -366,9 +385,9 @@
         "name": "collateralType",
         "type": "bytes32"
       },
-      { "internalType": "address", "name": "cdp", "type": "address" }
+      { "internalType": "address", "name": "safe", "type": "address" }
     ],
-    "name": "liquidateCDP",
+    "name": "liquidateSAFE",
     "outputs": [
       { "internalType": "uint256", "name": "auctionId", "type": "uint256" }
     ],
@@ -417,11 +436,28 @@
   },
   {
     "inputs": [
+      { "internalType": "bytes32", "name": "parameter", "type": "bytes32" },
+      { "internalType": "uint256", "name": "data", "type": "uint256" }
+    ],
+    "name": "modifyParameters",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
       { "internalType": "bytes32", "name": "", "type": "bytes32" },
       { "internalType": "address", "name": "", "type": "address" }
     ],
     "name": "mutex",
     "outputs": [{ "internalType": "uint8", "name": "", "type": "uint8" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "onAuctionSystemCoinLimit",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -432,10 +468,10 @@
         "name": "collateralType",
         "type": "bytes32"
       },
-      { "internalType": "address", "name": "cdp", "type": "address" },
+      { "internalType": "address", "name": "safe", "type": "address" },
       { "internalType": "address", "name": "saviour", "type": "address" }
     ],
-    "name": "protectCDP",
+    "name": "protectSAFE",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -447,6 +483,33 @@
     "name": "removeAuthorization",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "uint256", "name": "rad", "type": "uint256" }],
+    "name": "removeCoinsFromAuction",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "safeEngine",
+    "outputs": [
+      {
+        "internalType": "contract SAFEEngineLike",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "name": "safeSaviours",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
     "type": "function"
   }
 ]

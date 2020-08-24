@@ -59,6 +59,8 @@ export function handleModifyParametersUint(event: ModifyParametersUint): void {
 export function handleAuctionDebt(event: AuctionDebt): void {
   let accounting = getAccountingEngine(event)
   let config = EnglishAuctionConfiguration.load('DEBT')
+
+  
   accounting.totalOnAuctionDebt = accounting.totalOnAuctionDebt.plus(accounting.debtAuctionBidSize)
 
   let id = event.params.id

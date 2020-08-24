@@ -214,20 +214,32 @@ export function handleConfiscateSAFECollateralAndDebt(event: ConfiscateSAFEColla
   safe.debt = safe.debt.plus(deltaDebt)
   safe.save()
 
+  // Update collateral debt counter
   let collateral = getOrCreateCollateral(collateralType, event)
   collateral.debtAmount = collateral.debtAmount.plus(deltaDebt)
   collateral.save()
 
-  // Check the wad rad multiplication confusion here: https://github.com/reflexer-labs/geb/blob/9501696ca6908f0a7e47f59ed1d50c34c0c6c404/src/SAFEEngine.sol#L483
-  let deltaTotalIssuedDebt = deltaDebt.times(collateral.accumulatedRate)
-  let internalCollateralBalance = getOrCreateCollateralBalance(event.params.debtCounterparty, collateralType, event)
-  updateCollateralBalance(
-    internalCollateralBalance,
-    internalCollateralBalance.balance.minus(deltaTotalIssuedDebt),
+  // Update counter party collateral
+  let collateraCounterPartyBalance = getOrCreateCollateralBalance(
+    event.params.collateralCounterparty,
+    collateralType,
     event,
   )
-  internalCollateralBalance.save()
 
+  updateCollateralBalance(
+    collateraCounterPartyBalance,
+    collateraCounterPartyBalance.balance.minus(deltaCollateral),
+    event,
+  )
+  collateraCounterPartyBalance.save()
+
+  // Update counter party debt
+  let deltaTotalIssuedDebt = deltaDebt.times(collateral.accumulatedRate)
+  let debtCounterPartyBalance = getOrCreateDebtBalance(event.params.debtCounterparty, event)
+  updateDebtBalance(debtCounterPartyBalance, debtCounterPartyBalance.balance.minus(deltaTotalIssuedDebt), event)
+  debtCounterPartyBalance.save()
+
+  // Update global debt counter
   let system = getSystemState(event)
   system.globalUnbackedDebt = system.globalUnbackedDebt.minus(deltaTotalIssuedDebt)
   system.save()

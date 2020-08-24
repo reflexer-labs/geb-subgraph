@@ -6,7 +6,7 @@ import {
   FixedDiscountCollateralAuctionHouse,
   BuyCollateral,
 } from '../../../../generated/templates/FixDiscountCollateralAuctionHouse/FixedDiscountCollateralAuctionHouse'
-import { dataSource } from '@graphprotocol/graph-ts'
+import { dataSource, log } from '@graphprotocol/graph-ts'
 import {
   getOrCreateCollateral,
   FixDiscountAuctionConfiguration,
@@ -72,6 +72,11 @@ export function handleBuyCollateral(event: BuyCollateral): void {
 
   let auctionId = collateral.toString() + '-' + id.toString()
   let auction = FixDiscountCollateralAuction.load(auctionId)
+  
+  if(auction == null) {
+    log.error("handleBuyCollateral - auction {} not found.", [auctionId])
+  }
+
   let batch = new FixDiscountAuctionBatch(
     collateral.toString() + '-' + id.toString() + '-' + auction.numberOfBatches.toString(),
   )

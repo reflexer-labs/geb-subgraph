@@ -53,7 +53,11 @@ export function handleModifyParametersCollateralTypeAddress(event: ModifyParamet
       log.info('English auction set for collateral {}', [collateral.id])
 
       // Default auction config
-      let auctionConfiguration = new EnglishAuctionConfiguration(collateral.id)
+      let auctionConfiguration = EnglishAuctionConfiguration.load(collateral.id)
+      if (auctionConfiguration == null) {
+        auctionConfiguration = new EnglishAuctionConfiguration(collateral.id)
+      }
+
       auctionConfiguration.bidIncrease = decimal.fromNumber(1.05)
       auctionConfiguration.bidDuration = integer.HOUR.times(integer.fromNumber(3)) // 3 hours
       auctionConfiguration.LIQUIDATION_bidToMarketPriceRatio = decimal.ZERO
@@ -69,7 +73,10 @@ export function handleModifyParametersCollateralTypeAddress(event: ModifyParamet
       log.info('Start indexing english auction house: {}', [address.toHexString()])
     } else if (auctionType == 'FIXED_DISCOUNT') {
       // Default auction config
-      let auctionConfiguration = new FixDiscountAuctionConfiguration(collateral.id)
+      let auctionConfiguration = FixDiscountAuctionConfiguration.load(collateral.id)
+      if (auctionConfiguration == null) {
+        auctionConfiguration = new FixDiscountAuctionConfiguration(collateral.id)
+      }
       auctionConfiguration.collateralType = collateral.id
       auctionConfiguration.minimumBid = decimal.fromNumber(5)
       auctionConfiguration.totalAuctionLength = integer.DAY.times(integer.fromNumber(7))
@@ -99,10 +106,15 @@ export function handleModifyParametersCollateralTypeAddress(event: ModifyParamet
 export function handleLiquidate(event: Liquidate): void {
   let id = event.params.auctionId
   let collateral = getOrCreateCollateral(event.params.collateralType, event)
-  let config = EnglishAuctionConfiguration.load(collateral.id)
   log.info('Start liquidation id {} of collateral {}', [id.toString(), collateral.id])
 
   if (collateral.auctionType == 'ENGLISH') {
+    let config = EnglishAuctionConfiguration.load(collateral.id)
+
+    if (config == null) {
+      log.error('handleLiquidate - auction configuration {} not found', [collateral.id])
+    }
+
     let liquidation = new EnglishAuction(collateral.id.toString() + '-' + id.toString())
 
     liquidation.auctionId = id
@@ -127,7 +139,13 @@ export function handleLiquidate(event: Liquidate): void {
     liquidation.safe = safe.id
 
     liquidation.save()
-  } else if (collateral.auctionType == 'FIX_DISCOUNT') {
+  } else if (collateral.auctionType == 'FIXED_DISCOUNT') {
+    let config = FixDiscountAuctionConfiguration.load(collateral.id)
+
+    if (config == null) {
+      log.error('handleLiquidate - auction configuration {} not found', [collateral.id])
+    }
+
     let liquidation = new FixDiscountCollateralAuction(collateral.id.toString() + '-' + id.toString())
 
     liquidation.auctionId = id

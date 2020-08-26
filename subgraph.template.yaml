@@ -331,7 +331,7 @@ templates:
       file: ./src/mappings/modules/auctions/discount-collateral-auction-house.ts
       entities:
         - CollateralType
-        - FixDiscountCollateralAuction
+        - FixDiscountAuction
         - FixDiscountAuctionConfiguration
         - FixDiscountAuctionBatch
       abis:
@@ -441,7 +441,7 @@ templates:
       file: ./src/mappings/modules/auctions/debt-auction-house.ts
       entities:
         - CollateralType
-        - FixDiscountCollateralAuction
+        - FixDiscountAuction
         - FixDiscountAuctionConfiguration
         - FixDiscountAuctionBatch
       abis:

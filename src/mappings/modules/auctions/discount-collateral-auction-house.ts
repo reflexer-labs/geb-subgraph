@@ -10,7 +10,7 @@ import { dataSource, log } from '@graphprotocol/graph-ts'
 import {
   getOrCreateCollateral,
   FixDiscountAuctionConfiguration,
-  FixDiscountCollateralAuction,
+  FixDiscountAuction,
   FixDiscountAuctionBatch,
 } from '../../../entities'
 
@@ -71,7 +71,7 @@ export function handleBuyCollateral(event: BuyCollateral): void {
   let collateral = FixedDiscountCollateralAuctionHouse.bind(dataSource.address()).collateralType()
 
   let auctionId = collateral.toString() + '-' + id.toString()
-  let auction = FixDiscountCollateralAuction.load(auctionId)
+  let auction = FixDiscountAuction.load(auctionId)
 
   if (auction == null) {
     log.error('handleBuyCollateral - auction {} not found.', [auctionId])
@@ -83,10 +83,10 @@ export function handleBuyCollateral(event: BuyCollateral): void {
 
   batch.batchNumber = auction.numberOfBatches
   batch.auction = auctionId
-  let remainingToRaise = auction.target.minus(auction.buyAmount)
+  let remainingToRaise = auction.amountToRaise.minus(auction.buyAmount)
   let wad = decimal.fromWad(event.params.wad)
   batch.buyAmount = wad.gt(remainingToRaise) ? remainingToRaise : wad
-  batch.sellAmount = decimal.fromRad(event.params.boughtCollateral)
+  batch.sellAmount = decimal.fromWad(event.params.boughtCollateral)
   batch.price = batch.sellAmount.div(batch.buyAmount)
   batch.buyer = event.transaction.from
   batch.createdAt = event.block.timestamp
@@ -96,7 +96,7 @@ export function handleBuyCollateral(event: BuyCollateral): void {
 
   auction.numberOfBatches = auction.numberOfBatches.plus(integer.ONE)
   auction.buyAmount = auction.buyAmount.plus(batch.buyAmount)
-  auction.sellAmount = auction.sellAmount.plus(batch.sellAmount)
-  auction.isTerminated = auction.sellAmount.equals(decimal.ZERO) ? true : false
+  auction.sellAmount = auction.sellAmount.minus(batch.sellAmount)
+  auction.isTerminated = auction.amountToRaise.equals(auction.buyAmount) ? true : false
   auction.save()
 }

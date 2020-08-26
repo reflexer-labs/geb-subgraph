@@ -47,7 +47,7 @@ type Safe @entity {
   modifySAFECollateralization: [ModifySAFECollateralization!] @derivedFrom(field: "safe")
 
   " English Liquidations auctions of the safe "
-  liquidationFixedDiscount: [FixDiscountCollateralAuction!] @derivedFrom(field: "safe")
+  liquidationFixedDiscount: [FixDiscountAuction!] @derivedFrom(field: "safe")
 
   " English Liquidations auctions of the safe "
   liquidationEnglish: [EnglishAuction!] @derivedFrom(field: "safe")
@@ -833,11 +833,11 @@ type FixDiscountAuctionConfiguration @entity {
   systemCoinOracle: Bytes
 }
 
-type FixDiscountCollateralAuction @entity {
+type FixDiscountAuction @entity {
   " <Collateral type>-<auction ID> "
   id: ID!
 
-  " Auction incrmental id per collateral "
+  " Auction incremental id per collateral "
   auctionId: BigInt!
 
   " Collateral type of the auction "
@@ -849,11 +849,8 @@ type FixDiscountCollateralAuction @entity {
   " Total collateral for sale a the start of the auction "
   sellInitialAmount: BigDecimal!
 
-  " Minimum of bonds to be bough, define the floor price "
-  buyInitialAmount: BigDecimal!
-
-  " Minimum amount to raise in bonds (If less is raised, unbacked debt is created) "
-  target: BigDecimal!
+  " Max amount of bond to raise with the sale of the collateral. After reaching this target, any collateral if returned to the Safe owner  "
+  amountToRaise: BigDecimal!
 
   " Amount raised so far to repay the debt. "
   buyAmount: BigDecimal!
@@ -900,7 +897,7 @@ type FixDiscountAuctionBatch @entity {
   batchNumber: BigInt!
 
   " Auction in which the batch was sold "
-  auction: FixDiscountCollateralAuction!
+  auction: FixDiscountAuction!
 
   " bonds bought in the batch "
   buyAmount: BigDecimal!

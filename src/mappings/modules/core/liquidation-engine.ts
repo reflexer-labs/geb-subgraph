@@ -141,16 +141,15 @@ export function handleLiquidate(event: Liquidate): void {
       log.error('handleLiquidate - auction configuration {} not found', [collateral.id])
     }
 
-    let liquidation = new FixDiscountCollateralAuction(collateral.id.toString() + '-' + id.toString())
+    let liquidation = new FixDiscountAuction(collateral.id.toString() + '-' + id.toString())
 
     liquidation.auctionId = id
     liquidation.collateralType = collateral.id
     liquidation.safeHandler = event.params.safe
     liquidation.sellInitialAmount = decimal.fromWad(event.params.collateralAmount)
-    liquidation.buyInitialAmount = decimal.fromWad(event.params.debtAmount)
-    liquidation.target = decimal.fromRad(event.params.amountToRaise)
+    liquidation.amountToRaise = decimal.fromRad(event.params.amountToRaise)
     liquidation.buyAmount = decimal.ZERO
-    liquidation.sellAmount = decimal.ZERO
+    liquidation.sellAmount = liquidation.sellInitialAmount
     let safe = Safe.load(event.params.safe.toHexString() + '-' + collateral.id)
     liquidation.safe = safe.id
     liquidation.auctionDeadline = config.totalAuctionLength.plus(event.block.timestamp)

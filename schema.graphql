@@ -194,8 +194,8 @@ type CollateralType @entity {
   " Type of collateral auction "
   auctionType: AuctionType
 
-  " Max amount of collateral to sell in one liquidation auction [collateralToSell in LiquidationEngine] "
-  maxCollateralToSellInLiquidations: BigDecimal
+  " Max amount of system coins to request in one auction (If a safe is bigger than this it will be splitted in several auctions) "
+  liquidationQuantity: BigDecimal
 
   " Auction configuration (Fix discount auction only) "
   englishAuctionConfiguration: EnglishAuctionConfiguration

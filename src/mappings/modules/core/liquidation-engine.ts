@@ -10,7 +10,7 @@ import {
   getOrCreateCollateral,
   Safe,
   EnglishAuctionConfiguration,
-  FixDiscountCollateralAuction,
+  FixDiscountAuction,
   FixDiscountAuctionConfiguration,
   EnglishAuction,
 } from '../../../entities'
@@ -28,9 +28,9 @@ export function handleModifyParametersCollateralTypeUint(event: ModifyParameters
   let collateral = getOrCreateCollateral(event.params.collateralType, event)
 
   if (what == 'liquidationPenalty') {
-    collateral.liquidationPenalty = decimal.fromRay(event.params.data)
-  } else if (what == 'collateralToSell') {
-    collateral.maxCollateralToSellInLiquidations = decimal.fromWad(event.params.data)
+    collateral.liquidationPenalty = decimal.fromWad(event.params.data)
+  } else if (what == 'liquidationQuantity') {
+    collateral.liquidationQuantity = decimal.fromRad(event.params.data)
   }
 
   updateLastModifyCollateralType(collateral, event)

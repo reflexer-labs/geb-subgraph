@@ -276,6 +276,65 @@ dataSources:
       eventHandlers:
         - event: Created(indexed address,indexed address,address,address)
           handler: handleCreated
+
+  - name: CoinJoin
+    kind: ethereum/contract
+    network: {{NETWORK}}
+    source:
+      abi: CoinJoin
+      address: '{{GEB_COIN_JOIN}}'
+      startBlock: {{STARTING_BLOCK_NUMBER}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/modules/token/coin-join.ts
+      entities:
+        - CoinJoin
+      abis:
+        - name: CoinJoin
+          file: ./abis/CoinJoin.json
+      eventHandlers:
+        - event: Exit(address,address,uint256)
+          handler: handleExit
+        - event: Join(address,address,uint256)
+          handler: handleJoin
+        # - event: AddAuthorization(address)
+        #   handler: handleAddAuthorization
+        # - event: DisableContract()
+        #   handler: handleDisableContract
+        # - event: RemoveAuthorization(address)
+        #   handler: handleRemoveAuthorization
+  
+  - name: EthAJoin
+    kind: ethereum/contract
+    network: {{NETWORK}}
+    source:
+      abi: BasicCollateralJoin
+      address: '{{GEB_JOIN_ETH_A}}'
+      startBlock: {{STARTING_BLOCK_NUMBER}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/modules/token/collateral-join.ts
+      entities:
+        - CollateralJoin
+      abis:
+        - name: BasicCollateralJoin
+          file: ./abis/BasicCollateralJoin.json
+      eventHandlers:
+        - event: Exit(address,address,uint256)
+          handler: handleExit
+        - event: Join(address,address,uint256)
+          handler: handleJoin
+        # - event: AddAuthorization(address)
+        #   handler: handleAddAuthorization
+        # - event: DisableContract()
+        #   handler: handleDisableContract
+        # - event: RemoveAuthorization(address)
+        #   handler: handleRemoveAuthorization
+
 templates:
   - name: EnglishCollateralAuctionHouse
     kind: ethereum/contract

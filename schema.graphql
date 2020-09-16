@@ -84,10 +84,10 @@ type User @entity {
   collateralExit: CollateralExit @derivedFrom(field: "owner")
 
   " List of bond deposits made into the system "
-  bondJoin: BondJoin @derivedFrom(field: "owner")
+  coinJoin: CoinJoin @derivedFrom(field: "owner")
 
   " List of bond withdrawals made into the system "
-  bondExit: BondExit @derivedFrom(field: "owner")
+  coinExit: CoinExit @derivedFrom(field: "owner")
 }
 
 type UserProxy @entity {
@@ -414,27 +414,27 @@ type InternalBondBalance @entity {
   balance: BigDecimal!
 
   " List of Collateral Joins (= deposits)"
-  joins: [BondJoin!]
+  joins: [CoinJoin!]
 
   " List of Collateral Exits (= withdrawals)"
-  exits: [BondExit!]
+  exits: [CoinExit!]
 
-  " Timestamp of the block in which this Safe was opened [seconds] "
+  " Timestamp of the block in which this balance was first created [seconds] "
   createdAt: BigInt!
 
-  " Block number in which this Safe was opened "
+  " Block number in which this balance was first created "
   createdAtBlock: BigInt!
 
-  " Transaction hash in which this Safe was opened "
+  " Transaction hash in which this balance was first created "
   createdAtTransaction: Bytes!
 
-  " Timestamp of the block in which this Safe was last modified [seconds] "
+  " Timestamp of the block in which this balance was last modified [seconds] "
   modifiedAt: BigInt
 
-  " Block number in which this Safe was last modified "
+  " Block number in which this balance was last modified "
   modifiedAtBlock: BigInt
 
-  " Transaction hash in which this Safe was last modified "
+  " Transaction hash in which this balance was last modified "
   modifiedAtTransaction: Bytes
 }
 
@@ -475,13 +475,16 @@ type CollateralJoin @entity {
   id: ID!
 
   " Join amount "
-  amount: Bytes!
+  amount: BigDecimal!
 
-  " Safe handler owning the balance at the SAFEEninge level "
-  safeHandler: Bytes
+  " Safe handler being credited "
+  safeHandler: Bytes!
 
-  " End user address owning the changed balance "
+  " Owner of the safeHandler "
   owner: User!
+
+  " Source address of the collateral"
+  source: Bytes!
 
   " Collateral type of the Join "
   collateralType: CollateralType!
@@ -501,13 +504,16 @@ type CollateralExit @entity {
   id: ID!
 
   " Exit amount "
-  amount: Bytes!
+  amount: BigDecimal!
 
-  " Safe handler owning the balance at the SAFEEninge level "
+  " Owner of the safeHandler "
   safeHandler: Bytes
 
-  " End user address owning the changed balance "
+  " Owner of the safeHandler "
   owner: User!
+
+  " Account receiving the collateral "
+  recipient: Bytes!
 
   " Collateral type of the Exit "
   collateralType: CollateralType!
@@ -522,18 +528,21 @@ type CollateralExit @entity {
   createdAtTransaction: Bytes!
 }
 
-type BondJoin @entity {
+type CoinJoin @entity {
   "<TX hash>-<Log index>"
   id: ID!
 
   " Join amount "
-  amount: Bytes!
+  amount: BigDecimal!
 
-  " Safe handler owning the balance at the SAFEEninge level "
-  safeHandler: Bytes
+  " Safe handler being credited "
+  safeHandler: Bytes!
 
-  " End user address owning the changed balance "
+  " Owner of the safeHandler "
   owner: User!
+
+  " Source address of the coins"
+  source: Bytes!
 
   " Timestamp of the block in which this Safe was opened [seconds] "
   createdAt: BigInt!
@@ -545,18 +554,21 @@ type BondJoin @entity {
   createdAtTransaction: Bytes!
 }
 
-type BondExit @entity {
+type CoinExit @entity {
   "<TX hash>-<Log index>"
   id: ID!
 
   " Exit amount "
-  amount: Bytes!
+  amount: BigDecimal!
 
   " Safe handler owning the balance at the SAFEEninge level "
-  safeHandler: Bytes
+  safeHandler: Bytes!
 
-  " End user address owning the changed balance "
+  " Owner of the safeHandler "
   owner: User!
+
+  " Account receiving the coins "
+  recipient: Bytes!
 
   " Timestamp of the block in which this Safe was opened [seconds] "
   createdAt: BigInt!

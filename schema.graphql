@@ -932,3 +932,83 @@ type FixDiscountAuctionBatch @entity {
   " Transaction hash in which tthe liquidation was started "
   createdAtTransaction: Bytes!
 }
+
+# --- ERC20 ---
+
+type ERC20Balance @entity {
+  "<tokenAddress>-<address>"
+  id: ID!
+
+  " Address of the ERC20 token "
+  tokenAddress: Bytes!
+
+  " Balance owner address"
+  address: Bytes!
+
+  " Balance amount "
+  balance: BigDecimal!
+
+  " List of account spending allowance (addresses/contracts that can spend the balance)"
+  approvals: [ERC20allowance!] @derivedFrom(field: "balance")
+
+  " Timestamp of the block in which this balance was last modified [seconds] "
+  modifiedAt: BigInt!
+
+  " Block number in which this balance was last modified "
+  modifiedAtBlock: BigInt!
+
+  " Transaction hash in which this balance was last modified "
+  modifiedAtTransaction: Bytes!
+}
+
+type ERC20Transfer @entity {
+  " <TX hash>-<Log index> "
+  id: ID!
+
+  " Address of the ERC20 token "
+  tokenAddress: Bytes!
+
+  " Source address "
+  source: Bytes!
+
+  " Destination address "
+  destination: Bytes!
+
+  " Timestamp of the block in which this transaction was first created [seconds] "
+  createdAt: BigInt!
+
+  " Block number in which this transaction was first created "
+  createdAtBlock: BigInt!
+
+  " Transaction hash in which this transaction was first created "
+  createdAtTransaction: Bytes!
+}
+
+type ERC20allowance @entity {
+  "<tokenAddress>-<address>-<approvedAddress>"
+  id: ID!
+
+  " Address of the ERC20 token "
+  tokenAddress: Bytes!
+
+  " Account address that can be spent from "
+  address: Bytes!
+
+  " Balance that can be spent from "
+  balance: ERC20Balance!
+
+  " Address being aprove to spend the balance "
+  approvedAddress: Bytes!
+
+  " Current token allowance "
+  amount: BigDecimal!
+
+  " Timestamp of the block in which this balance was last modified [seconds] "
+  modifiedAt: BigInt!
+
+  " Block number in which this balance was last modified "
+  modifiedAtBlock: BigInt!
+
+  " Transaction hash in which this balance was last modified "
+  modifiedAtTransaction: Bytes!
+}

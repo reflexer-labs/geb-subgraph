@@ -334,6 +334,36 @@ dataSources:
         #   handler: handleDisableContract
         # - event: RemoveAuthorization(address)
         #   handler: handleRemoveAuthorization
+  
+  - name: Coin
+    kind: ethereum/contract
+    network: {{NETWORK}}
+    source:
+      abi: Coin
+      address: '{{GEB_COIN}}'
+      startBlock: {{STARTING_BLOCK_NUMBER}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/modules/token/coin.ts
+      entities:
+        - ERC20Balance
+        - ERC20Transfer
+        - ERC20allowance
+      abis:
+        - name: Coin
+          file: ./abis/Coin.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer 
+        - event: Approval(indexed address,indexed address,uint256)
+          handler: handleApproval 
+        # - event: AddAuthorization(address)
+        #   handler: handleAddAuthorization 
+        # - event: RemoveAuthorization(address)
+        #   handler: handleRemoveAuthorization 
+
 
 templates:
   - name: EnglishCollateralAuctionHouse

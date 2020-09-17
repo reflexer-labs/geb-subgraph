@@ -433,14 +433,14 @@ templates:
           handler: handleModifyParametersUint
         - event: BuyCollateral(uint256,uint256,uint256)
           handler: handleBuyCollateral
+        - event: SettleAuction(uint256,uint256)
+          handler: handleSettleAuction
         
         # Remaining events:
         # - event: AddAuthorization(address)
         #   handler: handleAddAuthorization
         # - event: RemoveAuthorization(address)
         #   handler: handleRemoveAuthorization
-        # - event: SettleAuction(uint256,uint256)
-        #   handler: handleSettleAuction
         # - event: StartAuction(uint256,uint256,uint256,uint256,uint256,indexed address,indexed address,uint256)
         #   handler: handleStartAuction
         # - event: TerminateAuctionPrematurely(uint256,address,uint256)

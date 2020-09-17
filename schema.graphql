@@ -771,7 +771,7 @@ type EnglishAuction @entity {
   " Address that started the auction "
   startedBy: Bytes!
 
-  " If the bough Tokens was claimed by the auction winner "
+  " If the bought tokens were claimed by the auction winner "
   isClaimed: Boolean!
 
   " Total number of bids "
@@ -890,6 +890,9 @@ type FixDiscountAuction @entity {
 
   " If there is still collateral to be bought in the auction "
   isTerminated: Boolean!
+
+  " If the settle function that return remaining collateral to its owner was called "
+  isSettled: Boolean!
 
   " Timestamp of the block in which the liquidation was started "
   createdAt: BigInt!

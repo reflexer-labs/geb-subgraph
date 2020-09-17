@@ -5,6 +5,7 @@ import {
   ModifyParameters1 as ModifyParametersAddress,
   FixedDiscountCollateralAuctionHouse,
   BuyCollateral,
+  SettleAuction,
 } from '../../../../generated/templates/FixDiscountCollateralAuctionHouse/FixedDiscountCollateralAuctionHouse'
 import { dataSource, log } from '@graphprotocol/graph-ts'
 import {
@@ -98,5 +99,15 @@ export function handleBuyCollateral(event: BuyCollateral): void {
   auction.buyAmount = auction.buyAmount.plus(batch.buyAmount)
   auction.sellAmount = auction.sellAmount.minus(batch.sellAmount)
   auction.isTerminated = auction.amountToRaise.equals(auction.buyAmount) ? true : false
+  auction.save()
+}
+
+export function handleSettleAuction(event: SettleAuction): void {
+  let id = event.params.id
+  let collateral = FixedDiscountCollateralAuctionHouse.bind(dataSource.address()).collateralType()
+  let auctionId = collateral.toString() + '-' + id.toString()
+  let auction = FixDiscountAuction.load(auctionId)
+
+  auction.isSettled = true
   auction.save()
 }

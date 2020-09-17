@@ -157,6 +157,7 @@ export function handleLiquidate(event: Liquidate): void {
     liquidation.numberOfBatches = integer.ZERO
     liquidation.fixDiscountAuctionConfiguration = collateral.id
     liquidation.isTerminated = false
+    liquidation.isSettled = false
     liquidation.createdAt = event.block.timestamp
     liquidation.createdAtBlock = event.block.number
     liquidation.createdAtTransaction = event.transaction.hash

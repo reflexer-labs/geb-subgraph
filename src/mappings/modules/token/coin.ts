@@ -42,13 +42,15 @@ export function handleTransfer(event: Transfer): void {
     amount.toString(),
   ])
 
+  // TODO: Deduct allowance when it's a transferFrom call. (Not possible )
   // Hacky way to figure out if it's a transferFrom or a simple transfer
   // First make sure it's not a burn or mint
-  if (!source.equals(nullAddress) && !destination.equals(nullAddress)) {
-    let contract = Coin.bind(dataSource.address())
-    let srcBalance = getOrCreateERC20Balance(source, tokenAddress, event, false)
-    let msgDotSender: Address
+  // if (!source.equals(nullAddress) && !destination.equals(nullAddress)) {
+  //   let contract = Coin.bind(dataSource.address())
+  //   let srcBalance = getOrCreateERC20Balance(source, tokenAddress, event, false)
+  //   let msgDotSender: Address
 
+   
     // Loop over all the approvals of the source address
     // for (let i = 0; i < srcBalance.approvals.length; i++) {
 
@@ -63,16 +65,17 @@ export function handleTransfer(event: Transfer): void {
     //   }
     // }
 
-    if (msgDotSender) {
-      // It was a transfer from, so deduct the allowance
-      let allowance = getOrCreateERC20BAllowance(source, tokenAddress, msgDotSender, event, false)
-      allowance.amount = allowance.amount.minus(decimal.fromWad(event.params.amount))
-      allowance.modifiedAt = event.block.timestamp
-      allowance.modifiedAtBlock = event.block.number
-      allowance.modifiedAtTransaction = event.transaction.hash
-      allowance.save()
-    }
-  }
+    // if (msgDotSender) {
+    //   // It was a transfer from, so deduct the allowance
+    //   let allowance = getOrCreateERC20BAllowance(source, tokenAddress, msgDotSender, event, false)
+    //   allowance.amount = allowance.amount.minus(decimal.fromWad(event.params.amount))
+    //   allowance.modifiedAt = event.block.timestamp
+    //   allowance.modifiedAtBlock = event.block.number
+    //   allowance.modifiedAtTransaction = event.transaction.hash
+    //   allowance.save()
+    // }
+  // }
+
   let transfer = new ERC20Transfer(eventUid(event))
   transfer.tokenAddress = tokenAddress
   transfer.source = source

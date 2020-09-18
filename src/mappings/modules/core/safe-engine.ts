@@ -219,13 +219,13 @@ export function handleConfiscateSAFECollateralAndDebt(event: ConfiscateSAFEColla
   let deltaCollateral = decimal.fromWad(event.params.deltaCollateral)
 
   let safe = Safe.load(event.params.safe.toHexString() + '-' + collateralType.toString())
-  safe.collateral = safe.collateral.plus(deltaCollateral)
-  safe.debt = safe.debt.plus(deltaDebt)
+  updateSafeCollateralization(safe as Safe, safe.collateral.plus(deltaCollateral), safe.debt.plus(deltaDebt), event)
   safe.save()
 
   // Update collateral debt counter
   let collateral = getOrCreateCollateral(collateralType, event)
   collateral.debtAmount = collateral.debtAmount.plus(deltaDebt)
+  collateral.totalCollateralLockedInSafes = collateral.totalCollateralLockedInSafes.plus(deltaCollateral)
   collateral.save()
 
   // Update counter party collateral

@@ -27,7 +27,6 @@ import * as decimal from '../../../utils/decimal'
 import * as integer from '../../../utils/integer'
 import { getOrCreateCollateral, updateLastModifyCollateralType } from '../../../entities/collateral'
 import {
-
   updateBondBalance,
   updateCollateralBalance,
   updateDebtBalance,
@@ -88,14 +87,21 @@ export function handleModifyParametersCollateralTypeUint(event: ModifyParameters
     collateral.save()
   }
 }
-// Modify a user's collateral balance
+// Modify a user's collateral balance (Called by authorized collateral adapters, mint system coins)
 export function handleModifyCollateralBalance(event: ModifyCollateralBalance): void {
   let account = event.params.account
   let collateral = event.params.collateralType
+  let amount = decimal.fromWad(event.params.wad)
 
+  // Update user balance
   let balance = getOrCreateCollateralBalance(account, collateral, event)
-  updateCollateralBalance(balance, balance.balance.plus(decimal.fromWad(event.params.wad)), event)
+  updateCollateralBalance(balance, balance.balance.plus(amount), event)
   balance.save()
+
+  // Update collateral counter
+  let collateralObj = getOrCreateCollateral(collateral, event)
+  collateralObj.totalCollateral = collateralObj.totalCollateral.plus(amount)
+  collateralObj.save()
 }
 
 // Transfer collateral between users
@@ -127,60 +133,59 @@ export function handleModifySAFECollateralization(event: ModifySAFECollateraliza
   let deltaDebt = decimal.fromWad(event.params.deltaDebt)
 
   let collateral = getOrCreateCollateral(event.params.collateralType, event)
-  if (collateral != null) {
-    let debt = deltaDebt
-    let collateralBalance = deltaCollateral
-    let safeId = safeAddress.toHexString() + '-' + collateralType
-    let safe = Safe.load(safeId)
-    let system = getSystemState(event)
+  let collateralBalance = deltaCollateral
+  let safeId = safeAddress.toHexString() + '-' + collateralType
+  let safe = Safe.load(safeId)
+  let system = getSystemState(event)
 
-    if (safe == null) {
-      log.info('New unmanaged: {}', [safe.id])
-      // Register new unmanaged safe
-      safe = createUnmanagedSafe(safeAddress, event.params.collateralType, event)
-      updateSafeCollateralization(safe as Safe, collateralBalance, debt, event)
-    } else {
-      // Update existing Vault
-      log.info('Update cpd collateralization of: ', [safe.id])
-      updateSafeCollateralization(safe as Safe, safe.collateral.plus(collateralBalance), safe.debt.plus(debt), event)
-    }
-    safe.save()
-
-    // Update debt counter
-    collateral.debtAmount = collateral.debtAmount.plus(debt)
-    updateLastModifyCollateralType(collateral as CollateralType, event)
-    collateral.save()
-
-    system.globalDebt = system.globalDebt.plus(debt)
-    updateLastModifySystemState(system, event)
-    system.save()
-
-    // Update balances
-    let internalCollateralBalance = getOrCreateCollateralBalance(
-      event.params.collateralSource,
-      event.params.collateralType,
-      event,
-      false,
-    )
-    updateCollateralBalance(internalCollateralBalance, internalCollateralBalance.balance.minus(deltaCollateral), event)
-    internalCollateralBalance.save()
-
-    let internalBondBalance = getOrCreateBondBalance(event.params.debtDestination, event)
-    updateBondBalance(internalBondBalance, internalBondBalance.balance.plus(deltaDebt), event)
-    internalBondBalance.save()
-
-    // Create a new modify collateralization update
-    let update = new ModifySAFECollateralizationEntity(eventUid(event))
-    update.safe = safe.id
-    update.safeHandler = safeAddress
-    update.collateralType = collateral.id
-    update.deltaCollateral = deltaCollateral
-    update.deltaDebt = deltaDebt
-    update.createdAt = event.block.timestamp
-    update.createdAtBlock = event.block.number
-    update.createdAtTransaction = event.transaction.hash
-    update.save()
+  if (safe == null) {
+    // It was means that the SafeManager was not used, otherwise they would be a Safe entity already created.
+    log.info('New unmanaged: {}', [safe.id])
+    // Register new unmanaged safe
+    safe = createUnmanagedSafe(safeAddress, event.params.collateralType, event)
+    updateSafeCollateralization(safe as Safe, collateralBalance, deltaDebt, event)
+  } else {
+    // Update existing Vault
+    log.info('Update cpd collateralization of: ', [safe.id])
+    updateSafeCollateralization(safe as Safe, safe.collateral.plus(collateralBalance), safe.debt.plus(deltaDebt), event)
   }
+  safe.save()
+
+  // Update debt and collateral counters
+  collateral.debtAmount = collateral.debtAmount.plus(deltaDebt)
+  collateral.totalCollateralLockedInSafes = collateral.totalCollateralLockedInSafes.plus(deltaCollateral)
+  updateLastModifyCollateralType(collateral as CollateralType, event)
+  collateral.save()
+
+  system.globalDebt = system.globalDebt.plus(deltaDebt)
+  updateLastModifySystemState(system, event)
+  system.save()
+
+  // Update balances
+  let internalCollateralBalance = getOrCreateCollateralBalance(
+    event.params.collateralSource,
+    event.params.collateralType,
+    event,
+    false,
+  )
+  updateCollateralBalance(internalCollateralBalance, internalCollateralBalance.balance.minus(deltaCollateral), event)
+  internalCollateralBalance.save()
+
+  let internalBondBalance = getOrCreateBondBalance(event.params.debtDestination, event)
+  updateBondBalance(internalBondBalance, internalBondBalance.balance.plus(deltaDebt), event)
+  internalBondBalance.save()
+
+  // Create a new modify collateralization update
+  let update = new ModifySAFECollateralizationEntity(eventUid(event))
+  update.safe = safe.id
+  update.safeHandler = safeAddress
+  update.collateralType = collateral.id
+  update.deltaCollateral = deltaCollateral
+  update.deltaDebt = deltaDebt
+  update.createdAt = event.block.timestamp
+  update.createdAtBlock = event.block.number
+  update.createdAtTransaction = event.transaction.hash
+  update.save()
 }
 
 // Split a SAFE - binary approval or splitting/merging Vaults

@@ -30,6 +30,9 @@ export function getOrCreateCollateral(collateralType: Bytes, event: ethereum.Eve
     collateral.unmanagedSafeCount = integer.ZERO
     collateral.safeCount = integer.ZERO
 
+    collateral.totalCollateral = decimal.ZERO
+    collateral.totalCollateralLockedInSafes = decimal.ZERO
+
     collateral.createdAt = event.block.timestamp
     collateral.createdAtBlock = event.block.number
     collateral.createdAtTransaction = event.transaction.hash

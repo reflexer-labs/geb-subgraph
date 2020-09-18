@@ -155,6 +155,12 @@ type CollateralType @entity {
   " Min debt per Safe [bond] "
   debtFloor: BigDecimal!
 
+  " Total collateral deposited in the system (depostied in the adapter) "
+  totalCollateral: BigDecimal!
+
+  " Total collateral deposited in the system and locked in a safe "
+  totalCollateralLockedInSafes: BigDecimal!
+
   " Current market price [USD] "
   currentPrice: CollateralPrice
 

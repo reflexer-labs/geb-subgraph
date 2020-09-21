@@ -1,0 +1,35 @@
+on:
+  push:
+    branches:
+      - master
+
+name: Deploy to VM
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: save private key to file
+      run: cat ${{SSH_PRIVATE_KEY}} > key.pem
+    - name: rsync over ssh
+      run: |
+        echo "Cleaup..."
+        docker stop $(docker ps -aq)
+        docker rm $(docker ps -aq)
+        rm -rf geb-subgraph
+        echo "Clone repo..."
+        git clone https://github.com/reflexer-labs/geb-subgraph
+        cd geb-subgraph/docker
+        if docker-compose ps --services | grep graph-node
+        then 
+        echo "Redeploy subgraph only..."
+        sudo chmod -R +rxw data/
+        docker-compose up --build graph-deployer
+        else
+        echo "Redeploy all..."
+        sudo rm -rf data
+        docker-compose up --build -d
+        fi
+   

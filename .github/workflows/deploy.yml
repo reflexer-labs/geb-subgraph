@@ -21,9 +21,9 @@ jobs:
       uses: shimataro/ssh-key-action@v2
       with:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
-        known_hosts: ${{ secrets.VM_IP }}
-        config: ${{ secrets.CONFIG }} # ssh_config; optional
-    - name: rsync over ssh
+        name: id_rsa
+        known_hosts: ${{ secrets.KNOWN_HOSTS }}
+    - name: deploy over ssh
       env:
         VM_IP: ${{ secrets.VM_IP }}
         ETHEREUM_RPC: ${{secrets.ETHEREUM_RPC}}

@@ -30,27 +30,27 @@ jobs:
         POSTGRES_PASSWORD: ${{secrets.POSTGRES_PASSWORD}}
         NETWORK: ${{secrets.NETWORK}}
       run: |
-        ssh -tt -o StrictHostKeyChecking=no ubuntu@$VM_IP
-          export ETHEREUM_RPC=https://parity0.kovan.makerfoundation.com:8545
-          export POSTGRES_PASSWORD=$POSTGRES_PASSWORD
-          export NETWORK=$NETWORK
-          bash -c '
-              echo "Cleaup..."
-              docker stop $(docker ps -aq)
-              docker rm $(docker ps -aq)
-              rm -rf geb-subgraph
-              echo "Clone repo..."
-              git clone https://github.com/reflexer-labs/geb-subgraph
-              cd geb-subgraph/docker
-              if docker-compose ps --services | grep graph-node
-              then 
-              echo "Redeploy subgraph only..."
-              sudo chmod -R +rxw data/
-              docker-compose up --build graph-deployer
-              else
-              echo "Redeploy all..."
-              sudo rm -rf data
-              docker-compose up --build -d
-              fi
-              '
+        ssh ubuntu@$VM_IP ls
+#           export ETHEREUM_RPC=https://parity0.kovan.makerfoundation.com:8545
+#           export POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+#           export NETWORK=$NETWORK
+#           bash -c '
+#               echo "Cleaup..."
+#               docker stop $(docker ps -aq)
+#               docker rm $(docker ps -aq)
+#               rm -rf geb-subgraph
+#               echo "Clone repo..."
+#               git clone https://github.com/reflexer-labs/geb-subgraph
+#               cd geb-subgraph/docker
+#               if docker-compose ps --services | grep graph-node
+#               then 
+#               echo "Redeploy subgraph only..."
+#               sudo chmod -R +rxw data/
+#               docker-compose up --build graph-deployer
+#               else
+#               echo "Redeploy all..."
+#               sudo rm -rf data
+#               docker-compose up --build -d
+#               fi
+#               '
    

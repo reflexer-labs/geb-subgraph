@@ -25,12 +25,34 @@ jobs:
 #         known_hosts: ${{ secrets.KNOWN_HOSTS }}
     - name: executing remote ssh commands using ssh key
       uses: appleboy/ssh-action@master
+      env:
+       ETHEREUM_RPC: ${{secrets.ETHEREUM_RPC}}
+       POSTGRES_PASSWORD: ${{secrets.POSTGRES_PASSWORD}}
+       NETWORK: ${{secrets.NETWORK}}
       with:
         host: ${{ secrets.VM_IP }}
         username: ubuntu
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: 22
-        script: whoami
+        envs: ETHEREUM_RPC,POSTGRES_PASSWORD,NETWORK
+        script: |
+          echo "Cleaup..."
+          docker stop $(docker ps -aq)
+          docker rm $(docker ps -aq)
+          rm -rf geb-subgraph
+          echo "Clone repo..."
+          git clone https://github.com/reflexer-labs/geb-subgraph
+          cd geb-subgraph/docker
+          if docker-compose ps --services | grep graph-node
+          then 
+          echo "Redeploy subgraph only..."
+          sudo chmod -R +rxw data/
+          docker-compose up --build graph-deployer
+          else
+          echo "Redeploy all..."
+          sudo rm -rf data
+          docker-compose up --build -d
+          fi
 #     - name: deploy over ssh
 #       env:
 #         VM_IP: ${{ secrets.VM_IP }}

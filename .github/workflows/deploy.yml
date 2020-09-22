@@ -23,14 +23,22 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         name: id_rsa
         known_hosts: ${{ secrets.KNOWN_HOSTS }}
-    - name: deploy over ssh
-      env:
-        VM_IP: ${{ secrets.VM_IP }}
-        ETHEREUM_RPC: ${{secrets.ETHEREUM_RPC}}
-        POSTGRES_PASSWORD: ${{secrets.POSTGRES_PASSWORD}}
-        NETWORK: ${{secrets.NETWORK}}
-      run: |
-        ssh ubuntu@$VM_IP ls
+    - name: executing remote ssh commands using ssh key
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.VM_IP }}
+        username: ubuntu
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: 22
+        script: whoami
+#     - name: deploy over ssh
+#       env:
+#         VM_IP: ${{ secrets.VM_IP }}
+#         ETHEREUM_RPC: ${{secrets.ETHEREUM_RPC}}
+#         POSTGRES_PASSWORD: ${{secrets.POSTGRES_PASSWORD}}
+#         NETWORK: ${{secrets.NETWORK}}
+#       run: |
+#         ssh ubuntu@$VM_IP ls
 #           export ETHEREUM_RPC=https://parity0.kovan.makerfoundation.com:8545
 #           export POSTGRES_PASSWORD=$POSTGRES_PASSWORD
 #           export NETWORK=$NETWORK

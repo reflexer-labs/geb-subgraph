@@ -11,12 +11,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: save private key to file
-      run: |
-        echo $SSH_PRIVATE_KEY > key.pem
-        sudo chmod 600 key.pem
-      env:
-        SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
+#     - name: save private key to file
+#       run: |
+#         echo $SSH_PRIVATE_KEY > key.pem
+#         sudo chmod 600 key.pem
+#       env:
+#         SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
+    - name: Install SSH key
+      uses: shimataro/ssh-key-action@v2
+      with:
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        known_hosts: ${{ secrets.VM_IP }}
+        config: ${{ secrets.CONFIG }} # ssh_config; optional
     - name: rsync over ssh
       env:
         VM_IP: ${{ secrets.VM_IP }}
@@ -28,7 +34,7 @@ jobs:
         echo ubuntu@$VM_IP
         echo $NETWORK
         cat key.pem
-        ssh -o StrictHostKeyChecking=no -i key.pem ubuntu@52.35.96.137
+        ssh ubuntu@VM_IP
           export ETHEREUM_RPC=https://parity0.kovan.makerfoundation.com:8545
           export POSTGRES_PASSWORD=$POSTGRES_PASSWORD
           export NETWORK=$NETWORK

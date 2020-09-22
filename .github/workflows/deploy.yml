@@ -12,7 +12,9 @@ jobs:
 
     steps:
     - name: save private key to file
-      run: echo $SSH_PRIVATE_KEY > key.pem
+      run: |
+        echo $SSH_PRIVATE_KEY > key.pem
+        sudo chmod 600 key.pem
       env:
         SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
     - name: rsync over ssh

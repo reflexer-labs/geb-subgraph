@@ -23,10 +23,12 @@ jobs:
         NETWORK: ${{secrets.NETWORK}}
       run: |
         ls -l
-        ssh -i key.pem ubuntu@$VM_IP \
-          export ETHEREUM_RPC=https://parity0.kovan.makerfoundation.com:8545 \
-          export POSTGRES_PASSWORD=$POSTGRES_PASSWORD \
-          export NETWORK=$NETWORK \
+        echo ubuntu@$VM_IP
+        echo $NETWORK
+        ssh -i key.pem ubuntu@$VM_IP
+          export ETHEREUM_RPC=https://parity0.kovan.makerfoundation.com:8545
+          export POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+          export NETWORK=$NETWORK
           bash -c '
               echo "Cleaup..."
               docker stop $(docker ps -aq)

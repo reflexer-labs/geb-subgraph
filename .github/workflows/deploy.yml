@@ -39,7 +39,7 @@ jobs:
           echo "Cleaup..."
           docker stop $(docker ps -aq)
           docker rm $(docker ps -aq)
-          rm -rf geb-subgraph
+          sudo rm -rf geb-subgraph
           echo "Clone repo..."
           git clone https://github.com/reflexer-labs/geb-subgraph
           cd geb-subgraph/docker

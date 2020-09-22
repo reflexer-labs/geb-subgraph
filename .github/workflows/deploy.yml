@@ -30,7 +30,7 @@ jobs:
         POSTGRES_PASSWORD: ${{secrets.POSTGRES_PASSWORD}}
         NETWORK: ${{secrets.NETWORK}}
       run: |
-        ssh ubuntu@VM_IP
+        ssh ubuntu@V$M_IP
           export ETHEREUM_RPC=https://parity0.kovan.makerfoundation.com:8545
           export POSTGRES_PASSWORD=$POSTGRES_PASSWORD
           export NETWORK=$NETWORK

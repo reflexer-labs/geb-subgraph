@@ -26,7 +26,7 @@ jobs:
         echo ubuntu@$VM_IP
         echo $NETWORK
         cat key.pem
-        ssh -i key.pem ubuntu@52.35.96.137
+        ssh -o StrictHostKeyChecking=no -i key.pem ubuntu@52.35.96.137
           export ETHEREUM_RPC=https://parity0.kovan.makerfoundation.com:8545
           export POSTGRES_PASSWORD=$POSTGRES_PASSWORD
           export NETWORK=$NETWORK

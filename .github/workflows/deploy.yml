@@ -12,7 +12,9 @@ jobs:
 
     steps:
     - name: save private key to file
-      run: cat ${{SSH_PRIVATE_KEY}} > key.pem
+      run: cat $SSH_PRIVATE_KEY > key.pem
+      env:
+        SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
     - name: rsync over ssh
       env:
         VM_IP: ${{ secrets.VM_IP }}

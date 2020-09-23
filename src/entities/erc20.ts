@@ -50,7 +50,7 @@ export function getOrCreateERC20BAllowance(
     }
 
     allowance = new ERC20allowance(id)
-    allowance.tokenAddress
+    allowance.tokenAddress = tokenAddress
     allowance.address = address
     allowance.balance = balance.id
     allowance.approvedAddress = approvedAddress

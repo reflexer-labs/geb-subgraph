@@ -669,9 +669,6 @@ type EnglishAuctionConfiguration @entity {
   " Maximum auction length "
   totalAuctionLength: BigInt!
 
-  " Minimum mandatory size of the first bid compared to collateral price coming from the oracle "
-  LIQUIDATION_bidToMarketPriceRatio: BigDecimal
-
   " OSM contract"
   LIQUIDATION_osm: Bytes
 

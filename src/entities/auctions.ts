@@ -40,7 +40,6 @@ export function getOrCreateEnglishAuctionConfiguration(
     let contract = EnglishCollateralAuctionHouse.bind(houseAddress as Address)
     config.bidIncrease = decimal.fromWad(contract.bidIncrease())
     config.bidDuration = contract.bidDuration()
-    config.LIQUIDATION_bidToMarketPriceRatio = decimal.fromRay(contract.bidToMarketPriceRatio())
     config.LIQUIDATION_collateralType = contract.collateralType().toString()
     config.totalAuctionLength = contract.totalAuctionLength()
   }

@@ -333,7 +333,10 @@
       { "internalType": "uint256", "name": "wad", "type": "uint256" }
     ],
     "name": "getCollateralBought",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      { "internalType": "uint256", "name": "", "type": "uint256" },
+      { "internalType": "uint256", "name": "", "type": "uint256" }
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },

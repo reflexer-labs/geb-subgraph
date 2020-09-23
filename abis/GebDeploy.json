@@ -242,11 +242,6 @@
         "internalType": "address",
         "name": "systemCoinOracle",
         "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "bidToMarketPriceRatio",
-        "type": "uint256"
       }
     ],
     "name": "deployCollateral",
@@ -271,6 +266,25 @@
       }
     ],
     "name": "deployPause",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "protesterLifetime",
+        "type": "uint256"
+      },
+      { "internalType": "uint256", "name": "delay", "type": "uint256" },
+      {
+        "internalType": "contract DSAuthority",
+        "name": "authority",
+        "type": "address"
+      }
+    ],
+    "name": "deployProtestPause",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -544,6 +558,32 @@
   },
   {
     "inputs": [],
+    "name": "protestPause",
+    "outputs": [
+      {
+        "internalType": "contract DSProtestPause",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "protestPauseFactory",
+    "outputs": [
+      {
+        "internalType": "contract ProtestPauseFactory",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "releaseAuth",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -708,6 +748,11 @@
       {
         "internalType": "contract PauseFactory",
         "name": "pauseFactory_",
+        "type": "address"
+      },
+      {
+        "internalType": "contract ProtestPauseFactory",
+        "name": "protestPauseFactory_",
         "type": "address"
       },
       {

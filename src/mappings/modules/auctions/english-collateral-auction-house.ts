@@ -48,8 +48,6 @@ export function handleModifyParametersUint(event: ModifyParametersUint): void {
     config.bidDuration = val
   } else if (what == 'totalAuctionLength') {
     config.totalAuctionLength = val
-  } else if (what == 'bidToMarketPriceRatio') {
-    config.LIQUIDATION_bidToMarketPriceRatio = decimal.fromRay(val)
   }
 
   config.save()

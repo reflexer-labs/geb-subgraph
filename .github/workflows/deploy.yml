@@ -42,7 +42,7 @@ jobs:
           cd geb-subgraph/docker
           docker-compose stop graph-node
           git pull
-          sudo chmod -R +rxw data/
+          sudo chmod -R 777 data/
           docker-compose start graph-node
           docker-compose up --build graph-deployer
           else

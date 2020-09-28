@@ -40,10 +40,9 @@ jobs:
           then 
           echo "Redeploy subgraph only..."
           cd geb-subgraph/docker
-          docker-compose stop graph-node
+          docker-compose stop graph-node postgres
           git pull
-          sudo chmod -R 777 data/
-          docker-compose start graph-node
+          sudo chmod -R +rwx data/
           docker-compose up --build graph-deployer
           else
           echo "Redeploy all..."

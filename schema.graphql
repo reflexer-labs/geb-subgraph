@@ -1,77 +1,75 @@
 # --- Safes & Users ---
 
 type Safe @entity {
-  " Equals to: <safeHandler>-<CollateralType> "
+  " Equal to: <safeHandler>-<CollateralType> "
   id: ID!
 
-  " Safe ID if this Safe was created through the manager (GebSafeManager) "
+  " Safe ID if this Safe was created through the Safe Manager (GebSafeManager) "
   safeId: BigInt
 
-  " Collateral type associated to this safe "
+  " Collateral type associated with this Safe "
   collateralType: CollateralType!
 
-  " Assets locked as collateral (safeCollateral) "
+  " Amount of collateral locked in the Safe "
   collateral: BigDecimal!
 
-  " Outstanding debt "
+  " Outstanding Safe debt "
   debt: BigDecimal!
 
-  " safeHandler address (ownership at the SAFEEngine level) "
+  " The address of the Safe handler (ownership at the SAFEEngine level if the Safe was created using GebSafeManager) "
   safeHandler: Bytes!
 
-  " Address of Safe owner (top level ownership)"
+  " Address of the Safe owner (top level ownership)"
   owner: User!
 
-  " Optional, address of the proxy if the owner is using a proxy "
+  " Optional proxy address (if the owner used a proxy to create the Safe) "
   proxy: UserProxy
 
-  " Timestamp of the block in which this Safe was opened [seconds] "
+  " Timestamp of the block at which this Safe was opened [seconds] "
   createdAt: BigInt!
 
-  " Block number in which this Safe was opened "
+  " Block number at which this Safe was opened "
   createdAtBlock: BigInt!
 
-  " Transaction hash in which this Safe was opened "
+  " Hash of the transaction that opened the Safe "
   createdAtTransaction: Bytes!
 
-  " Timestamp of the block in which this Safe was last modified [seconds] "
+  " Timestamp of the block at which this Safe was last modified [seconds] "
   modifiedAt: BigInt
 
-  " Block number in which this Safe was last modified "
+  " Block number at which this Safe was last modified "
   modifiedAtBlock: BigInt
 
-  " Transaction hash in which this Safe was last modified "
+  " Hash of the transaction that last modified the Safe "
   modifiedAtTransaction: Bytes
 
-  " List of changes in collateralization "
+  " List of CRatio changes "
   modifySAFECollateralization: [ModifySAFECollateralization!] @derivedFrom(field: "safe")
 
-  " English Liquidations auctions of the safe "
+  " List of fixed discount auctions associated with this Safe "
   liquidationFixedDiscount: [FixDiscountAuction!] @derivedFrom(field: "safe")
 
-  " English Liquidations auctions of the safe "
+  " List of English auctions associated with this Safe "
   liquidationEnglish: [EnglishAuction!] @derivedFrom(field: "safe")
 }
 
 type User @entity {
-  # End user of the system listing its Safes, balances, proxies, etc...
-
-  " Account address "
+  " Account ID "
   id: ID!
 
   " Account address "
   address: Bytes!
 
-  " Up to one per collateral type"
+  " List of proxies associated with the user's address (for now limited to maximum one) "
   proxies: [UserProxy!] @derivedFrom(field: "owner")
 
-  " Safe owned "
+  " List of Safes owned by this user "
   safes: [Safe!] @derivedFrom(field: "owner")
 
   " List of collateral balances "
   collateralBalance: [InternalCollateralBalance!] @derivedFrom(field: "owner")
 
-  " List of bonds balances "
+  " List of system coin balances "
   bondBalance: [InternalBondBalance!] @derivedFrom(field: "owner")
 
   " List of debt balances "
@@ -80,13 +78,13 @@ type User @entity {
   " List of collateral deposits made into the system "
   collateralJoin: CollateralJoin @derivedFrom(field: "owner")
 
-  " List of collateral withdrawals made into the system "
+  " List of collateral withdrawals made out of the system "
   collateralExit: CollateralExit @derivedFrom(field: "owner")
 
-  " List of bond deposits made into the system "
+  " List of system coin deposits made into the system "
   coinJoin: CoinJoin @derivedFrom(field: "owner")
 
-  " List of bond withdrawals made into the system "
+  " List of system coin withdrawals made out of the system "
   coinExit: CoinExit @derivedFrom(field: "owner")
 }
 
@@ -100,22 +98,22 @@ type UserProxy @entity {
   " Cache contract address "
   cache: Bytes!
 
-  " User reference "
+  " Owner address "
   owner: User!
 }
 
 type SafeHandlerOwner @entity {
-  # To lookup the owner of a safeHandler, only for managed Safes
+  # Used to look up the owner of a safeHandler. Only for Safes managed through the GebSafeManager
 
-  " SafeHandler address "
+  " safeHandler address "
   id: ID!
 
-  " Owner of the safeHandler address (If owned by a proxy this will be the proxy's owner)"
+  " Owner of the safeHandler address (if the Safe is owner by a proxy this will be the proxy's owner) "
   owner: User!
 }
 
 type ModifySAFECollateralization @entity {
-  "<TX hash>-<Log index>"
+  " Equal to: <TX hash>-<Log index> "
   id: ID!
 
   " Safe modified "
@@ -133,13 +131,13 @@ type ModifySAFECollateralization @entity {
   " Change in debt "
   deltaDebt: BigDecimal!
 
-  " Timestamp of the block in which this Safe was opened [seconds] "
+  " Timestamp of the block at which this Safe was created [seconds] "
   createdAt: BigInt!
 
-  " Block number in which this Safe was opened "
+  " Block number at which this Safe was created "
   createdAtBlock: BigInt!
 
-  " Transaction hash in which this Safe was opened "
+  " Hash of the transaction that created this Safe "
   createdAtTransaction: Bytes!
 }
 
@@ -149,117 +147,117 @@ type CollateralType @entity {
   " Collateral type name "
   id: ID!
 
-  " Debt ceiling [bond] (line) "
+  " Debt ceiling/upper limit "
   debtCeiling: BigDecimal!
 
-  " Min debt per Safe [bond] "
+  " Minimum permitted debt per Safe/lower limit "
   debtFloor: BigDecimal!
 
-  " Total collateral deposited in the system (depostied in the adapter) "
+  " Total collateral deposited in the system (deposited in this collateral's specific adapter) "
   totalCollateral: BigDecimal!
 
-  " Total collateral deposited in the system and locked in a safe "
+  " Total collateral deposited in the system and locked in Safes "
   totalCollateralLockedInSafes: BigDecimal!
 
-  " Current market price [USD] "
+  " Current market price "
   currentPrice: CollateralPrice
 
-  " Asset/bonds exchange rate (rate), interest accrued on this collateral type "
+  " Total interest accrued on this collateral type "
   accumulatedRate: BigDecimal!
 
-  " Total debt backed by this collateral type [bonds]"
+  " Total debt backed by this collateral type "
   debtAmount: BigDecimal!
 
-  " collateral price with safety margin. Used to limit the amount of debt that can be generated per one unit of collateral "
+  " Collateral price with safety margin. Used to limit the amount of debt that can be generated per one unit of collateral "
   safetyCRatio: BigDecimal!
 
-  " Collateral price with safety margin. Used only in LiquidationEngine when a Safe is liquidated "
+  " Collateral price with liquidation margin. Used only in LiquidationEngine when a Safe is liquidated "
   liquidationCRatio: BigDecimal!
 
-  " OSM contract address for the colateral (price source)"
+  " Address of the FSM contract used for this colateral type "
   osmAddress: Bytes
 
-  " Stability fee rate per second for the collateral "
+  " Per second stability fee "
   stabilityFee: BigDecimal!
 
   " Time of the last stability fee update "
   stabilityFeeLastUpdatedAt: BigInt!
 
-  " Number of Safe NOT opened through the manager (SafeManager) "
+  " Number of Safes backed by this collateral type and NOT opened through the manager (GebSafeManager) "
   unmanagedSafeCount: BigInt!
 
-  " Number of Safes opened through the manager (SafeManager) "
+  " Number of Safes backed by this collateral type that were opened through the manager (GebSafeManager) "
   safeCount: BigInt!
 
   " Penalty applied to every liquidation involving this collateral type "
   liquidationPenalty: BigDecimal!
 
-  " Address of the liquidation auction smart contract "
+  " Address of the auction smart contract handling this collateral type "
   collateralAuctionHouseAddress: Bytes!
 
   " Type of collateral auction "
   auctionType: AuctionType
 
-  " Max amount of system coins to request in one auction (If a safe is bigger than this it will be splitted in several auctions) "
+  " Max amount of system coins to sell in one auction "
   liquidationQuantity: BigDecimal
 
-  " Auction configuration (Fix discount auction only) "
+  " Auction configuration (English only) "
   englishAuctionConfiguration: EnglishAuctionConfiguration
 
-  " Auction configuration (English auction only) "
+  " Auction configuration (fixed discount only) "
   fixDiscountAuctionConfiguration: FixDiscountAuctionConfiguration
 
-  " Timestamp of the block in which this collateral type was added [seconds] "
+  " Timestamp of the block at which this collateral type was added [seconds] "
   createdAt: BigInt!
 
-  " Block number in which this collateral type was added "
+  " Block number at which this collateral type was added "
   createdAtBlock: BigInt!
 
-  " Transaction hash in which this collateral type was added "
+  " Hash of the transaction that added this collateral type "
   createdAtTransaction: Bytes!
 
-  " Timestamp of the block in which this collateral type was last modified [seconds] "
+  " Timestamp of the block at which this collateral type was last modified [seconds] "
   modifiedAt: BigInt
 
-  " Block number in which this collateral type was last modified "
+  " Block number at which this collateral type was last modified "
   modifiedAtBlock: BigInt
 
-  " Transaction hash in which this collateral type was last modified "
+  " Hash of the transaction that last modified this collateral type "
   modifiedAtTransaction: Bytes
 }
 
 type SystemState @entity {
-  " Singleton entity. Equals to 'current' "
+  " Singleton entity. Always set to 'current' "
   id: ID!
 
-  " Number of Safes opened through the manager (SafeManager) "
+  " Number of Safes opened through the manager (GebSafeManager) "
   safeCount: BigInt!
 
-  " Number of Safes NOT opened through the manager (SafeManager) "
+  " Number of Safes NOT opened through the manager (GebSafeManager) "
   unmanagedSafeCount: BigInt!
 
-  " Total number of Safes with collateral > 0 or debt > 0"
+  " Total number of Safes with debt > 0 and/or collateral > 0"
   totalActiveSafeCount: BigInt!
 
   " Number of user proxies created "
   proxyCount: BigInt!
 
-  " Total debt issued in bonds across all collaterals "
+  " Total debt issued across all collateral types "
   globalDebt: BigDecimal!
 
-  " Total unbacked debt issued in bonds across all collaterals "
+  " Total unbacked debt across all collateral types "
   globalUnbackedDebt: BigDecimal!
 
-  " Total global Debt Ceiling "
+  " Global debt ceiling "
   globalDebtCeiling: BigDecimal!
 
   " Number of collateral types registered "
   collateralCount: BigInt!
 
-  " Base rate for stability fee per second add for all collaterals "
+  " Base per second stability fee applied to all collateral types "
   globalStabilityFee: BigDecimal!
 
-  " Savings Rate "
+  " Savings rate "
   savingsRate: BigDecimal!
 
   " Number of collateral auctions started "
@@ -271,59 +269,59 @@ type SystemState @entity {
   " Latest redemption price "
   currentRedemptionPrice: RedemptionPrice
 
-  " Timestamp of the block in which the system was created [seconds] "
+  " Timestamp of the block at which the system was created [seconds] "
   createdAt: BigInt!
 
-  " Block number in which the system was created "
+  " Block number at which the system was created "
   createdAtBlock: BigInt!
 
-  " Transaction hash in which the system was created "
+  " Hash of the transaction that started to create the system "
   createdAtTransaction: Bytes!
 
-  " Timestamp of the block in which the system was last modified [seconds] "
+  " Timestamp of the block at which the system was last modified [seconds] "
   modifiedAt: BigInt
 
-  " Block number in which the system was last modified "
+  " Block number at which the system was last modified "
   modifiedAtBlock: BigInt
 
-  " Transaction hash in which the system was last modified "
+  " Transaction hash at which the system was last modified "
   modifiedAtTransaction: Bytes
 
-  # TODO: Flap and flop auctions parameters used to be here. Add the auction abstraction class.
+  # TODO: Surplus and debt auction parameters used to be here. Add the auction abstraction class.
 }
 
 type AccountingEngine @entity {
-  " current "
+  " Always set th 'current' "
   id: ID!
 
   " Total debt in the queue (that the system tries to cover with collateral auctions) "
   totalQueuedDebt: BigDecimal!
 
-  " Total debt being auctioned in DebtAuctionHouse (printing protocol tokens for coins that will settle the debt) "
+  " Total debt being auctioned in DebtAuctionHouse "
   totalOnAuctionDebt: BigDecimal!
 
-  " When the last surplus auction was triggered; enforces a delay in case we use DEX surplus auctions "
+  " When the last surplus auction was triggered "
   lastSurplusAuctionTime: BigInt
 
   " Delay between surplus auctions "
   surplusAuctionDelay: BigInt!
 
-  " Delay after which debt can be popped from debtQueue "
+  " Delay after which debt can be popped from the debtQueue (from the moment it's added) "
   popDebtDelay: BigInt!
 
-  " Amount of protocol tokens to be minted post-auction "
+  " Amount of protocol tokens to be minted after a debt auction "
   initialDebtAuctionMintedTokens: BigDecimal!
 
-  " Amount of debt sold in one debt auction (initial coin bid for initialDebtAuctionMintedTokens protocol tokens) "
+  " Amount of debt sold in one debt auction "
   debtAuctionBidSize: BigDecimal!
 
   " Amount of surplus stability fees sold in one surplus auction "
   surplusAuctionAmountToSell: BigDecimal!
 
-  " Amount of stability fees that need to accrue in this contract before any surplus auction can start "
+  " Amount of stability fees that need to accrue in the engine before any surplus auction can start "
   surplusBuffer: BigDecimal!
 
-  " Time to wait (post settlement) until any remaining surpluscan be transferred to the settlement auctioneer "
+  " Time to wait (post settlement) until any remaining surplus can be transferred to the settlement surplus auctioneer "
   disableCooldown: BigInt!
 
   " When the contract was disabled "
@@ -335,71 +333,71 @@ type AccountingEngine @entity {
   " Safe database "
   safeEngine: Bytes!
 
-  " Contract that handles auctions for surplus stability fees (sell coins for protocol tokens that are then burned) "
+  " Contract that handles auctions for surplus stability fees "
   surplusAuctionHouse: Bytes!
 
-  " Contract that handles auctions for debt that couldn't be covered by collateral auctions (it prints protocol tokens in exchange for coins that will settle the debt) "
+  " Contract that handles auctions for debt that couldn't be covered by collateral auctions "
   debtAuctionHouse: Bytes!
 
-  " Permissions registry for who can burn and mint protocol tokens "
+  " Permissions registry dictating who can burn and mint protocol tokens "
   protocolTokenAuthority: Bytes!
 
-  " Contract that auctions extra surplus after settlement is triggered "
+  " Addredd of the contract that auctions extra surplus after settlement is triggered "
   postSettlementSurplusDrain: Bytes!
 
-  " Timestamp of the block in which the Accounting engine was last modified [seconds] "
+  " Timestamp of the block at which the Accounting engine was last modified [seconds] "
   modifiedAt: BigInt
 
-  " Block number in which the Accounting engine was last modified "
+  " Block number at which the Accounting engine was last modified "
   modifiedAtBlock: BigInt
 
-  " Transaction hash in which the Accounting engine was last modified "
+  " Hash of the transaction that last modified the accounting engine "
   modifiedAtTransaction: Bytes
 }
 
 # --- Balances & Deposits/Withdrawals ---
 
 type InternalCollateralBalance @entity {
-  " Equals to: <accountHandler>-<CollateralType> "
+  " Equal to: <accountHandler>-<CollateralType> "
   id: ID!
 
-  " Account ownership at the Safeengine level "
+  " Account ownership at the SafeEngine level "
   accountHandler: Bytes!
 
-  " Ultimate owner of the balance (The accountHandler or the Proxy)"
+  " Ultimate owner of the balance "
   owner: User!
 
-  " Collateral type of the balance "
+  " Collateral type "
   collateralType: CollateralType!
 
-  " Proxy address if the balance belongs to a proxy "
+  " Proxy address (if the balance belongs to a proxy) "
   proxy: UserProxy
 
   " Actual balance "
   balance: BigDecimal!
 
-  " List of Collateral Joins (= deposits)"
+  " List of collateral joins (deposits) "
   joins: [CollateralJoin!]
 
-  " List of Collateral Exits (= withdrawals)"
+  " List of collateral exits (withdrawals) "
   exits: [CollateralExit!]
 
-  " Timestamp of the block in which this Safe was opened [seconds] "
+  " Timestamp of the block at which this balance was created [seconds] "
   createdAt: BigInt!
 
-  " Block number in which this Safe was opened "
+  " Block number at which this balance was created "
   createdAtBlock: BigInt!
 
-  " Transaction hash in which this Safe was opened "
+  " Hash of the transaction that created this balance "
   createdAtTransaction: Bytes!
 
-  " Timestamp of the block in which this Safe was last modified [seconds] "
+  " Timestamp of the block at which this balance was last modified [seconds] "
   modifiedAt: BigInt
 
-  " Block number in which this Safe was last modified "
+  " Block number at which this balance was last modified "
   modifiedAtBlock: BigInt
 
-  " Transaction hash in which this Safe was last modified "
+  " Hash of the transaction that last modified this transaction "
   modifiedAtTransaction: Bytes
 }
 
@@ -407,7 +405,7 @@ type InternalBondBalance @entity {
   " Equals to: <accountHandler> "
   id: ID!
 
-  " Account ownership at the Safeengine level "
+  " Account ownership at the SafeEngine level "
   accountHandler: Bytes!
 
   " Ultimate owner of the balance (The accountHandler or the Proxy)"
@@ -625,7 +623,7 @@ type RedemptionPrice @entity {
   " Rate of change of the redemption price, output from the feedback mechanism"
   redemptionRate: BigDecimal!
 
-  " Value of the redemption price, the price of redemption of a reflex bond"
+  " Redemption price value "
   value: BigDecimal!
 }
 
@@ -639,7 +637,7 @@ type RedemptionRate @entity {
   " Timestamp in seconds "
   timestamp: BigInt!
 
-  " Reflex bond price for redemption "
+  " The redemption price "
   redemptionPrice: BigDecimal!
 
   " Rate of change of the redemption price, output from the feedback mechanism"

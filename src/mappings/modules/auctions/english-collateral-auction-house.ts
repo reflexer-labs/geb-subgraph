@@ -27,7 +27,7 @@ export function handleModifyParametersAddress(event: ModifyParametersAddress): v
   if (what == 'oracleRelayer') {
     config.LIQUIDATION_oracleRelayer = address
   } else if (what == 'osm') {
-    config.LIQUIDATION_osm = address
+    config.LIQUIDATION_fsm = address
   }
 
   config.save()

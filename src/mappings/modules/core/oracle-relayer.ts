@@ -57,7 +57,7 @@ export function handleModifyParametersCollateralTypeAddress(event: ModifyParamet
   if (what == 'orcl') {
     let collateral = getOrCreateCollateral(event.params.collateralType, event)
 
-    collateral.osmAddress = event.params.addr
+    collateral.fsmAddress = event.params.addr
     collateral.modifiedAt = event.block.timestamp
     collateral.modifiedAtBlock = event.block.number
     collateral.modifiedAtTransaction = event.transaction.hash

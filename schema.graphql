@@ -175,7 +175,7 @@ type CollateralType @entity {
   liquidationCRatio: BigDecimal!
 
   " Address of the FSM contract used for this colateral type "
-  osmAddress: Bytes
+  fsmAddress: Bytes
 
   " Per second stability fee "
   stabilityFee: BigDecimal!
@@ -667,8 +667,8 @@ type EnglishAuctionConfiguration @entity {
   " Maximum auction length "
   totalAuctionLength: BigInt!
 
-  " OSM contract"
-  LIQUIDATION_osm: Bytes
+  " FSM contract"
+  LIQUIDATION_fsm: Bytes
 
   " Oracle relayer contract "
   LIQUIDATION_oracleRelayer: Bytes
@@ -818,16 +818,16 @@ type FixDiscountAuctionConfiguration @entity {
   " Discount (compared to the system coin's current redemption price) at which collateral is being sold "
   discount: BigDecimal!
 
-  " Max lower bound deviation that the collateral median can have compared to the OSM price "
+  " Max lower bound deviation that the collateral median can have compared to the FSM price "
   lowerCollateralMedianDeviation: BigDecimal!
 
-  " Max upper bound deviation that the collateral median can have compared to the OSM price "
+  " Max upper bound deviation that the collateral median can have compared to the FSM price "
   upperCollateralMedianDeviation: BigDecimal!
 
-  " Max lower bound deviation that the system coin oracle price feed can have compared to the OSM price "
+  " Max lower bound deviation that the system coin oracle price feed can have compared to the FSM price "
   lowerSystemCoinMedianDeviation: BigDecimal!
 
-  " Max upper bound deviation that the collateral median can have compared to the OSM price "
+  " Max upper bound deviation that the collateral median can have compared to the FSM price "
   upperSystemCoinMedianDeviation: BigDecimal!
 
   " Min deviation for the system coin median result compared to the redemption price in order to take the median into account "
@@ -836,8 +836,8 @@ type FixDiscountAuctionConfiguration @entity {
   " Oracle relayer contract "
   oracleRelayer: Bytes
 
-  " Collateral OSM contract address "
-  collateralOSM: Bytes
+  " Collateral FSM contract address "
+  collateralFSM: Bytes
 
   " Collateral Medianizer contract "
   collateralMedian: Bytes

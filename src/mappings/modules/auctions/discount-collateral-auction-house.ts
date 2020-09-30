@@ -57,7 +57,7 @@ export function handleModifyParametersAddress(event: ModifyParametersAddress): v
   if (what == 'oracleRelayer') {
     config.oracleRelayer = address
   } else if (what == 'collateralOSM') {
-    config.collateralOSM = address
+    config.collateralFSM = address
   } else if (what == 'collateralMedian') {
     config.collateralMedian = address
   } else if (what == 'systemCoinOracle') {

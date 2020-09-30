@@ -363,6 +363,47 @@ dataSources:
         #   handler: handleAddAuthorization 
         # - event: RemoveAuthorization(address)
         #   handler: handleRemoveAuthorization 
+  - name: ProtestPause
+    kind: ethereum/contract
+    network: {{NETWORK}}
+    source:
+      abi: DSProtestPause
+      address: '{{GEB_PAUSE}}'
+      startBlock: {{STARTING_BLOCK_NUMBER}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/modules/governance/ds-protest-pause.ts
+      entities:
+        - DsPauseScheduledTransaction
+
+      abis:
+        - name: DSProtestPause
+          file: ./abis/DSProtestPause.json
+      eventHandlers:
+        - event: ScheduleTransaction(address,address,bytes32,bytes,uint256)
+          handler: handleScheduleTransaction
+        - event: AttachTransactionDescription(address,address,bytes32,bytes,uint256,string)
+          handler: handleAttachTransactionDescription
+        - event: ExecuteTransaction(address,address,bytes32,bytes,uint256)
+          handler: handleExecuteTransaction
+        - event: AbandonTransaction(address,address,bytes32,bytes,uint256)
+          handler: handleAbandonTransaction
+        # - event: ChangeDelayMultiplier(uint256)
+        #   handler: handleChangeDelayMultiplier
+        # - event: LogNote(indexed bytes4,indexed address,indexed bytes32,indexed bytes32,uint256,bytes)
+        #   handler: handleLogNote
+        # - event: LogSetAuthority(indexed address)
+        #   handler: handleLogSetAuthority
+        # - event: LogSetOwner(indexed address)
+        #   handler: handleLogSetOwner
+        # - event: ProtestAgainstTransaction(address,address,bytes32,bytes,uint256)
+        #   handler: handleProtestAgainstTransaction
+        # - event: SetDelay(uint256)
+        #   handler: handleSetDelay
+        # - event: SetProtester(address)
+        #   handler: handleSetProtester
 
 
 templates:

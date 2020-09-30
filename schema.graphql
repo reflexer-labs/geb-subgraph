@@ -487,19 +487,19 @@ type CollateralJoin @entity {
   " Owner of the safeHandler "
   owner: User!
 
-  " Source address of the collateral"
+  " Source of the collateral"
   source: Bytes!
 
-  " Collateral type of the Join "
+  " Collateral type handled by the CollateralJoin contract "
   collateralType: CollateralType!
 
-  " Timestamp of the block in which this Safe was opened [seconds] "
+  " Timestamp of the block at which this join action happened [seconds] "
   createdAt: BigInt!
 
-  " Block number in which this Safe was opened "
+  " Block number at which this join action happened "
   createdAtBlock: BigInt!
 
-  " Transaction hash in which this Safe was opened "
+  " Hash of the join transaction "
   createdAtTransaction: Bytes!
 }
 
@@ -507,36 +507,36 @@ type CollateralExit @entity {
   "<TX hash>-<Log index>"
   id: ID!
 
-  " Exit amount "
+  " Exited amount "
   amount: BigDecimal!
 
-  " Owner of the safeHandler "
+  " Safe handler being debited "
   safeHandler: Bytes
 
   " Owner of the safeHandler "
   owner: User!
 
-  " Account receiving the collateral "
+  " Account receiving the exited collateral "
   recipient: Bytes!
 
-  " Collateral type of the Exit "
+  " Collateral type exited "
   collateralType: CollateralType!
 
-  " Timestamp of the block in which this Safe was opened [seconds] "
+  " Timestamp of the block at which this exit was executed [seconds] "
   createdAt: BigInt!
 
-  " Block number in which this Safe was opened "
+  " Block number at which this exit was executed "
   createdAtBlock: BigInt!
 
-  " Transaction hash in which this Safe was opened "
+  " Transaction hash at which this exit was executed "
   createdAtTransaction: Bytes!
 }
 
 type CoinJoin @entity {
-  "<TX hash>-<Log index>"
+  "Equal to: <TX hash>-<Log index>"
   id: ID!
 
-  " Join amount "
+  " Joined amount "
   amount: BigDecimal!
 
   " Safe handler being credited "
@@ -545,16 +545,16 @@ type CoinJoin @entity {
   " Owner of the safeHandler "
   owner: User!
 
-  " Source address of the coins"
+  " Source address of the coins "
   source: Bytes!
 
-  " Timestamp of the block in which this Safe was opened [seconds] "
+  " Timestamp of the block at which this transaction was executed [seconds] "
   createdAt: BigInt!
 
-  " Block number in which this Safe was opened "
+  " Block number at which this transaction was executed "
   createdAtBlock: BigInt!
 
-  " Transaction hash in which this Safe was opened "
+  " Hash of the transaction that executed the join "
   createdAtTransaction: Bytes!
 }
 
@@ -562,33 +562,33 @@ type CoinExit @entity {
   "<TX hash>-<Log index>"
   id: ID!
 
-  " Exit amount "
+  " Exited amount "
   amount: BigDecimal!
 
-  " Safe handler owning the balance at the SAFEEninge level "
+  " Safe handler owning the balance at the SAFEEngine level "
   safeHandler: Bytes!
 
   " Owner of the safeHandler "
   owner: User!
 
-  " Account receiving the coins "
+  " Account that received the coins "
   recipient: Bytes!
 
-  " Timestamp of the block in which this Safe was opened [seconds] "
+  " Timestamp of the block at which this transaction was executed [seconds] "
   createdAt: BigInt!
 
-  " Block number in which this Safe was opened "
+  " Block number at which this transaction was executed "
   createdAtBlock: BigInt!
 
-  " Transaction hash in which this Safe was opened "
+  " Hash of the transaction that executed this exit "
   createdAtTransaction: Bytes!
 }
 
 # --- Prices ---
-# TODO: Do not use block as ID (Can be several update per block)
+# TODO: Do not use block as ID (there can be several updates per block)
 
 type CollateralPrice @entity {
-  " Equals to: <block_number>-<collateral_type>"
+  " Equal to: <block_number>-<collateral_type>"
   id: ID!
 
   " Block number "
@@ -600,13 +600,13 @@ type CollateralPrice @entity {
   " Collateral type "
   collateral: CollateralType!
 
-  " Price of the collateral discounted by the redemptionPrice and safetyCRatio, price used for coins mint and redemption "
+  " Price of the collateral divided by the redemptionPrice and then divided again by the safetyCRatio "
   safetyPrice: BigDecimal!
 
-  " Price of the collateral discounted by the redemptionPrice an liquidationCRatio, price at which a safe gets liquidated "
+  " Price of the collateral divided by the redemptionPrice and then divided again by the liquidationCRatio "
   liquidationPrice: BigDecimal!
 
-  " Collateral price in USD "
+  " Collateral price in denomination currency "
   value: BigDecimal!
 }
 
@@ -620,7 +620,7 @@ type RedemptionPrice @entity {
   " Timestamp in seconds "
   timestamp: BigInt!
 
-  " Rate of change of the redemption price, output from the feedback mechanism"
+  " The rate of change of the redemption price "
   redemptionRate: BigDecimal!
 
   " Redemption price value "
@@ -628,7 +628,7 @@ type RedemptionPrice @entity {
 }
 
 type RedemptionRate @entity {
-  " Equals to: <block_number>"
+  " Equal to: <block_number>"
   id: ID!
 
   " Block number "
@@ -640,7 +640,7 @@ type RedemptionRate @entity {
   " The redemption price "
   redemptionPrice: BigDecimal!
 
-  " Rate of change of the redemption price, output from the feedback mechanism"
+  " The rate of change of the redemption price "
   value: BigDecimal!
 }
 
@@ -652,13 +652,13 @@ enum AuctionType {
 }
 
 type EnglishAuctionConfiguration @entity {
-  " Collateral type name OR 'DEBT' OR 'SURPLUS_PRE' OR 'SURPLUS_POST' "
+  " Collateral type name, 'DEBT', 'SURPLUS_PRE' or 'SURPLUS_POST' "
   id: ID!
 
-  " Collateral type"
+  " Collateral type "
   LIQUIDATION_collateralType: CollateralType
 
-  " Minimum bid increase ratio i.g: 1.05 means 5% bid increase minimum "
+  " Minimum bid increase (e.g 1.05 means a minimum 5% increase for the next bid compared to the current one) "
   bidIncrease: BigDecimal!
 
   " How long the auction lasts after a new bid is submitted "
@@ -667,48 +667,48 @@ type EnglishAuctionConfiguration @entity {
   " Maximum auction length "
   totalAuctionLength: BigInt!
 
-  " FSM contract"
+  " FSM contract "
   LIQUIDATION_fsm: Bytes
 
   " Oracle relayer contract "
   LIQUIDATION_oracleRelayer: Bytes
 
-  " Amount sold increased upon auction restart (Debt auction only) "
+  " Increase in amount sold upon auction restart (used only for DEBT auctions) "
   DEBT_amountSoldIncrease: BigDecimal
 }
 
 type EnglishAuctionBid @entity {
-  "<collateral type id OR 'DEBT' OR 'SURPLUS_PRE' OR 'SURPLUS_POST'>-<auction id>-<bid number>"
+  " Collateral type name or 'DEBT', 'SURPLUS_PRE' or 'SURPLUS_POST'. Equal to: <collateral type>-<auction id>-<bid number> "
   id: ID!
 
-  " Incremental id of the bid "
+  " Incremental bid id "
   bidNumber: BigInt!
 
-  " Type, either increase buy or decrease sell "
+  " Bid type, either increase buy or decrease sell "
   type: EnglishBidType!
 
-  " Auction to which the bid belongs if it's a bid on a collateral auction"
+  " Auction to which the bid belongs (if it's a bid on a collateral auction) "
   auction: EnglishAuction
 
-  " How many token we are selling in the auction "
+  " How many tokens/coins are sold in the auction "
   sellAmount: BigDecimal!
 
-  " How many token we are buying in the auction "
+  " How many tokens are being bought from the auction "
   buyAmount: BigDecimal!
 
-  " Collateral price ( sellAmount / buyAMount ) "
+  " Price of the asset being sold (sellAmount / buyAmount) "
   price: BigDecimal!
 
-  " Bidder address"
+  " Bidder address "
   bidder: Bytes
 
-  " Timestamp of the block in which the liquidation was started "
+  " Timestamp of the block at which the liquidation started "
   createdAt: BigInt!
 
-  " Block number in which the liquidation was started "
+  " Block number at which the liquidation started "
   createdAtBlock: BigInt!
 
-  " Transaction hash in which tthe liquidation was started "
+  " Hash of the transaction that started the liquidation "
   createdAtTransaction: Bytes!
 }
 
@@ -733,37 +733,37 @@ enum EnglishBidType {
 }
 
 type EnglishAuction @entity {
-  " <collateral type OR 'DEBBT' OR 'SURPLUS_PRE' OR 'SURPLUS_POST'>-<auction id> "
+  " Collateral type name or 'DEBT', 'SURPLUS_PRE' or 'SURPLUS_POST'. Equal toL <collateral type>-<auction id> "
   id: ID!
 
-  " Auction incrmental id per collateral "
+  " Incremental auction id "
   auctionId: BigInt!
 
-  " Whether it's a liquidation, surplus auction or debt auction "
+  " Whether the auction handles collateral, surplus or debt "
   englishAuctionType: EnglishAuctionType!
 
-  " Token being sold "
+  " Token/coin being sold "
   sellToken: AuctionToken!
 
-  " Token being bought "
+  " Token/coin being bought "
   buyToken: AuctionToken!
 
-  " Amount of token that the system is selling a the start of the auction  "
+  " Amount of tokens that the system is selling at the start of the auction  "
   sellInitialAmount: BigDecimal!
 
-  " Amount of token that the system is buying a the start of the auction  "
+  " Amount of tokens that the system is buying at the start of the auction  "
   buyInitialAmount: BigDecimal!
 
-  " Amount of token that the system is currently selling in the auction "
+  " Amount of tokens that the system is currently selling in the auction "
   sellAmount: BigDecimal!
 
-  " Amount of token that the system is currently buying in the auction "
+  " Amount of tokens that that are currently being bought in the auction "
   buyAmount: BigDecimal!
 
-  " Sell price ( sellAmount / buyAMount ) of the best offer "
+  " Sell price (sellAmount / buyAMount) of the best offer "
   price: BigDecimal
 
-  " For collateral auctions only! Threshold of buyToken between which the system increase the amount of buyToken and which it start to drecrease to amount of sellToken "
+  " Used for collateral auctions only. Threshold of buyToken at which the system starts to decrease the amount sold "
   targetAmount: BigDecimal
 
   " Auction winner "
@@ -772,50 +772,50 @@ type EnglishAuction @entity {
   " Address that started the auction "
   startedBy: Bytes!
 
-  " If the bought tokens were claimed by the auction winner "
+  " Whether the bought tokens were claimed by the auction winner "
   isClaimed: Boolean!
 
   " Total number of bids "
   numberOfBids: BigInt!
 
-  " Deadline for the auction after which no more bids can be placed. Note: A new bid can postpone the deadline  "
+  " Deadline for the auction after which no more bids can be placed  "
   auctionDeadline: BigInt!
 
-  " List of individual bid "
+  " List of individual bids "
   englishAuctionBids: [EnglishAuctionBid!] @derivedFrom(field: "auction")
 
   " Auction configuration "
   englishAuctionConfiguration: EnglishAuctionConfiguration!
 
-  " Liquidation only! Safe that got liquidated "
+  " Used only for collateral auctions. This is the Safe that got liquidated "
   safe: Safe
 
-  " Timestamp of the block in which the liquidation was started "
+  " Timestamp of the block at which the auction started "
   createdAt: BigInt!
 
-  " Block number in which the liquidation was started "
+  " Block number at which the auction started "
   createdAtBlock: BigInt!
 
-  " Transaction hash in which tthe liquidation was started "
+  " Hash of the transaction that started the auction "
   createdAtTransaction: Bytes!
 }
 
-# --- Fix Discount Auction ---
+# --- Fixed Discount Auction ---
 
 type FixDiscountAuctionConfiguration @entity {
   " Collateral type name "
   id: ID!
 
-  " Collateral type"
+  " Collateral type "
   collateralType: CollateralType!
 
   " Minimum acceptable bid "
   minimumBid: BigDecimal!
 
-  " Total length of the auction "
+  " Total length of the auction [seconds] "
   totalAuctionLength: BigInt!
 
-  " Discount (compared to the system coin's current redemption price) at which collateral is being sold "
+  " Discount (compared to the collateral's current price introduced in the system) at which collateral is being sold "
   discount: BigDecimal!
 
   " Max lower bound deviation that the collateral median can have compared to the FSM price "
@@ -824,10 +824,10 @@ type FixDiscountAuctionConfiguration @entity {
   " Max upper bound deviation that the collateral median can have compared to the FSM price "
   upperCollateralMedianDeviation: BigDecimal!
 
-  " Max lower bound deviation that the system coin oracle price feed can have compared to the FSM price "
+  " Max lower bound deviation that the system coin oracle price feed can have compared to the system coin oracle "
   lowerSystemCoinMedianDeviation: BigDecimal!
 
-  " Max upper bound deviation that the collateral median can have compared to the FSM price "
+  " Max upper bound deviation that the collateral median can have compared to the system coin oracle "
   upperSystemCoinMedianDeviation: BigDecimal!
 
   " Min deviation for the system coin median result compared to the redemption price in order to take the median into account "
@@ -839,36 +839,36 @@ type FixDiscountAuctionConfiguration @entity {
   " Collateral FSM contract address "
   collateralFSM: Bytes
 
-  " Collateral Medianizer contract "
+  " Collateral medianizer contract "
   collateralMedian: Bytes
 
-  " Coin price Medianizer contract "
+  " System coin price feed contract "
   systemCoinOracle: Bytes
 }
 
 type FixDiscountAuction @entity {
-  " <Collateral type>-<auction ID> "
+  " Equal to: <collateral type>-<auction ID> "
   id: ID!
 
-  " Auction incremental id per collateral "
+  " Auction incremental id "
   auctionId: BigInt!
 
-  " Collateral type of the auction "
+  " Auction collateral type "
   collateralType: CollateralType!
 
-  " Safe handler address in the Safe engine "
+  " Safe handler address in the SafeEngine "
   safeHandler: Bytes!
 
-  " Total collateral for sale a the start of the auction "
+  " Total collateral for sale at the start of the auction "
   sellInitialAmount: BigDecimal!
 
-  " Max amount of Coin to raise with the sale of the collateral. After reaching this target, any collateral if returned to the Safe owner  "
+  " Max amount of system coins to raise "
   amountToRaise: BigDecimal!
 
-  " Amount raised so far to repay the debt. "
+  " Amount of system coins raised so far "
   buyAmount: BigDecimal!
 
-  " Cumulative collateral amount sold so far.  collateralAmountSold <= initialCollateralAmount"
+  " Cumulative collateral amount sold so far "
   sellAmount: BigDecimal
 
   " Liquidated Safe "
@@ -880,60 +880,60 @@ type FixDiscountAuction @entity {
   " Address that started the auction "
   startedBy: Bytes!
 
-  " Number of individual batch sold "
+  " Number of individual batches of collateral sold "
   numberOfBatches: BigInt!
 
-  # " List of individual batches sold "
+  # " List of individual collateral batches that were sold "
   batchSold: [FixDiscountAuctionBatch!] @derivedFrom(field: "auction")
 
   " Auction configuration "
   fixDiscountAuctionConfiguration: FixDiscountAuctionConfiguration!
 
-  " If there is still collateral to be bought in the auction "
+  " Whether there's still any collateral left to be bought "
   isTerminated: Boolean!
 
-  " If the settle function that return remaining collateral to its owner was called "
+  " Whether the settle function that returns remaining collateral to the Safe was called "
   isSettled: Boolean!
 
-  " Timestamp of the block in which the liquidation was started "
+  " Timestamp of the block in which the auction started "
   createdAt: BigInt!
 
-  " Block number in which the liquidation was started "
+  " Block number at which the auction started "
   createdAtBlock: BigInt!
 
-  " Transaction hash in which tthe liquidation was started "
+  " Hash of the transaction that started the auction "
   createdAtTransaction: Bytes!
 }
 
 type FixDiscountAuctionBatch @entity {
-  " <collateral type>-<auction id>-<batch number> "
+  " Equal to: <collateral type>-<auction id>-<batch number> "
   id: ID!
 
-  " Incremental id of the batch "
+  " Incremental batch id "
   batchNumber: BigInt!
 
   " Auction in which the batch was sold "
   auction: FixDiscountAuction!
 
-  " Coins bought in the batch "
+  " Amount of tokens bought in the batch "
   buyAmount: BigDecimal!
 
-  " collateral sold in the batch "
+  " Amount of collateral sold in the batch "
   sellAmount: BigDecimal!
 
   " Collateral price "
   price: BigDecimal!
 
-  " Bidder address"
+  " Bidder address "
   buyer: Bytes!
 
-  " Timestamp of the block in which the liquidation was started "
+  " Timestamp of the block at which the batch was created "
   createdAt: BigInt!
 
-  " Block number in which the liquidation was started "
+  " Block number at which the batch was created "
   createdAtBlock: BigInt!
 
-  " Transaction hash in which tthe liquidation was started "
+  " Hash of the transaction that created the batch "
   createdAtTransaction: Bytes!
 }
 
@@ -946,27 +946,27 @@ type ERC20Balance @entity {
   " Address of the ERC20 token "
   tokenAddress: Bytes!
 
-  " Balance owner address"
+  " Address of the owner that has the balance "
   address: Bytes!
 
   " Balance amount "
   balance: BigDecimal!
 
-  " List of account spending allowance (addresses/contracts that can spend the balance)"
+  " List of account spending allowance (addresses that can spend the balance) "
   approvals: [ERC20allowance!] @derivedFrom(field: "balance")
 
-  " Timestamp of the block in which this balance was last modified [seconds] "
+  " Timestamp of the block at which this balance was last modified [seconds] "
   modifiedAt: BigInt!
 
-  " Block number in which this balance was last modified "
+  " Block number at which this balance was last modified "
   modifiedAtBlock: BigInt!
 
-  " Transaction hash in which this balance was last modified "
+  " Hash of the transaction that last modified the balance "
   modifiedAtTransaction: Bytes!
 }
 
 type ERC20Transfer @entity {
-  " <TX hash>-<Log index> "
+  " Equal to: <tx hash>-<log index> "
   id: ID!
 
   " Address of the ERC20 token "

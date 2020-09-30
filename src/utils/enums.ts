@@ -5,7 +5,7 @@ export let EnglishAuctionType_DEBT = 'DEBT'
 export let EnglishAuctionType_SURPLUS_PRE = 'SURPLUS_PRE'
 export let EnglishAuctionType_SURPLUS_POST = 'SURPLUS_POST'
 
-export let AuctionToken_BOND = 'BOND'
+export let AuctionToken_COIN = 'COIN'
 export let AuctionToken_COLLATERAL = 'COLLATERAL'
 export let AuctionToken_PROTOCOL_TOKEN = 'PROTOCOL_TOKEN'
 

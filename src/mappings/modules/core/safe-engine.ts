@@ -27,10 +27,10 @@ import * as decimal from '../../../utils/decimal'
 import * as integer from '../../../utils/integer'
 import { getOrCreateCollateral, updateLastModifyCollateralType } from '../../../entities/collateral'
 import {
-  updateBondBalance,
+  updateCoinBalance,
   updateCollateralBalance,
   updateDebtBalance,
-  getOrCreateBondBalance,
+  getOrCreateCoinBalance,
   getOrCreateDebtBalance,
   getOrCreateCollateralBalance,
 } from '../../../entities/balances'
@@ -115,12 +115,12 @@ export function handleTransferCollateral(event: TransferCollateral): void {
   dst.save()
 }
 
-// Transfer reflexer bond between users
+// Transfer reflexer coin between users
 export function handleTransferInternalCoins(event: TransferInternalCoins): void {
-  let src = getOrCreateBondBalance(event.params.src, event, false)
-  let dst = getOrCreateBondBalance(event.params.dst, event)
-  updateBondBalance(src, src.balance.minus(decimal.fromRad(event.params.rad)), event)
-  updateBondBalance(dst, dst.balance.plus(decimal.fromRad(event.params.rad)), event)
+  let src = getOrCreateCoinBalance(event.params.src, event, false)
+  let dst = getOrCreateCoinBalance(event.params.dst, event)
+  updateCoinBalance(src, src.balance.minus(decimal.fromRad(event.params.rad)), event)
+  updateCoinBalance(dst, dst.balance.plus(decimal.fromRad(event.params.rad)), event)
   src.save()
   dst.save()
 }
@@ -171,9 +171,9 @@ export function handleModifySAFECollateralization(event: ModifySAFECollateraliza
   updateCollateralBalance(internalCollateralBalance, internalCollateralBalance.balance.minus(deltaCollateral), event)
   internalCollateralBalance.save()
 
-  let internalBondBalance = getOrCreateBondBalance(event.params.debtDestination, event)
-  updateBondBalance(internalBondBalance, internalBondBalance.balance.plus(deltaDebt), event)
-  internalBondBalance.save()
+  let internalCoinBalance = getOrCreateCoinBalance(event.params.debtDestination, event)
+  updateCoinBalance(internalCoinBalance, internalCoinBalance.balance.plus(deltaDebt), event)
+  internalCoinBalance.save()
 
   // Create a new modify collateralization update
   let update = new ModifySAFECollateralizationEntity(eventUid(event))
@@ -254,7 +254,7 @@ export function handleConfiscateSAFECollateralAndDebt(event: ConfiscateSAFEColla
   system.save()
 }
 
-// Create/destroy equal quantities of reflexer bond and system debt
+// Create/destroy equal quantities of reflexer coin and system debt
 export function handleSettleDebt(event: SettleDebt): void {
   let rad = decimal.fromRad(event.params.rad)
 
@@ -265,17 +265,17 @@ export function handleSettleDebt(event: SettleDebt): void {
   updateLastModifySystemState(system, event)
   system.save()
 
-  // Update debt and bond balance
+  // Update debt and coin balance
   let account = event.address // msg.sender
-  let balance = getOrCreateBondBalance(account, event)
+  let balance = getOrCreateCoinBalance(account, event)
   let debt = getOrCreateDebtBalance(account, event)
-  updateBondBalance(balance, balance.balance.minus(rad), event)
+  updateCoinBalance(balance, balance.balance.minus(rad), event)
   updateDebtBalance(debt, debt.balance.minus(rad), event)
   balance.save()
   debt.save()
 }
 
-// Mint unbacked reflexer bonds
+// Mint unbacked reflexer coins
 export function handleCreateUnbackedDebt(event: CreateUnbackedDebt): void {
   let rad = decimal.fromRad(event.params.rad)
 
@@ -286,9 +286,9 @@ export function handleCreateUnbackedDebt(event: CreateUnbackedDebt): void {
   updateLastModifySystemState(system, event)
   system.save()
 
-  // Credit the bonds
-  let balance = getOrCreateBondBalance(event.params.coinDestination, event)
-  updateBondBalance(balance, balance.balance.plus(rad), event)
+  // Credit the coins
+  let balance = getOrCreateCoinBalance(event.params.coinDestination, event)
+  updateCoinBalance(balance, balance.balance.plus(rad), event)
   balance.save()
 
   // Add the debt
@@ -315,7 +315,7 @@ export function handleUpdateAccumulatedRate(event: UpdateAccumulatedRate): void 
   system.save()
 
   // Send the taxes
-  let dst = getOrCreateBondBalance(event.params.surplusDst, event)
-  updateBondBalance(dst, dst.balance.plus(decimal.fromRad(event.params.dstCoinBalance)), event)
+  let dst = getOrCreateCoinBalance(event.params.surplusDst, event)
+  updateCoinBalance(dst, dst.balance.plus(decimal.fromRad(event.params.dstCoinBalance)), event)
   dst.save()
 }

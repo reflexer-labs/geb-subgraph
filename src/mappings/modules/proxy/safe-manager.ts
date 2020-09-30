@@ -10,7 +10,7 @@ import {
 import {
   CollateralType,
   Safe,
-  InternalBondBalance,
+  InternalCoinBalance,
   InternalDebtBalance,
   InternalCollateralBalance,
 } from '../../../../generated/schema'
@@ -55,8 +55,8 @@ export function handleTransferSAFEOwnership(event: TransferSAFEOwnership): void 
   safe.save()
 
   // Transfers balances ownership
-  let bondBalance = InternalBondBalance.load(safeHandler.toHexString())
-  if (bondBalance) bondBalance.owner = safe.owner
+  let coinBalance = InternalCoinBalance.load(safeHandler.toHexString())
+  if (coinBalance) coinBalance.owner = safe.owner
   let debtBalance = InternalDebtBalance.load(safeHandler.toHexString())
   if (debtBalance) debtBalance.owner = safe.owner
   let collateralBalance = InternalCollateralBalance.load(safeHandler.toHexString() + '-' + collateralType.toString())

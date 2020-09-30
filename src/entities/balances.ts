@@ -1,7 +1,7 @@
 import { Bytes, BigDecimal, ethereum, Address, log } from '@graphprotocol/graph-ts'
 import {
   UserProxy,
-  InternalBondBalance,
+  InternalCoinBalance,
   InternalCollateralBalance,
   InternalDebtBalance,
   Safe,
@@ -14,27 +14,27 @@ import * as integer from '../utils/integer'
 import { getOrCreateUser, findUltimateOwner } from './user'
 import { findProxy } from '../mappings/modules/proxy/proxy-factory'
 
-// --- Bond balance ---
+// --- Coin balance ---
 
-export function getOrCreateBondBalance(
+export function getOrCreateCoinBalance(
   address: Bytes,
   event: ethereum.Event,
   // @ts-ignore
   canCreate: bool = true,
-): InternalBondBalance {
-  let bal = InternalBondBalance.load(address.toHexString())
+): InternalCoinBalance {
+  let bal = InternalCoinBalance.load(address.toHexString())
   if (bal != null) {
-    return bal as InternalBondBalance
+    return bal as InternalCoinBalance
   } else {
     if (!canCreate) {
-      log.error(" Bond balance of address {} not found and can't created", [address.toHexString()])
+      log.error(" Coin balance of address {} not found and can't created", [address.toHexString()])
     }
-    return createBondBalance(address, decimal.ZERO, event)
+    return createCoinBalance(address, decimal.ZERO, event)
   }
 }
 
-export function createBondBalance(address: Bytes, balance: BigDecimal, event: ethereum.Event): InternalBondBalance {
-  let bal = new InternalBondBalance(address.toHexString())
+export function createCoinBalance(address: Bytes, balance: BigDecimal, event: ethereum.Event): InternalCoinBalance {
+  let bal = new InternalCoinBalance(address.toHexString())
   bal.accountHandler = address
   bal.owner = getOrCreateUser(findUltimateOwner(address)).id
   bal.proxy = findProxy(address).id
@@ -46,7 +46,7 @@ export function createBondBalance(address: Bytes, balance: BigDecimal, event: et
   return bal
 }
 
-export function updateBondBalance(balance: InternalBondBalance, amount: BigDecimal, event: ethereum.Event): void {
+export function updateCoinBalance(balance: InternalCoinBalance, amount: BigDecimal, event: ethereum.Event): void {
   balance.balance = amount
   balance.modifiedAt = event.block.timestamp
   balance.modifiedAtBlock = event.block.number

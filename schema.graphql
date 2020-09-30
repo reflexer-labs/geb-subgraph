@@ -70,7 +70,7 @@ type User @entity {
   collateralBalance: [InternalCollateralBalance!] @derivedFrom(field: "owner")
 
   " List of system coin balances "
-  bondBalance: [InternalBondBalance!] @derivedFrom(field: "owner")
+  coinBalance: [InternalCoinBalance!] @derivedFrom(field: "owner")
 
   " List of debt balances "
   debtBalance: [InternalDebtBalance!] @derivedFrom(field: "owner")
@@ -401,7 +401,7 @@ type InternalCollateralBalance @entity {
   modifiedAtTransaction: Bytes
 }
 
-type InternalBondBalance @entity {
+type InternalCoinBalance @entity {
   " Equals to: <accountHandler> "
   id: ID!
 
@@ -600,7 +600,7 @@ type CollateralPrice @entity {
   " Collateral type "
   collateral: CollateralType!
 
-  " Price of the collateral discounted by the redemptionPrice and safetyCRatio, price used for bonds mint and redemption "
+  " Price of the collateral discounted by the redemptionPrice and safetyCRatio, price used for coins mint and redemption "
   safetyPrice: BigDecimal!
 
   " Price of the collateral discounted by the redemptionPrice an liquidationCRatio, price at which a safe gets liquidated "
@@ -722,7 +722,7 @@ enum EnglishAuctionType {
 }
 
 enum AuctionToken {
-  BOND
+  COIN
   COLLATERAL
   PROTOCOL_TOKEN
 }
@@ -842,7 +842,7 @@ type FixDiscountAuctionConfiguration @entity {
   " Collateral Medianizer contract "
   collateralMedian: Bytes
 
-  " Bond price Medianizer contract "
+  " Coin price Medianizer contract "
   systemCoinOracle: Bytes
 }
 
@@ -862,7 +862,7 @@ type FixDiscountAuction @entity {
   " Total collateral for sale a the start of the auction "
   sellInitialAmount: BigDecimal!
 
-  " Max amount of bond to raise with the sale of the collateral. After reaching this target, any collateral if returned to the Safe owner  "
+  " Max amount of Coin to raise with the sale of the collateral. After reaching this target, any collateral if returned to the Safe owner  "
   amountToRaise: BigDecimal!
 
   " Amount raised so far to repay the debt. "
@@ -915,7 +915,7 @@ type FixDiscountAuctionBatch @entity {
   " Auction in which the batch was sold "
   auction: FixDiscountAuction!
 
-  " bonds bought in the batch "
+  " Coins bought in the batch "
   buyAmount: BigDecimal!
 
   " collateral sold in the batch "

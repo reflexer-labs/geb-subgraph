@@ -115,7 +115,7 @@ export function handleLiquidate(event: Liquidate): void {
     liquidation.auctionId = id
     liquidation.numberOfBids = integer.ZERO
     liquidation.englishAuctionType = enums.EnglishAuctionType_LIQUIDATION
-    liquidation.buyToken = enums.AuctionToken_BOND
+    liquidation.buyToken = enums.AuctionToken_COIN
     liquidation.sellToken = enums.AuctionToken_COLLATERAL
     liquidation.sellInitialAmount = decimal.fromWad(event.params.collateralAmount)
     liquidation.buyInitialAmount = decimal.ZERO

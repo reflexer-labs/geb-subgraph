@@ -88,7 +88,7 @@ export function handleAuctionDebt(event: AuctionDebt): void {
   auction.auctionId = id
   auction.numberOfBids = integer.ZERO
   auction.englishAuctionType = enums.EnglishAuctionType_DEBT
-  auction.buyToken = enums.AuctionToken_BOND
+  auction.buyToken = enums.AuctionToken_COIN
   auction.sellToken = enums.AuctionToken_COLLATERAL
   auction.sellInitialAmount = accounting.initialDebtAuctionMintedTokens
   auction.buyInitialAmount = accounting.debtAuctionBidSize
@@ -124,7 +124,7 @@ export function handleAuctionSurplus(event: AuctionSurplus): void {
   auction.numberOfBids = integer.ZERO
   auction.englishAuctionType = enums.EnglishAuctionType_SURPLUS_PRE
   auction.buyToken = enums.AuctionToken_PROTOCOL_TOKEN
-  auction.sellToken = enums.AuctionToken_BOND
+  auction.sellToken = enums.AuctionToken_COIN
   auction.sellInitialAmount = accounting.surplusAuctionAmountToSell
   auction.buyInitialAmount = decimal.ZERO
   auction.sellAmount = auction.sellInitialAmount

@@ -1020,45 +1020,45 @@ type ERC20allowance @entity {
 # --- Governance ---
 
 type DsPauseScheduledTransaction @entity {
-  " <fullTransactionHash> "
+  " Equal to: <fullTransactionHash> "
   id: ID!
 
-  " Address of the smart contract sending the proposal (e.g: Multisig, vote quorum) "
+  " Address of the smart contract sending the proposal (e.g: multisig, vote quorum) "
   proposalSender: Bytes!
 
   " Recipient of the transaction "
   proposalTarget: Bytes!
 
-  " If the transaction was executed "
+  " Whether the transaction was executed "
   executed: Boolean!
 
-  " Abandoned transaction "
+  " Whether the transaction was abandoned "
   abandoned: Boolean!
 
-  " Transaction data of the proposal "
+  " Proposal transaction data "
   transactionData: Bytes!
 
-  " Code hash "
+  " Transaction code hash "
   codeHash: Bytes!
 
-  " Timestamp of the earliest possible execution of this proposal "
+  " Earliest timestamp when this proposal can be executed "
   earliestExecutionTime: BigInt!
 
-  " Full hash identifier of the proposal "
+  " The proposal's full hash identifier "
   fullTransactionHash: Bytes!
 
-  " Partial hash identifier of the proposal "
+  " The proposal's partial hash identifier "
   partialTransactionHash: Bytes!
 
-  " Optional description of the proposal transaction "
+  " Optional description of the proposal "
   transactionDescription: String
 
-  " Timestamp of the block in which this transaction was first created [seconds] "
+  " Timestamp of the block at which this transaction was created [seconds] "
   createdAt: BigInt!
 
-  " Block number in which this transaction was first created "
+  " Block number at which this transaction was created "
   createdAtBlock: BigInt!
 
-  " Transaction hash in which this transaction was first created "
+  " Hash of the transaction that created the proposal "
   createdAtTransaction: Bytes!
 }

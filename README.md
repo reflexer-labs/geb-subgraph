@@ -1,19 +1,17 @@
 # GEB subgraph
 
-The Graph protocol subgraph for GEB
+A Graph protocol subgraph for GEB.
 
 ```
 git clone https://github.com/reflexer-labs/geb-subgraph
 cd geb-subgraph
 git submodule update --init --recursive
 ```
-## Hosted service
+## Deploy on the hosted service
 
-Deploy the subgraph on the hosted Graph protocol service.
+First, set the addresses of the smart contracts you want to index in `config/kovan.json` or `config/mainnet.json`.
 
-Need authentication
-
-Set the smart-contract addresses in configuration files `config/kovan.json` or `config/mainnet.json`.
+Then, open a terminal and run:
 
 ```
 npm install -D
@@ -24,9 +22,9 @@ npm run deploy-hosted-kovan
 npm run deploy-hosted-mainnet
 ```
 
-## Local development graph node
+## Local development
 
-First start a blockchain node on `localhost:8545` (Ganache, Parity POA, etc..)
+First, start a blockchain node on `localhost:8545` (Ganache, Parity POA, etc..)
 
 Configure the `docker/.env` to:
 
@@ -47,11 +45,12 @@ cd docker
 docker-compose up -d
 ```
 
-Then access the GraphQL endpoints:
-Queries (HTTP): http://localhost:8000/subgraphs/name/reflexer-labs/rai
-Subscriptions (WS): http://localhost:8001/subgraphs/name/reflexer-labs/rai
+Then access the GraphQL endpoints using:
 
-## Prod graph node deployment
+http://localhost:8000/subgraphs/name/reflexer-labs/rai (HTTP queries)
+http://localhost:8001/subgraphs/name/reflexer-labs/rai (WS subscriptions)
+
+## Production Graph node deployment
 
 Run a graph node on a live chain (Ethereum Mainnet, Kovan etc..), deploy to subgraph on the node, expose the graphQL endpoint.
 
@@ -72,13 +71,11 @@ SUBGAPH_NAME=reflexer-labs/rai
 
 ```
 
-Run the following command. It will start the graph node, start an ipfs node, start the postgress DB and deploy the subgraph on the graph node.
+Then run the following commands:
 
 ```
 cd graph-node
 docker-compose up -d
 ```
 
-Then access the GraphQL endpoints:
-Queries (HTTP): http://localhost:8000/subgraphs/name/reflexer-labs/rai
-Subscriptions (WS): http://localhost:8001/subgraphs/name/reflexer-labs/rai
+These will start the Graph node, an IPFS node, a Postgress DB and then it will deploy the subgraph on the Graph node.

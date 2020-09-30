@@ -1,16 +1,8 @@
 [
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "safeEngine_",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "systemCoin_",
-        "type": "address"
-      }
+      { "internalType": "address", "name": "safeEngine_", "type": "address" },
+      { "internalType": "address", "name": "systemCoin_", "type": "address" }
     ],
     "stateMutability": "nonpayable",
     "type": "constructor"
@@ -99,11 +91,7 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      }
+      { "internalType": "address", "name": "account", "type": "address" }
     ],
     "name": "addAuthorization",
     "outputs": [],
@@ -140,11 +128,7 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      },
+      { "internalType": "address", "name": "account", "type": "address" },
       { "internalType": "uint256", "name": "wad", "type": "uint256" }
     ],
     "name": "exit",
@@ -154,11 +138,7 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      },
+      { "internalType": "address", "name": "account", "type": "address" },
       { "internalType": "uint256", "name": "wad", "type": "uint256" }
     ],
     "name": "join",
@@ -168,11 +148,7 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      }
+      { "internalType": "address", "name": "account", "type": "address" }
     ],
     "name": "removeAuthorization",
     "outputs": [],
@@ -196,11 +172,7 @@
     "inputs": [],
     "name": "systemCoin",
     "outputs": [
-      {
-        "internalType": "contract DSTokenLike",
-        "name": "",
-        "type": "address"
-      }
+      { "internalType": "contract DSTokenLike", "name": "", "type": "address" }
     ],
     "stateMutability": "view",
     "type": "function"

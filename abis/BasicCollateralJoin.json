@@ -1,21 +1,13 @@
 [
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "safeEngine_",
-        "type": "address"
-      },
+      { "internalType": "address", "name": "safeEngine_", "type": "address" },
       {
         "internalType": "bytes32",
         "name": "collateralType_",
         "type": "bytes32"
       },
-      {
-        "internalType": "address",
-        "name": "collateral_",
-        "type": "address"
-      }
+      { "internalType": "address", "name": "collateral_", "type": "address" }
     ],
     "stateMutability": "nonpayable",
     "type": "constructor"
@@ -104,11 +96,7 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      }
+      { "internalType": "address", "name": "account", "type": "address" }
     ],
     "name": "addAuthorization",
     "outputs": [],
@@ -165,11 +153,7 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      },
+      { "internalType": "address", "name": "account", "type": "address" },
       { "internalType": "uint256", "name": "wad", "type": "uint256" }
     ],
     "name": "exit",
@@ -179,11 +163,7 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      },
+      { "internalType": "address", "name": "account", "type": "address" },
       { "internalType": "uint256", "name": "wad", "type": "uint256" }
     ],
     "name": "join",
@@ -193,11 +173,7 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      }
+      { "internalType": "address", "name": "account", "type": "address" }
     ],
     "name": "removeAuthorization",
     "outputs": [],

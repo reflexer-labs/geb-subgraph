@@ -2,16 +2,8 @@
   {
     "inputs": [
       { "internalType": "string", "name": "name_", "type": "string" },
-      {
-        "internalType": "string",
-        "name": "symbol_",
-        "type": "string"
-      },
-      {
-        "internalType": "uint256",
-        "name": "chainId_",
-        "type": "uint256"
-      }
+      { "internalType": "string", "name": "symbol_", "type": "string" },
+      { "internalType": "uint256", "name": "chainId_", "type": "uint256" }
     ],
     "stateMutability": "nonpayable",
     "type": "constructor"
@@ -108,11 +100,7 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      }
+      { "internalType": "address", "name": "account", "type": "address" }
     ],
     "name": "addAuthorization",
     "outputs": [],
@@ -132,11 +120,7 @@
   {
     "inputs": [
       { "internalType": "address", "name": "usr", "type": "address" },
-      {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
+      { "internalType": "uint256", "name": "amount", "type": "uint256" }
     ],
     "name": "approve",
     "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
@@ -160,11 +144,7 @@
   {
     "inputs": [
       { "internalType": "address", "name": "usr", "type": "address" },
-      {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
+      { "internalType": "uint256", "name": "amount", "type": "uint256" }
     ],
     "name": "burn",
     "outputs": [],
@@ -181,11 +161,7 @@
   {
     "inputs": [
       { "internalType": "address", "name": "usr", "type": "address" },
-      {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
+      { "internalType": "uint256", "name": "amount", "type": "uint256" }
     ],
     "name": "mint",
     "outputs": [],
@@ -196,11 +172,7 @@
     "inputs": [
       { "internalType": "address", "name": "src", "type": "address" },
       { "internalType": "address", "name": "dst", "type": "address" },
-      {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
+      { "internalType": "uint256", "name": "amount", "type": "uint256" }
     ],
     "name": "move",
     "outputs": [],
@@ -223,26 +195,10 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "holder",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "spender",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "nonce",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "expiry",
-        "type": "uint256"
-      },
+      { "internalType": "address", "name": "holder", "type": "address" },
+      { "internalType": "address", "name": "spender", "type": "address" },
+      { "internalType": "uint256", "name": "nonce", "type": "uint256" },
+      { "internalType": "uint256", "name": "expiry", "type": "uint256" },
       { "internalType": "bool", "name": "allowed", "type": "bool" },
       { "internalType": "uint8", "name": "v", "type": "uint8" },
       { "internalType": "bytes32", "name": "r", "type": "bytes32" },
@@ -256,11 +212,7 @@
   {
     "inputs": [
       { "internalType": "address", "name": "usr", "type": "address" },
-      {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
+      { "internalType": "uint256", "name": "amount", "type": "uint256" }
     ],
     "name": "pull",
     "outputs": [],
@@ -270,11 +222,7 @@
   {
     "inputs": [
       { "internalType": "address", "name": "usr", "type": "address" },
-      {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
+      { "internalType": "uint256", "name": "amount", "type": "uint256" }
     ],
     "name": "push",
     "outputs": [],
@@ -283,11 +231,7 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      }
+      { "internalType": "address", "name": "account", "type": "address" }
     ],
     "name": "removeAuthorization",
     "outputs": [],
@@ -311,11 +255,7 @@
   {
     "inputs": [
       { "internalType": "address", "name": "dst", "type": "address" },
-      {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
+      { "internalType": "uint256", "name": "amount", "type": "uint256" }
     ],
     "name": "transfer",
     "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
@@ -326,11 +266,7 @@
     "inputs": [
       { "internalType": "address", "name": "src", "type": "address" },
       { "internalType": "address", "name": "dst", "type": "address" },
-      {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
+      { "internalType": "uint256", "name": "amount", "type": "uint256" }
     ],
     "name": "transferFrom",
     "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],

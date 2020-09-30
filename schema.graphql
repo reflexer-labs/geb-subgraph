@@ -408,77 +408,77 @@ type InternalBondBalance @entity {
   " Account ownership at the SafeEngine level "
   accountHandler: Bytes!
 
-  " Ultimate owner of the balance (The accountHandler or the Proxy)"
+  " Ultimate owner of the balance (the accountHandler or the proxy)"
   owner: User!
 
-  " Proxy address if the balance belongs to a proxy "
+  " Proxy address (if the balance belongs to a proxy) "
   proxy: UserProxy
 
   " Actual balance "
   balance: BigDecimal!
 
-  " List of Collateral Joins (= deposits)"
+  " List of system coin joins (deposits) "
   joins: [CoinJoin!]
 
-  " List of Collateral Exits (= withdrawals)"
+  " List of system coin exits (withdrawals) "
   exits: [CoinExit!]
 
-  " Timestamp of the block in which this balance was first created [seconds] "
+  " Timestamp of the block at which this balance was first created [seconds] "
   createdAt: BigInt!
 
-  " Block number in which this balance was first created "
+  " Block number at which this balance was first created "
   createdAtBlock: BigInt!
 
-  " Transaction hash in which this balance was first created "
+  " Hash of the transaction that first created this balance "
   createdAtTransaction: Bytes!
 
-  " Timestamp of the block in which this balance was last modified [seconds] "
+  " Timestamp of the block at which this balance was last modified [seconds] "
   modifiedAt: BigInt
 
-  " Block number in which this balance was last modified "
+  " Block number at which this balance was last modified "
   modifiedAtBlock: BigInt
 
-  " Transaction hash in which this balance was last modified "
+  " Hash of the transaction that last modified this balance "
   modifiedAtTransaction: Bytes
 }
 
 type InternalDebtBalance @entity {
-  " Equals to: <accountHandler> "
+  " Equal to: <accountHandler> "
   id: ID!
 
-  " Account ownership at the Safeengine level "
+  " Account ownership at the SafeEngine level "
   accountHandler: Bytes!
 
-  " Ultimate owner of the balance (The accountHandler or the Proxy)"
+  " Ultimate owner of the balance (the accountHandler or the proxy)"
   owner: User!
 
   " Actual balance "
   balance: BigDecimal!
 
-  " Timestamp of the block in which this Safe was opened [seconds] "
+  " Timestamp of the block at which this balance was created [seconds] "
   createdAt: BigInt!
 
-  " Block number in which this Safe was opened "
+  " Block number at which this balance was created "
   createdAtBlock: BigInt!
 
-  " Transaction hash in which this Safe was opened "
+  " Hash of the transaction that first created this balance "
   createdAtTransaction: Bytes!
 
-  " Timestamp of the block in which this Safe was last modified [seconds] "
+  " Timestamp of the block at which this balance was last modified [seconds] "
   modifiedAt: BigInt
 
-  " Block number in which this Safe was last modified "
+  " Block number in which this balance was last modified "
   modifiedAtBlock: BigInt
 
-  " Transaction hash in which this Safe was last modified "
+  " Hash of the transaction that last modified this balance "
   modifiedAtTransaction: Bytes
 }
 
 type CollateralJoin @entity {
-  "<TX hash>-<Log index>"
+  "Equal to: <TX hash>-<Log index>"
   id: ID!
 
-  " Join amount "
+  " Joined amount "
   amount: BigDecimal!
 
   " Safe handler being credited "

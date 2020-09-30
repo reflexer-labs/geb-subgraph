@@ -7,6 +7,7 @@ git clone https://github.com/reflexer-labs/geb-subgraph
 cd geb-subgraph
 git submodule update --init --recursive
 ```
+
 ## Deploy on the hosted service
 
 First, set the addresses of the smart contracts you want to index in `config/kovan.json` or `config/mainnet.json`.
@@ -24,7 +25,7 @@ npm run deploy-hosted-mainnet
 
 ## Local development
 
-First, start a blockchain node on `localhost:8545` (Ganache, Parity POA, etc..)
+First, start a blockchain node on `localhost:8545` (Ganache, Parity POA, etc..) configure the smart contract addresses in `config/test.json`.
 
 Configure the `docker/.env` to:
 
@@ -40,6 +41,8 @@ ETHEREUM_RPC=http://172.17.0.1:8545/
 NETWORK=test
 ```
 
+Run:
+
 ```
 cd docker
 docker-compose up -d
@@ -47,12 +50,12 @@ docker-compose up -d
 
 Then access the GraphQL endpoints using:
 
-http://localhost:8000/subgraphs/name/reflexer-labs/rai (HTTP queries)
-http://localhost:8001/subgraphs/name/reflexer-labs/rai (WS subscriptions)
+http://localhost/subgraphs/name/reflexer-labs/rai (HTTP queries)
 
 ## Production Graph node deployment
 
 Run a graph node on a live chain (Ethereum Mainnet, Kovan etc..), deploy to subgraph on the node, expose the graphQL endpoint.
+Frist, configure the smart contract addresses in `config/kovan.json` or `config/mainnet.json`.
 
 Configure the `docker/.env` to:
 

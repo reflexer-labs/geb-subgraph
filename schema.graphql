@@ -286,8 +286,6 @@ type SystemState @entity {
 
   " Transaction hash at which the system was last modified "
   modifiedAtTransaction: Bytes
-
-  # TODO: Surplus and debt auction parameters used to be here. Add the auction abstraction class.
 }
 
 type AccountingEngine @entity {
@@ -585,10 +583,8 @@ type CoinExit @entity {
 }
 
 # --- Prices ---
-# TODO: Do not use block as ID (there can be several updates per block)
-
 type CollateralPrice @entity {
-  " Equal to: <block_number>-<collateral_type>"
+  " Equal to: <tx hash>-<log index>"
   id: ID!
 
   " Block number "
@@ -611,7 +607,7 @@ type CollateralPrice @entity {
 }
 
 type RedemptionPrice @entity {
-  " Equals to: <block_number>"
+  " Equals to: <tx hash>-<log index>"
   id: ID!
 
   " Block number "
@@ -628,7 +624,7 @@ type RedemptionPrice @entity {
 }
 
 type RedemptionRate @entity {
-  " Equal to: <block_number>"
+  " Equal to: <tx hash>-<log index>"
   id: ID!
 
   " Block number "

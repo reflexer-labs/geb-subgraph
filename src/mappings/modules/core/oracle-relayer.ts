@@ -14,6 +14,7 @@ import {
 import { CollateralType, CollateralPrice, RedemptionPrice, RedemptionRate } from '../../../../generated/schema'
 import { getSystemState } from '../../../entities'
 import { getOrCreateCollateral } from '../../../entities/collateral'
+import { eventUid } from '../../../utils/ethereum'
 
 export function handleUpdateCollateralPrice(event: UpdateCollateralPrice): void {
   let collateralType = event.params.collateralType.toString()
@@ -22,7 +23,7 @@ export function handleUpdateCollateralPrice(event: UpdateCollateralPrice): void 
   let collateral = CollateralType.load(collateralType)
 
   if (collateral != null) {
-    let price = new CollateralPrice(event.block.number.toString() + '-' + collateralType)
+    let price = new CollateralPrice(eventUid(event))
     price.block = event.block.number
     price.collateral = collateral.id
     price.safetyPrice = decimal.fromRay(event.params.safetyPrice)
@@ -37,7 +38,7 @@ export function handleUpdateCollateralPrice(event: UpdateCollateralPrice): void 
 }
 
 export function handleUpdateRedemptionPrice(event: UpdateRedemptionPrice): void {
-  let price = new RedemptionPrice(event.block.number.toString())
+  let price = new RedemptionPrice(eventUid(event))
   price.block = event.block.number
   price.timestamp = event.block.timestamp
   price.value = decimal.fromRay(event.params.redemptionPrice)
@@ -86,7 +87,7 @@ export function handleModifyParametersUint(event: ModifyParametersUint): void {
     log.error('ModifyParameters-redemptionPrice is not supported', [])
   } else if (what == 'redemptionRate') {
     let system = getSystemState(event)
-    let rate = new RedemptionRate(event.block.number.toString())
+    let rate = new RedemptionRate(eventUid(event))
     rate.block = event.block.number
     rate.timestamp = event.block.timestamp
     rate.value = decimal.fromRay(event.params.data)

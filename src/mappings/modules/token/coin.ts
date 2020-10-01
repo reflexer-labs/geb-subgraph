@@ -1,6 +1,6 @@
 import { Address, dataSource, log } from '@graphprotocol/graph-ts'
 import { Transfer, Approval, Coin } from '../../../../generated/Coin/Coin'
-import { ERC20allowance, ERC20Balance, ERC20Transfer } from '../../../entities'
+import { ERC20Allowance, ERC20Balance, ERC20Transfer } from '../../../entities'
 import { getOrCreateERC20Balance, getOrCreateERC20BAllowance } from '../../../entities/erc20'
 import * as decimal from '../../../utils/decimal'
 import { eventUid } from '../../../utils/ethereum'
@@ -50,30 +50,29 @@ export function handleTransfer(event: Transfer): void {
   //   let srcBalance = getOrCreateERC20Balance(source, tokenAddress, event, false)
   //   let msgDotSender: Address
 
-   
-    // Loop over all the approvals of the source address
-    // for (let i = 0; i < srcBalance.approvals.length; i++) {
+  // Loop over all the approvals of the source address
+  // for (let i = 0; i < srcBalance.approvals.length; i++) {
 
-    //     if(!srcBalance.approvals[0]) {
-    //         log.error("s",[])
-    //     }
-    //   let approval = ERC20allowance.load(id)
+  //     if(!srcBalance.approvals[0]) {
+  //         log.error("s",[])
+  //     }
+  //   let approval = ERC20Allowance.load(id)
 
-    //   // If this is not matching, it means that it's a transfer from
-    //   if (approval.amount.equals(decimal.fromWad(contract.allowance(source, approval.approvedAddress)))) {
-    //     msgDotSender = approval.approvedAddress
-    //   }
-    // }
+  //   // If this is not matching, it means that it's a transfer from
+  //   if (approval.amount.equals(decimal.fromWad(contract.allowance(source, approval.approvedAddress)))) {
+  //     msgDotSender = approval.approvedAddress
+  //   }
+  // }
 
-    // if (msgDotSender) {
-    //   // It was a transfer from, so deduct the allowance
-    //   let allowance = getOrCreateERC20BAllowance(source, tokenAddress, msgDotSender, event, false)
-    //   allowance.amount = allowance.amount.minus(decimal.fromWad(event.params.amount))
-    //   allowance.modifiedAt = event.block.timestamp
-    //   allowance.modifiedAtBlock = event.block.number
-    //   allowance.modifiedAtTransaction = event.transaction.hash
-    //   allowance.save()
-    // }
+  // if (msgDotSender) {
+  //   // It was a transfer from, so deduct the allowance
+  //   let allowance = getOrCreateERC20BAllowance(source, tokenAddress, msgDotSender, event, false)
+  //   allowance.amount = allowance.amount.minus(decimal.fromWad(event.params.amount))
+  //   allowance.modifiedAt = event.block.timestamp
+  //   allowance.modifiedAtBlock = event.block.number
+  //   allowance.modifiedAtTransaction = event.transaction.hash
+  //   allowance.save()
+  // }
   // }
 
   let transfer = new ERC20Transfer(eventUid(event))

@@ -1,5 +1,5 @@
 import { Address, ethereum, log } from '@graphprotocol/graph-ts'
-import { ERC20Balance, ERC20allowance } from '../entities'
+import { ERC20Balance, ERC20Allowance } from '../entities'
 import * as decimal from '../utils/decimal'
 
 export function getOrCreateERC20Balance(
@@ -33,9 +33,9 @@ export function getOrCreateERC20BAllowance(
   approvedAddress: Address,
   event: ethereum.Event,
   canCreate: boolean = true,
-): ERC20allowance {
+): ERC20Allowance {
   let id = tokenAddress.toHexString() + '-' + address.toHexString() + '-' + approvedAddress.toHexString()
-  let allowance = ERC20allowance.load(id)
+  let allowance = ERC20Allowance.load(id)
 
   if (allowance == null) {
     if (!canCreate) {
@@ -49,7 +49,7 @@ export function getOrCreateERC20BAllowance(
       balance = getOrCreateERC20Balance(address, tokenAddress, event)
     }
 
-    allowance = new ERC20allowance(id)
+    allowance = new ERC20Allowance(id)
     allowance.tokenAddress = tokenAddress
     allowance.address = address
     allowance.balance = balance.id
@@ -60,5 +60,5 @@ export function getOrCreateERC20BAllowance(
     allowance.modifiedAtTransaction = event.transaction.hash
   }
   allowance.save()
-  return allowance as ERC20allowance
+  return allowance as ERC20Allowance
 }

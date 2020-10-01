@@ -953,7 +953,7 @@ type ERC20Balance @entity {
   balance: BigDecimal!
 
   " List of account spending allowance (addresses that can spend the balance) "
-  approvals: [ERC20allowance!] @derivedFrom(field: "balance")
+  approvals: [ERC20Allowance!] @derivedFrom(field: "balance")
 
   " Timestamp of the block at which this balance was last modified [seconds] "
   modifiedAt: BigInt!
@@ -988,7 +988,7 @@ type ERC20Transfer @entity {
   createdAtTransaction: Bytes!
 }
 
-type ERC20allowance @entity {
+type ERC20Allowance @entity {
   " Equal to: <tokenAddress>-<address>-<approvedAddress> "
   id: ID!
 

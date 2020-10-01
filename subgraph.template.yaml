@@ -350,7 +350,7 @@ dataSources:
       entities:
         - ERC20Balance
         - ERC20Transfer
-        - ERC20allowance
+        - ERC20Allowance
       abis:
         - name: Coin
           file: ./abis/Coin.json

@@ -15,24 +15,6 @@ import * as integer from '../../../utils/integer'
 import * as enums from '../../../utils/enums'
 import { getOrCreateEnglishAuctionConfiguration } from '../../../entities/auctions'
 
-export function handleModifyParametersAddress(event: ModifyParametersAddress): void {
-  let what = event.params.parameter.toString()
-  let collateral = getOrCreateCollateral(
-    EnglishCollateralAuctionHouse.bind(dataSource.address()).collateralType(),
-    event,
-  )
-  let config = getOrCreateEnglishAuctionConfiguration(dataSource.address(), collateral.id)
-  let address = event.params.data
-
-  if (what == 'oracleRelayer') {
-    config.LIQUIDATION_oracleRelayer = address
-  } else if (what == 'osm') {
-    config.LIQUIDATION_fsm = address
-  }
-
-  config.save()
-}
-
 export function handleModifyParametersUint(event: ModifyParametersUint): void {
   let what = event.params.parameter.toString()
   let collateral = getOrCreateCollateral(

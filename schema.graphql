@@ -663,12 +663,6 @@ type EnglishAuctionConfiguration @entity {
   " Maximum auction length "
   totalAuctionLength: BigInt!
 
-  " FSM contract "
-  LIQUIDATION_fsm: Bytes
-
-  " Oracle relayer contract "
-  LIQUIDATION_oracleRelayer: Bytes
-
   " Increase in amount sold upon auction restart (used only for DEBT auctions) "
   DEBT_amountSoldIncrease: BigDecimal
 }

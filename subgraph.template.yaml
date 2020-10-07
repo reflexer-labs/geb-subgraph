@@ -6,11 +6,11 @@ schema:
 dataSources:
   - name: SAFEEngine
     kind: ethereum/contract
-    network: {{NETWORK}}
+    network: { { NETWORK } }
     source:
-      address: '{{GEB_SAFE_ENGINE}}'
+      address: "{{GEB_SAFE_ENGINE}}"
       abi: SAFEEngine
-      startBlock: {{STARTING_BLOCK_NUMBER}}
+      startBlock: { { STARTING_BLOCK_NUMBER } }
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -48,14 +48,14 @@ dataSources:
           handler: handleCreateUnbackedDebt
         - event: UpdateAccumulatedRate(bytes32,address,int256,uint256,uint256)
           handler: handleUpdateAccumulatedRate
-  
+
   - name: GebSafeManager
     kind: ethereum/contract
-    network: {{NETWORK}}
+    network: { { NETWORK } }
     source:
-      address: '{{SAFE_MANAGER}}'
+      address: "{{SAFE_MANAGER}}"
       abi: GebSafeManager
-      startBlock: {{STARTING_BLOCK_NUMBER}}
+      startBlock: { { STARTING_BLOCK_NUMBER } }
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -81,11 +81,11 @@ dataSources:
 
   - name: OracleRelayer
     kind: ethereum/contract
-    network: {{NETWORK}}
+    network: { { NETWORK } }
     source:
-      address: '{{GEB_ORACLE_RELAYER}}'
+      address: "{{GEB_ORACLE_RELAYER}}"
       abi: OracleRelayer
-      startBlock: {{STARTING_BLOCK_NUMBER}}
+      startBlock: { { STARTING_BLOCK_NUMBER } }
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -109,14 +109,14 @@ dataSources:
           handler: handleModifyParametersCollateralTypeUint
         - event: ModifyParameters(bytes32,uint256)
           handler: handleModifyParametersUint
-  
+
   - name: TaxCollector
     kind: ethereum/contract
-    network: {{NETWORK}}
+    network: { { NETWORK } }
     source:
-      address: '{{GEB_TAX_COLLECTOR}}'
+      address: "{{GEB_TAX_COLLECTOR}}"
       abi: TaxCollector
-      startBlock: {{STARTING_BLOCK_NUMBER}}
+      startBlock: { { STARTING_BLOCK_NUMBER } }
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -133,7 +133,7 @@ dataSources:
           handler: handleModifyParametersCollateralTypeUint
         - event: ModifyParameters(bytes32,uint256) # Type 1
           handler: handleModifyParametersUint
-        
+
         # Remaining events
         # - event: AddAuthorization(address)
         #   handle: handleAddAuthorization
@@ -155,14 +155,14 @@ dataSources:
         #   handle: handleModifySecondaryReceiver
         # - event: RemoveAuthorization(address)
         #   handle: handleRemoveAuthorization
-  
+
   - name: LiquidationEngine
     kind: ethereum/contract
-    network: {{NETWORK}}
+    network: { { NETWORK } }
     source:
-      address: '{{GEB_LIQUIDATION_ENGINE}}'
+      address: "{{GEB_LIQUIDATION_ENGINE}}"
       abi: LiquidationEngine
-      startBlock: {{STARTING_BLOCK_NUMBER}}
+      startBlock: { { STARTING_BLOCK_NUMBER } }
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -185,7 +185,7 @@ dataSources:
           handler: handleModifyParametersCollateralTypeAddress
         - event: ModifyParameters(bytes32,bytes32,uint256)
           handler: handleModifyParametersCollateralTypeUint
-        
+
         # Remaining events:
         # - event: AddAuthorization(address)
         #   handler: handleAddAuthorization
@@ -203,14 +203,14 @@ dataSources:
         #   handler: handleRemoveAuthorization
         # - event: SaveSAFE(indexed bytes32,indexed address,uint256)
         #   handler: handleSaveSAFE
-  
+
   - name: AccountingEngine
     kind: ethereum/contract
-    network: {{NETWORK}}
+    network: { { NETWORK } }
     source:
-      address: '{{GEB_ACCOUNTING_ENGINE}}'
+      address: "{{GEB_ACCOUNTING_ENGINE}}"
       abi: AccountingEngine
-      startBlock: {{STARTING_BLOCK_NUMBER}}
+      startBlock: { { STARTING_BLOCK_NUMBER } }
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -219,7 +219,7 @@ dataSources:
       entities:
         - SystemState
         - EnglishAuctionConfiguration
-        - AccountingEngine 
+        - AccountingEngine
         - EnglishAuction
       abis:
         - name: AccountingEngine
@@ -228,7 +228,7 @@ dataSources:
           file: ./abis/DebtAuctionHouse.json
         - name: PreSettlementSurplusAuctionHouse
           file: ./abis/PreSettlementSurplusAuctionHouse.json
-        
+
       eventHandlers:
         - event: ModifyParameters(bytes32,address)
           handler: handleModifyParametersAddress
@@ -258,11 +258,11 @@ dataSources:
 
   - name: ProxyFactory
     kind: ethereum/contract
-    network: {{NETWORK}}
+    network: { { NETWORK } }
     source:
       abi: DSProxyFactory
-      address: '{{PROXY_FACTORY}}'
-      startBlock: {{STARTING_BLOCK_NUMBER}}
+      address: "{{PROXY_FACTORY}}"
+      startBlock: { { STARTING_BLOCK_NUMBER } }
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -279,11 +279,11 @@ dataSources:
 
   - name: CoinJoin
     kind: ethereum/contract
-    network: {{NETWORK}}
+    network: { { NETWORK } }
     source:
       abi: CoinJoin
-      address: '{{GEB_COIN_JOIN}}'
-      startBlock: {{STARTING_BLOCK_NUMBER}}
+      address: "{{GEB_COIN_JOIN}}"
+      startBlock: { { STARTING_BLOCK_NUMBER } }
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -305,14 +305,14 @@ dataSources:
         #   handler: handleDisableContract
         # - event: RemoveAuthorization(address)
         #   handler: handleRemoveAuthorization
-  
+
   - name: EthAJoin
     kind: ethereum/contract
-    network: {{NETWORK}}
+    network: { { NETWORK } }
     source:
       abi: BasicCollateralJoin
-      address: '{{GEB_JOIN_ETH_A}}'
-      startBlock: {{STARTING_BLOCK_NUMBER}}
+      address: "{{GEB_JOIN_ETH_A}}"
+      startBlock: { { STARTING_BLOCK_NUMBER } }
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -334,14 +334,14 @@ dataSources:
         #   handler: handleDisableContract
         # - event: RemoveAuthorization(address)
         #   handler: handleRemoveAuthorization
-  
+
   - name: Coin
     kind: ethereum/contract
-    network: {{NETWORK}}
+    network: { { NETWORK } }
     source:
       abi: Coin
-      address: '{{GEB_COIN}}'
-      startBlock: {{STARTING_BLOCK_NUMBER}}
+      address: "{{GEB_COIN}}"
+      startBlock: { { STARTING_BLOCK_NUMBER } }
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -356,20 +356,20 @@ dataSources:
           file: ./abis/Coin.json
       eventHandlers:
         - event: Transfer(indexed address,indexed address,uint256)
-          handler: handleTransfer 
+          handler: handleTransfer
         - event: Approval(indexed address,indexed address,uint256)
-          handler: handleApproval 
+          handler: handleApproval
         # - event: AddAuthorization(address)
-        #   handler: handleAddAuthorization 
+        #   handler: handleAddAuthorization
         # - event: RemoveAuthorization(address)
-        #   handler: handleRemoveAuthorization 
+        #   handler: handleRemoveAuthorization
   - name: ProtestPause
     kind: ethereum/contract
-    network: {{NETWORK}}
+    network: { { NETWORK } }
     source:
       abi: DSProtestPause
-      address: '{{GEB_PAUSE}}'
-      startBlock: {{STARTING_BLOCK_NUMBER}}
+      address: "{{GEB_PAUSE}}"
+      startBlock: { { STARTING_BLOCK_NUMBER } }
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -405,11 +405,10 @@ dataSources:
         # - event: SetProtester(address)
         #   handler: handleSetProtester
 
-
 templates:
   - name: EnglishCollateralAuctionHouse
     kind: ethereum/contract
-    network: {{NETWORK}}
+    network: { { NETWORK } }
     source:
       abi: EnglishCollateralAuctionHouse
     mapping:
@@ -430,13 +429,11 @@ templates:
           handler: handleDecreaseSoldAmount
         - event: IncreaseBidSize(uint256,address,uint256,uint256,uint256)
           handler: handleIncreaseBidSize
-        - event: ModifyParameters(bytes32,address)
-          handler: handleModifyParametersAddress
         - event: ModifyParameters(bytes32,uint256)
           handler: handleModifyParametersUint
         - event: SettleAuction(uint256)
           handler: handleSettleAuction
-        
+
         # Remaining events:
         # - event: AddAuthorization(address)
         #   handler: handleAddAuthorization
@@ -448,10 +445,10 @@ templates:
         #   handler: handleStartAuction
         # - event: TerminateAuctionPrematurely(uint256,address,uint256,uint256)
         #   handler: handleTerminateAuctionPrematurely
-  
+
   - name: FixDiscountCollateralAuctionHouse
     kind: ethereum/contract
-    network: {{NETWORK}}
+    network: { { NETWORK } }
     source:
       abi: FixedDiscountCollateralAuctionHouse
     mapping:
@@ -476,7 +473,7 @@ templates:
           handler: handleBuyCollateral
         - event: SettleAuction(uint256,uint256)
           handler: handleSettleAuction
-        
+
         # Remaining events:
         # - event: AddAuthorization(address)
         #   handler: handleAddAuthorization
@@ -489,7 +486,7 @@ templates:
 
   - name: PreSettlementSurplusAuctionHouse
     kind: ethereum/contract
-    network: {{NETWORK}}
+    network: { { NETWORK } }
     source:
       abi: PreSettlementSurplusAuctionHouse
     mapping:
@@ -527,7 +524,7 @@ templates:
 
   - name: PostSettlementSurplusAuctionHouse
     kind: ethereum/contract
-    network: {{NETWORK}}
+    network: { { NETWORK } }
     source:
       abi: PostSettlementSurplusAuctionHouse
     mapping:
@@ -561,7 +558,7 @@ templates:
 
   - name: DebtAuctionHouse
     kind: ethereum/contract
-    network: {{NETWORK}}
+    network: { { NETWORK } }
     source:
       abi: DebtAuctionHouse
     mapping:
@@ -580,7 +577,6 @@ templates:
       eventHandlers:
         - event: ModifyParameters(bytes32,uint256)
           handler: handleModifyParametersUint
-        
         # Remaining events:
         # - event: ModifyParameters(bytes32,address)
         #   handler: handleModifyParametersAddress
@@ -598,6 +594,5 @@ templates:
         #   handler: handleSettleAuction
         # - event: StartAuction(uint256,uint256,uint256,uint256,indexed address,uint256,uint256)
         #   handler: handleStartAuction
-        # - event: TerminateAuctionPrematurely(uint256,address,address,uint256,uint256)  
+        # - event: TerminateAuctionPrematurely(uint256,address,address,uint256,uint256)
         #   handler: handleTerminateAuctionPrematurely
-

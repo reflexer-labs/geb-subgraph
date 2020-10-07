@@ -2,13 +2,13 @@ import {
     Exit,
     Join
   } from '../../../../generated/CoinJoin/CoinJoin'
-import { CoinExit, CoinJoin, getOrCreateUser } from '../../../entities'
+import { CoinExitTransaction, CoinJoinTransaction, getOrCreateUser } from '../../../entities'
 import { eventUid } from '../../../utils/ethereum'
 import * as decimal from '../../../utils/decimal'
 import { findUltimateOwner } from '../../../entities/user'
 
 export function handleJoin(event: Join): void {
-    let join = new CoinJoin(eventUid(event))
+    let join = new CoinJoinTransaction(eventUid(event))
 
     join.amount = decimal.fromWad(event.params.wad)
     join.safeHandler = event.params.account
@@ -22,7 +22,7 @@ export function handleJoin(event: Join): void {
 }
 
 export function handleExit(event: Exit): void {
-    let exit = new CoinExit(eventUid(event))
+    let exit = new CoinExitTransaction(eventUid(event))
 
     exit.amount = decimal.fromWad(event.params.wad)
     exit.safeHandler = event.params.sender

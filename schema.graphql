@@ -76,16 +76,16 @@ type User @entity {
   debtBalance: [InternalDebtBalance!] @derivedFrom(field: "owner")
 
   " List of collateral deposits made into the system "
-  collateralJoin: CollateralJoin @derivedFrom(field: "owner")
+  collateralJoinTransactions: CollateralJoinTransaction @derivedFrom(field: "owner")
 
   " List of collateral withdrawals made out of the system "
-  collateralExit: CollateralExit @derivedFrom(field: "owner")
+  collateralExitTransactions: CollateralExitTransaction @derivedFrom(field: "owner")
 
   " List of system coin deposits made into the system "
-  coinJoin: CoinJoin @derivedFrom(field: "owner")
+  coinJoinTransactions: CoinJoinTransaction @derivedFrom(field: "owner")
 
   " List of system coin withdrawals made out of the system "
-  coinExit: CoinExit @derivedFrom(field: "owner")
+  coinExitTransactions: CoinExitTransaction @derivedFrom(field: "owner")
 }
 
 type UserProxy @entity {
@@ -374,12 +374,6 @@ type InternalCollateralBalance @entity {
   " Actual balance "
   balance: BigDecimal!
 
-  " List of collateral joins (deposits) "
-  joins: [CollateralJoin!]
-
-  " List of collateral exits (withdrawals) "
-  exits: [CollateralExit!]
-
   " Timestamp of the block at which this balance was created [seconds] "
   createdAt: BigInt!
 
@@ -414,12 +408,6 @@ type InternalCoinBalance @entity {
 
   " Actual balance "
   balance: BigDecimal!
-
-  " List of system coin joins (deposits) "
-  joins: [CoinJoin!]
-
-  " List of system coin exits (withdrawals) "
-  exits: [CoinExit!]
 
   " Timestamp of the block at which this balance was first created [seconds] "
   createdAt: BigInt!
@@ -472,7 +460,7 @@ type InternalDebtBalance @entity {
   modifiedAtTransaction: Bytes
 }
 
-type CollateralJoin @entity {
+type CollateralJoinTransaction @entity {
   "Equal to: <TX hash>-<Log index>"
   id: ID!
 
@@ -501,7 +489,7 @@ type CollateralJoin @entity {
   createdAtTransaction: Bytes!
 }
 
-type CollateralExit @entity {
+type CollateralExitTransaction @entity {
   "<TX hash>-<Log index>"
   id: ID!
 
@@ -530,7 +518,7 @@ type CollateralExit @entity {
   createdAtTransaction: Bytes!
 }
 
-type CoinJoin @entity {
+type CoinJoinTransaction @entity {
   "Equal to: <TX hash>-<Log index>"
   id: ID!
 
@@ -556,7 +544,7 @@ type CoinJoin @entity {
   createdAtTransaction: Bytes!
 }
 
-type CoinExit @entity {
+type CoinExitTransaction @entity {
   "<TX hash>-<Log index>"
   id: ID!
 

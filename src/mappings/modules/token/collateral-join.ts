@@ -1,12 +1,12 @@
 import { BasicCollateralJoin, Exit, Join } from '../../../../generated/EthAJoin/BasicCollateralJoin'
-import { CoinJoin, CollateralExit, CollateralJoin, getOrCreateUser } from '../../../entities'
+import { CollateralExitTransaction, CollateralJoinTransaction, getOrCreateUser } from '../../../entities'
 import { eventUid } from '../../../utils/ethereum'
 import * as decimal from '../../../utils/decimal'
 import { findUltimateOwner } from '../../../entities/user'
 import { dataSource } from '@graphprotocol/graph-ts'
 
 export function handleJoin(event: Join): void {
-  let join = new CollateralJoin(eventUid(event))
+  let join = new CollateralJoinTransaction(eventUid(event))
 
   join.amount = decimal.fromWad(event.params.wad)
   join.safeHandler = event.params.account
@@ -23,7 +23,7 @@ export function handleJoin(event: Join): void {
 }
 
 export function handleExit(event: Exit): void {
-  let exit = new CollateralExit(eventUid(event))
+  let exit = new CollateralExitTransaction(eventUid(event))
 
   exit.amount = decimal.fromWad(event.params.wad)
   exit.safeHandler = event.params.sender

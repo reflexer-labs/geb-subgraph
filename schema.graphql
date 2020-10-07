@@ -47,7 +47,7 @@ type Safe @entity {
   modifySAFECollateralization: [ModifySAFECollateralization!] @derivedFrom(field: "safe")
 
   " List of fixed discount auctions associated with this Safe "
-  liquidationFixedDiscount: [FixDiscountAuction!] @derivedFrom(field: "safe")
+  liquidationFixedDiscount: [FixedDiscountAuction!] @derivedFrom(field: "safe")
 
   " List of English auctions associated with this Safe "
   liquidationEnglish: [EnglishAuction!] @derivedFrom(field: "safe")
@@ -205,7 +205,7 @@ type CollateralType @entity {
   englishAuctionConfiguration: EnglishAuctionConfiguration
 
   " Auction configuration (fixed discount only) "
-  fixDiscountAuctionConfiguration: FixDiscountAuctionConfiguration
+  fixedDiscountAuctionConfiguration: FixedDiscountAuctionConfiguration
 
   " Timestamp of the block at which this collateral type was added [seconds] "
   createdAt: BigInt!
@@ -792,7 +792,7 @@ type EnglishAuction @entity {
 
 # --- Fixed Discount Auction ---
 
-type FixDiscountAuctionConfiguration @entity {
+type FixedDiscountAuctionConfiguration @entity {
   " Collateral type name "
   id: ID!
 
@@ -836,7 +836,7 @@ type FixDiscountAuctionConfiguration @entity {
   systemCoinOracle: Bytes
 }
 
-type FixDiscountAuction @entity {
+type FixedDiscountAuction @entity {
   " Equal to: <collateral type>-<auction ID> "
   id: ID!
 
@@ -874,10 +874,10 @@ type FixDiscountAuction @entity {
   numberOfBatches: BigInt!
 
   # " List of individual collateral batches that were sold "
-  batchSold: [FixDiscountAuctionBatch!] @derivedFrom(field: "auction")
+  batchSold: [FixedDiscountAuctionBatch!] @derivedFrom(field: "auction")
 
   " Auction configuration "
-  fixDiscountAuctionConfiguration: FixDiscountAuctionConfiguration!
+  fixedDiscountAuctionConfiguration: FixedDiscountAuctionConfiguration!
 
   " Whether there's still any collateral left to be bought "
   isTerminated: Boolean!
@@ -895,7 +895,7 @@ type FixDiscountAuction @entity {
   createdAtTransaction: Bytes!
 }
 
-type FixDiscountAuctionBatch @entity {
+type FixedDiscountAuctionBatch @entity {
   " Equal to: <collateral type>-<auction id>-<batch number> "
   id: ID!
 
@@ -903,7 +903,7 @@ type FixDiscountAuctionBatch @entity {
   batchNumber: BigInt!
 
   " Auction in which the batch was sold "
-  auction: FixDiscountAuction!
+  auction: FixedDiscountAuction!
 
   " Amount of tokens bought in the batch "
   buyAmount: BigDecimal!

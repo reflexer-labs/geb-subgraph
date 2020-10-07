@@ -6,13 +6,13 @@ import {
   FixedDiscountCollateralAuctionHouse,
   BuyCollateral,
   SettleAuction,
-} from '../../../../generated/templates/FixDiscountCollateralAuctionHouse/FixedDiscountCollateralAuctionHouse'
+} from '../../../../generated/templates/FixedDiscountCollateralAuctionHouse/FixedDiscountCollateralAuctionHouse'
 import { dataSource, log } from '@graphprotocol/graph-ts'
 import {
   getOrCreateCollateral,
-  FixDiscountAuctionConfiguration,
-  FixDiscountAuction,
-  FixDiscountAuctionBatch,
+  FixedDiscountAuctionConfiguration,
+  FixedDiscountAuction,
+  FixedDiscountAuctionBatch,
 } from '../../../entities'
 
 export function handleModifyParametersUint(event: ModifyParametersUint): void {
@@ -21,7 +21,7 @@ export function handleModifyParametersUint(event: ModifyParametersUint): void {
     FixedDiscountCollateralAuctionHouse.bind(dataSource.address()).collateralType(),
     event,
   )
-  let config = FixDiscountAuctionConfiguration.load(collateral.id)
+  let config = FixedDiscountAuctionConfiguration.load(collateral.id)
   let val = event.params.data
 
   if (what == 'discount') {
@@ -51,7 +51,7 @@ export function handleModifyParametersAddress(event: ModifyParametersAddress): v
     FixedDiscountCollateralAuctionHouse.bind(dataSource.address()).collateralType(),
     event,
   )
-  let config = FixDiscountAuctionConfiguration.load(collateral.id)
+  let config = FixedDiscountAuctionConfiguration.load(collateral.id)
   let address = event.params.data
 
   if (what == 'oracleRelayer') {
@@ -72,13 +72,13 @@ export function handleBuyCollateral(event: BuyCollateral): void {
   let collateral = FixedDiscountCollateralAuctionHouse.bind(dataSource.address()).collateralType()
 
   let auctionId = collateral.toString() + '-' + id.toString()
-  let auction = FixDiscountAuction.load(auctionId)
+  let auction = FixedDiscountAuction.load(auctionId)
 
   if (auction == null) {
     log.error('handleBuyCollateral - auction {} not found.', [auctionId])
   }
 
-  let batch = new FixDiscountAuctionBatch(
+  let batch = new FixedDiscountAuctionBatch(
     collateral.toString() + '-' + id.toString() + '-' + auction.numberOfBatches.toString(),
   )
 
@@ -106,7 +106,7 @@ export function handleSettleAuction(event: SettleAuction): void {
   let id = event.params.id
   let collateral = FixedDiscountCollateralAuctionHouse.bind(dataSource.address()).collateralType()
   let auctionId = collateral.toString() + '-' + id.toString()
-  let auction = FixDiscountAuction.load(auctionId)
+  let auction = FixedDiscountAuction.load(auctionId)
 
   auction.isSettled = true
   auction.save()

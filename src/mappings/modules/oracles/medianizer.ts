@@ -1,5 +1,5 @@
 import { dataSource } from '@graphprotocol/graph-ts'
-import { UpdateResult, Medianizer } from '../../../../generated/EthMedian/Medianizer'
+import { UpdateResult, Medianizer } from '../../../../generated/EthMedianizer/Medianizer'
 import { MedianizerUpdate } from '../../../entities'
 import { eventUid } from '../../../utils/ethereum'
 import * as decimal from '../../../utils/decimal'

@@ -32,16 +32,6 @@ export function handleTransfer(event: Transfer): void {
     srcBalance.save()
   }
 
-  // Check if it's a transferFrom
-  log.error('ERRR {} {} {} {} {} {}', [
-    source.toHexString(),
-    destination.toHexString(),
-    event.transaction.hash.toHexString(),
-    event.transaction.from.toHexString(),
-    event.address.toHexString(),
-    amount.toString(),
-  ])
-
   // TODO: Deduct allowance when it's a transferFrom call. (Not possible )
   // Hacky way to figure out if it's a transferFrom or a simple transfer
   // First make sure it's not a burn or mint

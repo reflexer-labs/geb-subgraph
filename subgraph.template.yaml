@@ -525,18 +525,18 @@ dataSources:
         - MedianizerUpdate
       abis:
         - name: Medianizer
-          # Note: We're using chainlink median ABI for Uniswap median
-          # because they have almost the same ABI
-          file: ./abis/ChainlinkMedianETHUSD.json
+          file: ./abis/UniswapConsecutiveSlotsMedianRAIUSD.json
+        - name: UniswapPair
+          file: ./abis/UniswapPair.json
       eventHandlers:
         - event:  UpdateResult(uint256,uint256)
           handler: handleUpdateResult
+        - event:  ModifyParameters(bytes32,address)
+          handler: handleModifyParameters
         # - event:  AddAuthorization(address)
         #   handler: handleAddAuthorization
         # - event:  FailRewardCaller(bytes,address,uint256)
         #   handler: handleFailRewardCaller
-        # - event:  ModifyParameters(bytes32,address)
-        #   handler: handleModifyParameters
         # - event:  ModifyParameters(bytes32,uint256)
         #   handler: handleModifyParameters
         # - event:  RemoveAuthorization(address)
@@ -737,3 +737,29 @@ templates:
         # - event: TerminateAuctionPrematurely(uint256,address,address,uint256,uint256)  
         #   handler: handleTerminateAuctionPrematurely
 
+  - name: UniswapPair
+    kind: ethereum/contract
+    network: {{NETWORK}}
+    source:
+      abi: UniswapPair
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/modules/uniswap/uniswap.ts
+      entities:
+        - UniswapPair
+      abis:
+        - name: UniswapPair
+          file: ./abis/UniswapPair.json
+      eventHandlers:
+        - event: Sync(uint112,uint112)
+          handler: handleSync
+        # - event: Mint(indexed address,uint256,uint256)
+        #   handler: handleMint
+        # - event: Burn(indexed address,uint256,uint256,indexed address)
+        #   handler: handleBurn
+        # - event: Swap(indexed address,uint256,uint256,uint256,uint256,indexed address)
+        #   handler: handleSwap
+        # - event: Transfer(indexed address,indexed address,uint256)
+        #   handler: handleTransfer

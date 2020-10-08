@@ -628,6 +628,51 @@ type RedemptionRate @entity {
   value: BigDecimal!
 }
 
+# --- Oracles ---
+
+type FsmUpdate @entity {
+  " Equal to: <tx hash>-<log index>"
+  id: ID!
+
+  " FSM address "
+  fsmAddress: Bytes!
+
+  " The rate of change of the redemption price "
+  value: BigDecimal!
+
+  " Timestamp of the block at which this transaction was executed [seconds] "
+  createdAt: BigInt!
+
+  " Block number at which this transaction was executed "
+  createdAtBlock: BigInt!
+
+  " Hash of the transaction that executed this exit "
+  createdAtTransaction: Bytes!
+}
+
+type MedianizerUpdate @entity {
+  " Equal to: <tx hash>-<log index>"
+  id: ID!
+
+  " FSM address "
+  medianizerAddress: Bytes!
+
+  " Price pair symbol"
+  symbol: String!
+
+  " The rate of change of the redemption price "
+  value: BigDecimal!
+
+  " Timestamp of the block at which this transaction was executed [seconds] "
+  createdAt: BigInt!
+
+  " Block number at which this transaction was executed "
+  createdAtBlock: BigInt!
+
+  " Hash of the transaction that executed this exit "
+  createdAtTransaction: Bytes!
+}
+
 # --- Auctions ---
 
 enum AuctionType {

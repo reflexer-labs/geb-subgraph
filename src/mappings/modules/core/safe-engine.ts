@@ -310,7 +310,7 @@ export function handleUpdateAccumulatedRate(event: UpdateAccumulatedRate): void 
 
   // Update debt counter
   let system = getSystemState(event)
-  system.globalDebt = system.globalDebt.plus(rad)
+  system.globalDebt = decimal.fromRad(event.params.globalDebt)
   updateLastModifySystemState(system, event)
   system.save()
 

@@ -1,4 +1,4 @@
-import { dataSource } from '@graphprotocol/graph-ts'
+import { dataSource, log } from '@graphprotocol/graph-ts'
 import {
   UpdateResult,
   Medianizer as ChainlinkMedianizer,
@@ -7,15 +7,19 @@ import {
 import { Medianizer as UniMedianizer } from '../../../../generated/CoinMedianizer/Medianizer'
 import { UniswapPair as UniswapPairContract } from '../../../../generated/templates/UniswapPair/UniswapPair'
 import { UniswapPair as UniswapPairIndexer } from '../../../../generated/templates'
-import { getOrCreateCollateral, getSystemState, MedianizerUpdate, UniswapPair as UniswapPairEntity } from '../../../entities'
+import {
+  getOrCreateCollateral,
+  getSystemState,
+  MedianizerUpdate,
+  UniswapPair as UniswapPairEntity,
+} from '../../../entities'
 import { eventUid, NULL_ADDRESS } from '../../../utils/ethereum'
 import * as decimal from '../../../utils/decimal'
-import { addresses } from '../../../utils/addresses.template'
+import { addresses } from '../../../utils/addresses'
 import { ETH_A } from '../../../utils/bytes'
 
 // Called for both Chainlink and Uniswap medianizer
 export function handleUpdateResult(event: UpdateResult): void {
-  
   let id = eventUid(event)
   let update = new MedianizerUpdate(id)
   let contractAddress = dataSource.address()
@@ -30,14 +34,16 @@ export function handleUpdateResult(event: UpdateResult): void {
   update.createdAtTransaction = event.transaction.hash
   update.save()
 
-  if (contractAddress.toHexString().toLocaleLowerCase() === addresses.MEDIANIZER_ETH.toLocaleLowerCase()) {
+  if (contractAddress.equals(addresses.get('MEDIANIZER_ETH'))) {
     let collateral = getOrCreateCollateral(ETH_A, event)
     collateral.currentMedianizerUpdate = id
     collateral.save()
-  } (contractAddress.toHexString().toLocaleLowerCase() === addresses.MEDIANIZER_PRAI.toLocaleLowerCase()) {
+  } else if (contractAddress.equals(addresses.get('MEDIANIZER_PRAI'))) {
     let system = getSystemState(event)
     system.currentCoinMedianizerUpdate = id
     system.save()
+  } else {
+    log.error('Medianizer address not found', [])
   }
 }
 

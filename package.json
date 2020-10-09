@@ -5,7 +5,7 @@
   "scripts": {
     "auth": "graph auth https://api.thegraph.com/deploy/",
     "build": "graph build",
-    "codegen": "graph codegen",
+    "codegen": "rm -rf generated && graph codegen",
     "create-local": "graph create --node ${GRAPH_ADMIN_RPC_URL} ${SUBGRAPH_NAME}",
     "remove-local": "graph remove --node ${GRAPH_ADMIN_RPC_URL} ${SUBGRAPH_NAME}",
     "deploy-local": "npm run prepare-${NETWORK:-mainnet} && npm run codegen && npm run create-local; graph deploy --node ${GRAPH_ADMIN_RPC_URL} --ipfs ${IPFS_URL} ${SUBGRAPH_NAME}",
@@ -14,7 +14,10 @@
     "prepare-test": "mustache config/test.json subgraph.template.yaml > subgraph.yaml",
     "prepare-mainnet": "mustache config/mainnet.json subgraph.template.yaml > subgraph.yaml",
     "prepare-kovan": "mustache config/kovan.json subgraph.template.yaml > subgraph.yaml",
-    "update-abis": "node update_abis.js geb-subgraph/abis kovan/0.6.0"
+    "update-abis": "node update_abis.js geb-subgraph/abis kovan/0.6.0",
+    "test-hosted-kovan": "ETH_RPC=https://parity0.kovan.makerfoundation.com:8545 SUBGRAPH_NODE_URL=https://api.thegraph.com/subgraphs/name/reflexer-labs/rai-kovan TS_NODE_PROJECT=test/tsconfig.json mocha -r ts-node/register --timeout 5000 ./test/*.test.ts",
+    "test-hosted-mainnet": "ETH_RPC=https://parity0.mainnet.makerfoundation.com:8545 SUBGRAPH_NODE_URL=TODO TS_NODE_PROJECT=test/tsconfig.json mocha -r ts-node/register --timeout 5000 ./test/*.test.ts",
+    "test-aws-kovan": "ETH_RPC=https://parity0.kovan.makerfoundation.com:8545 SUBGRAPH_NODE_URL=https://subgraph-kovan.reflexer.finance/subgraphs/name/reflexer-labs/rai/graphql TS_NODE_PROJECT=test/tsconfig.json mocha -r ts-node/register --timeout 5000 ./test/*.test.ts"
   },
   "repository": {
     "type": "git",
@@ -29,7 +32,13 @@
   "devDependencies": {
     "@graphprotocol/graph-cli": "^0.18.0",
     "@graphprotocol/graph-ts": "^0.18.1",
-    "mustache": "^4.0.1"
-  },
-  "dependencies": {}
+    "@types/mocha": "^8.0.3",
+    "axios": "^0.20.0",
+    "ethers": "^5.0.17",
+    "geb.js": "0.0.18",
+    "mocha": "^8.1.3",
+    "mustache": "^4.0.1",
+    "ts-node": "^9.0.0",
+    "typescript": "^4.0.3"
+  }
 }

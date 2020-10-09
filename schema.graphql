@@ -269,6 +269,9 @@ type SystemState @entity {
   " Latest redemption price "
   currentRedemptionPrice: RedemptionPrice
 
+  " Total supply of COIN outside of the system, equals to ERC20.totalSupply() of Coin "
+  erc20CoinTotalSupply: BigDecimal!
+
   " Timestamp of the block at which the system was created [seconds] "
   createdAt: BigInt!
 

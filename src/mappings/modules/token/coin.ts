@@ -1,6 +1,6 @@
 import { Address, dataSource, log } from '@graphprotocol/graph-ts'
 import { Transfer, Approval, Coin } from '../../../../generated/Coin/Coin'
-import { ERC20Allowance, ERC20Balance, ERC20Transfer } from '../../../entities'
+import { ERC20Allowance, ERC20Balance, ERC20Transfer, getSystemState } from '../../../entities'
 import { getOrCreateERC20Balance, getOrCreateERC20BAllowance } from '../../../entities/erc20'
 import * as decimal from '../../../utils/decimal'
 import { eventUid } from '../../../utils/ethereum'
@@ -12,6 +12,8 @@ export function handleTransfer(event: Transfer): void {
   let destination = event.params.dst
   let amount = decimal.fromWad(event.params.amount)
   let nullAddress = Address.fromHexString('0x0000000000000000000000000000000000000000')
+  let system = getSystemState(event)
+  
   // Check if it's not a burn before updating destination
   if (!destination.equals(nullAddress)) {
     let destBalance = getOrCreateERC20Balance(destination, tokenAddress, event)
@@ -20,6 +22,9 @@ export function handleTransfer(event: Transfer): void {
     destBalance.modifiedAtBlock = event.block.number
     destBalance.modifiedAtTransaction = event.transaction.hash
     destBalance.save()
+  } else {
+    // Burn
+    system.erc20CoinTotalSupply = system.erc20CoinTotalSupply.minus(amount)  
   }
 
   // Check if it's not a mint before updating source
@@ -30,8 +35,12 @@ export function handleTransfer(event: Transfer): void {
     srcBalance.modifiedAtBlock = event.block.number
     srcBalance.modifiedAtTransaction = event.transaction.hash
     srcBalance.save()
+  } else {
+    // Mint
+    system.erc20CoinTotalSupply = system.erc20CoinTotalSupply.plus(amount)  
   }
 
+  system.save()
   // TODO: Deduct allowance when it's a transferFrom call. (Not possible )
   // Hacky way to figure out if it's a transferFrom or a simple transfer
   // First make sure it's not a burn or mint

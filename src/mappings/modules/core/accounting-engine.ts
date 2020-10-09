@@ -23,7 +23,7 @@ export function handleModifyParametersAddress(event: ModifyParametersAddress): v
     accounting.surplusAuctionHouse = data
 
     // Create or update the auction house object
-    getOrCreateEnglishAuctionConfiguration(data, enums.EnglishAuctionType_SURPLUS_PRE)
+    getOrCreateEnglishAuctionConfiguration(data, enums.EnglishAuctionType_SURPLUS)
 
     // Start indexing
     PreSettlementSurplusAuctionHouse.create(data)
@@ -109,7 +109,7 @@ export function handleAuctionSurplus(event: AuctionSurplus): void {
   let accounting = getOrCreateAccountingEngine(event)
   let config = getOrCreateEnglishAuctionConfiguration(
     accounting.surplusAuctionHouse,
-    enums.EnglishAuctionType_SURPLUS_PRE,
+    enums.EnglishAuctionType_SURPLUS,
   )
 
   if (config == null) {
@@ -119,10 +119,10 @@ export function handleAuctionSurplus(event: AuctionSurplus): void {
   accounting.lastSurplusAuctionTime = event.block.timestamp
 
   let id = event.params.id
-  let auction = new EnglishAuction(enums.EnglishAuctionType_SURPLUS_PRE + '-' + id.toString())
+  let auction = new EnglishAuction(enums.EnglishAuctionType_SURPLUS + '-' + id.toString())
   auction.auctionId = id
   auction.numberOfBids = integer.ZERO
-  auction.englishAuctionType = enums.EnglishAuctionType_SURPLUS_PRE
+  auction.englishAuctionType = enums.EnglishAuctionType_SURPLUS
   auction.buyToken = enums.AuctionToken_PROTOCOL_TOKEN
   auction.sellToken = enums.AuctionToken_COIN
   auction.sellInitialAmount = accounting.surplusAuctionAmountToSell
@@ -134,7 +134,7 @@ export function handleAuctionSurplus(event: AuctionSurplus): void {
   auction.createdAt = event.block.timestamp
   auction.createdAtBlock = event.block.number
   auction.createdAtTransaction = event.transaction.hash
-  auction.englishAuctionConfiguration = enums.EnglishAuctionType_SURPLUS_PRE
+  auction.englishAuctionConfiguration = enums.EnglishAuctionType_SURPLUS
   auction.auctionDeadline = config.totalAuctionLength.plus(event.block.timestamp)
 
   auction.save()

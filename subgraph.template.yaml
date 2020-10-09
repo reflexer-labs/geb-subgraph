@@ -661,40 +661,6 @@ templates:
         # - event: TerminateAuctionPrematurely(uint256,address,address,uint256)
         #   handler: handleTerminateAuctionPrematurely
 
-  - name: PostSettlementSurplusAuctionHouse
-    kind: ethereum/contract
-    network: {{NETWORK}}
-    source:
-      abi: PostSettlementSurplusAuctionHouse
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.4
-      language: wasm/assemblyscript
-      file: ./src/mappings/modules/auctions/settlement-surplus-auction-houses.ts
-      entities:
-        - EnglishAuction
-        - EnglishAuctionBid
-      abis:
-        - name: PostSettlementSurplusAuctionHouse
-          file: ./abis/PostSettlementSurplusAuctionHouse.json
-      eventHandlers:
-        - event: ModifyParameters(bytes32,uint256)
-          handler: handleModifyParametersPost
-        - event: IncreaseBidSize(uint256,address,uint256,uint256,uint256)
-          handler: handleIncreaseBidSizePost
-        - event: RestartAuction(uint256,uint256)
-          handler: handleRestartAuctionPost
-        - event: SettleAuction(uint256)
-          handler: handleSettleAuctionPost
-
-        # Remaining events:
-        # - event: AddAuthorization(address)
-        #   handler: handleAddAuthorization
-        # - event: RemoveAuthorization(address)
-        #   handler: handleRemoveAuthorization
-        # - event: StartAuction(uint256,uint256,uint256,uint256,uint256)
-        #   handler: handleStartAuction
-
   - name: DebtAuctionHouse
     kind: ethereum/contract
     network: {{NETWORK}}

@@ -684,7 +684,7 @@ enum AuctionType {
 }
 
 type EnglishAuctionConfiguration @entity {
-  " Collateral type name, 'DEBT', 'SURPLUS_PRE' or 'SURPLUS_POST' "
+  " Collateral type name, 'DEBT' or 'SURPLUS' "
   id: ID!
 
   " Collateral type "
@@ -743,8 +743,7 @@ type EnglishAuctionBid @entity {
 enum EnglishAuctionType {
   LIQUIDATION
   DEBT
-  SURPLUS_PRE
-  SURPLUS_POST
+  SURPLUS
 }
 
 enum AuctionToken {

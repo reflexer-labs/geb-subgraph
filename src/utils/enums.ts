@@ -2,8 +2,7 @@
 
 export let EnglishAuctionType_LIQUIDATION = 'LIQUIDATION'
 export let EnglishAuctionType_DEBT = 'DEBT'
-export let EnglishAuctionType_SURPLUS_PRE = 'SURPLUS_PRE'
-export let EnglishAuctionType_SURPLUS_POST = 'SURPLUS_POST'
+export let EnglishAuctionType_SURPLUS = 'SURPLUS'
 
 export let AuctionToken_COIN = 'COIN'
 export let AuctionToken_COLLATERAL = 'COLLATERAL'

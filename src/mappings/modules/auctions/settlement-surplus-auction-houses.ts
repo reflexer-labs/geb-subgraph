@@ -1,11 +1,4 @@
 import {
-  ModifyParameters as ModifyParametersPost,
-  IncreaseBidSize as IncreaseBidSizePost,
-  RestartAuction as RestartAuctionPost,
-  SettleAuction as SettleAuctionPost,
-} from '../../../../generated/templates/PostSettlementSurplusAuctionHouse/PostSettlementSurplusAuctionHouse'
-
-import {
   ModifyParameters as ModifyParametersPre,
   IncreaseBidSize as IncreaseBidSizePre,
   RestartAuction as RestartAuctionPre,
@@ -20,13 +13,8 @@ import * as integer from '../../../utils/integer'
 import * as enums from '../../../utils/enums'
 import { getOrCreateEnglishAuctionConfiguration } from '../../../entities/auctions'
 
-export function handleModifyParametersPost(event: ModifyParametersPost): void {
-  let config = getOrCreateEnglishAuctionConfiguration(dataSource.address(), enums.EnglishAuctionType_SURPLUS_POST)
-  modifyParameter(config, event.params.parameter.toString(), event.params.data)
-}
-
 export function handleModifyParametersPre(event: ModifyParametersPre): void {
-  let config = getOrCreateEnglishAuctionConfiguration(dataSource.address(), enums.EnglishAuctionType_SURPLUS_PRE)
+  let config = getOrCreateEnglishAuctionConfiguration(dataSource.address(), enums.EnglishAuctionType_SURPLUS)
   modifyParameter(config, event.params.parameter.toString(), event.params.data)
 }
 
@@ -41,17 +29,6 @@ function modifyParameter(config: EnglishAuctionConfiguration, what: string, val:
     config.DEBT_amountSoldIncrease = decimal.fromWad(val)
   }
   config.save()
-}
-
-export function handleIncreaseBidSizePost(event: IncreaseBidSizePost): void {
-  increaseBidSize(
-    event.params.id,
-    decimal.fromRad(event.params.bid),
-    event.params.highBidder,
-    event.params.bidExpiry,
-    event,
-    false,
-  )
 }
 
 export function handleIncreaseBidSizePre(event: IncreaseBidSizePre): void {
@@ -100,16 +77,8 @@ export function handleRestartAuctionPre(event: RestartAuctionPre): void {
   restartAuction(event.params.id, event.params.auctionDeadline, true)
 }
 
-export function handleRestartAuctionPost(event: RestartAuctionPost): void {
-  restartAuction(event.params.id, event.params.auctionDeadline, false)
-}
-
 export function handleSettleAuctionPre(event: SettleAuctionPre): void {
   settleAuction(event.params.id, true)
-}
-
-export function handleSettleAuctionPost(event: SettleAuctionPost): void {
-  settleAuction(event.params.id, false)
 }
 
 function restartAuction(id: BigInt, auctionDeadline: BigInt, isPre: boolean): void {
@@ -126,12 +95,12 @@ function settleAuction(id: BigInt, isPre: boolean): void {
 
 function auctionId(auctionId: BigInt, isPre: boolean): string {
   return isPre
-    ? enums.EnglishAuctionType_SURPLUS_PRE
-    : enums.EnglishAuctionType_SURPLUS_POST + '-' + auctionId.toString()
+    ? enums.EnglishAuctionType_SURPLUS
+    : enums.EnglishAuctionType_SURPLUS + '-' + auctionId.toString()
 }
 
 function bidAuctionId(auctionId: BigInt, bidNumber: BigInt, isPre: boolean): string {
   return isPre
-    ? enums.EnglishAuctionType_SURPLUS_PRE
-    : enums.EnglishAuctionType_SURPLUS_POST + '-' + auctionId.toString() + '-' + bidNumber.toString()
+    ? enums.EnglishAuctionType_SURPLUS
+    : enums.EnglishAuctionType_SURPLUS + '-' + auctionId.toString() + '-' + bidNumber.toString()
 }

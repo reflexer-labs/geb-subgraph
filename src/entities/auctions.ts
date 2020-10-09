@@ -6,7 +6,6 @@ import * as enums from '../utils/enums'
 import { EnglishAuctionConfiguration } from '.'
 import { DebtAuctionHouse } from '../../generated/templates/DebtAuctionHouse/DebtAuctionHouse'
 import { PreSettlementSurplusAuctionHouse } from '../../generated/templates/PreSettlementSurplusAuctionHouse/PreSettlementSurplusAuctionHouse'
-import { PostSettlementSurplusAuctionHouse } from '../../generated/templates/PostSettlementSurplusAuctionHouse/PostSettlementSurplusAuctionHouse'
 import { EnglishCollateralAuctionHouse } from '../../generated/templates/EnglishCollateralAuctionHouse/EnglishCollateralAuctionHouse'
 
 export function getOrCreateEnglishAuctionConfiguration(
@@ -26,13 +25,8 @@ export function getOrCreateEnglishAuctionConfiguration(
     config.bidDuration = contract.bidDuration()
     config.totalAuctionLength = contract.totalAuctionLength()
     config.DEBT_amountSoldIncrease = decimal.fromWad(contract.amountSoldIncrease())
-  } else if (configId == enums.EnglishAuctionType_SURPLUS_PRE) {
+  } else if (configId == enums.EnglishAuctionType_SURPLUS) {
     let contract = PreSettlementSurplusAuctionHouse.bind(houseAddress as Address)
-    config.bidIncrease = decimal.fromWad(contract.bidIncrease())
-    config.bidDuration = contract.bidDuration()
-    config.totalAuctionLength = contract.totalAuctionLength()
-  } else if (configId == enums.EnglishAuctionType_SURPLUS_POST) {
-    let contract = PostSettlementSurplusAuctionHouse.bind(houseAddress as Address)
     config.bidIncrease = decimal.fromWad(contract.bidIncrease())
     config.bidDuration = contract.bidDuration()
     config.totalAuctionLength = contract.totalAuctionLength()

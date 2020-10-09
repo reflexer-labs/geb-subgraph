@@ -7,13 +7,17 @@ import {
 import { Medianizer as UniMedianizer } from '../../../../generated/CoinMedianizer/Medianizer'
 import { UniswapPair as UniswapPairContract } from '../../../../generated/templates/UniswapPair/UniswapPair'
 import { UniswapPair as UniswapPairIndexer } from '../../../../generated/templates'
-import { MedianizerUpdate, UniswapPair as UniswapPairEntity } from '../../../entities'
+import { getOrCreateCollateral, getSystemState, MedianizerUpdate, UniswapPair as UniswapPairEntity } from '../../../entities'
 import { eventUid, NULL_ADDRESS } from '../../../utils/ethereum'
 import * as decimal from '../../../utils/decimal'
+import { addresses } from '../../../utils/addresses.template'
+import { ETH_A } from '../../../utils/bytes'
 
 // Called for both Chainlink and Uniswap medianizer
 export function handleUpdateResult(event: UpdateResult): void {
-  let update = new MedianizerUpdate(eventUid(event))
+  
+  let id = eventUid(event)
+  let update = new MedianizerUpdate(id)
   let contractAddress = dataSource.address()
 
   update.medianizerAddress = contractAddress
@@ -25,6 +29,16 @@ export function handleUpdateResult(event: UpdateResult): void {
   update.createdAtBlock = event.block.number
   update.createdAtTransaction = event.transaction.hash
   update.save()
+
+  if (contractAddress.toHexString().toLocaleLowerCase() === addresses.MEDIANIZER_ETH.toLocaleLowerCase()) {
+    let collateral = getOrCreateCollateral(ETH_A, event)
+    collateral.currentMedianizerUpdate = id
+    collateral.save()
+  } (contractAddress.toHexString().toLocaleLowerCase() === addresses.MEDIANIZER_PRAI.toLocaleLowerCase()) {
+    let system = getSystemState(event)
+    system.currentCoinMedianizerUpdate = id
+    system.save()
+  }
 }
 
 // Only call for the Uniswap medianizer

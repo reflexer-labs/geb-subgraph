@@ -162,6 +162,12 @@ type CollateralType @entity {
   " Current market price "
   currentPrice: CollateralPrice
 
+  " Latest Coin FSM update "
+  currentFsmUpdate: FsmUpdate
+
+  " Latest Coin medianizer update "
+  currentMedianizerUpdate: MedianizerUpdate
+
   " Total interest accrued on this collateral type "
   accumulatedRate: BigDecimal!
 
@@ -268,6 +274,12 @@ type SystemState @entity {
 
   " Latest redemption price "
   currentRedemptionPrice: RedemptionPrice
+
+  " Latest Coin FSM update "
+  currentCoinFsmUpdate: FsmUpdate
+
+  " Latest Coin medianizer update "
+  currentCoinMedianizerUpdate: MedianizerUpdate
 
   " Total supply of COIN outside of the system, equals to ERC20.totalSupply() of Coin "
   erc20CoinTotalSupply: BigDecimal!

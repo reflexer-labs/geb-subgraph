@@ -64,7 +64,9 @@ typings/
 docker/.env
 docker/data
 
-subgraph.yaml
 
+# Generated stuff
+subgraph.yaml
 build/
 generated/
+src/utils/addresses.ts

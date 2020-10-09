@@ -13,3 +13,5 @@ export function toSignedInt(value: Bytes, signed: boolean = false, bigEndian: bo
 export function toUnsignedInt(value: Bytes, bigEndian: boolean = true): BigInt {
   return BigInt.fromUnsignedBytes(bigEndian ? (value.reverse() as Bytes) : value)
 }
+
+export const ETH_A = Bytes.fromHexString('0x4554482d41000000000000000000000000000000000000000000000000000000')

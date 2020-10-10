@@ -630,17 +630,20 @@ type RedemptionRate @entity {
   " Equal to: <tx hash>-<log index>"
   id: ID!
 
-  " Block number "
-  block: BigInt!
-
-  " Timestamp in seconds "
-  timestamp: BigInt!
-
-  " The redemption price "
-  redemptionPrice: BigDecimal!
-
   " The rate of change of the redemption price "
-  value: BigDecimal!
+  perSecondRate: BigDecimal!
+
+  " Annualized redemption rate "
+  annualizedRate: BigDecimal!
+
+  " Timestamp of the block at which this rate was created [seconds] "
+  createdAt: BigInt!
+
+  " Block number at which this rate was created "
+  createdAtBlock: BigInt!
+
+  " Hash of the transaction that created this rate "
+  createdAtTransaction: Bytes!
 }
 
 # --- Oracles ---

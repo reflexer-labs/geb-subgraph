@@ -66,3 +66,9 @@ export function toRay(value: BigDecimal): BigInt {
 export function toWad(value: BigDecimal): BigInt {
   return value.times(WAD).truncate(0).digits
 }
+
+export let wadBigInt = BigInt.fromI32(10).pow(WAD_PRECISION)
+
+export let rayBigInt = BigInt.fromI32(10).pow(RAY_PRECISION)
+
+export let radBigInt = BigInt.fromI32(10).pow(RAD_PRECISION)

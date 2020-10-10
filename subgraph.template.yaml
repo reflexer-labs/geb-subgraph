@@ -98,6 +98,8 @@ dataSources:
       abis:
         - name: OracleRelayer
           file: ./abis/OracleRelayer.json
+        - name: RateSetter
+          file: ./abis/RateSetter.json
       eventHandlers:
         - event: UpdateCollateralPrice(bytes32,uint256,uint256,uint256)
           handler: handleUpdateCollateralPrice

@@ -1,4 +1,4 @@
-import { log, dataSource } from '@graphprotocol/graph-ts'
+import { log, dataSource, BigInt, Address } from '@graphprotocol/graph-ts'
 
 import * as bytes from '../../../utils/bytes'
 import * as decimal from '../../../utils/decimal'
@@ -11,10 +11,19 @@ import {
   ModifyParameters2 as ModifyParametersCollateralTypeUint,
   OracleRelayer,
 } from '../../../../generated/OracleRelayer/OracleRelayer'
-import { CollateralType, CollateralPrice, RedemptionPrice, RedemptionRate } from '../../../../generated/schema'
+
+import { RateSetter } from '../../../../generated/OracleRelayer/RateSetter'
+
+import {
+  CollateralType,
+  CollateralPrice,
+  RedemptionPrice,
+  RedemptionRate,
+} from '../../../../generated/schema'
 import { getSystemState } from '../../../entities'
 import { getOrCreateCollateral } from '../../../entities/collateral'
 import { eventUid } from '../../../utils/ethereum'
+import { addresses } from '../../../utils/addresses'
 
 export function handleUpdateCollateralPrice(event: UpdateCollateralPrice): void {
   let collateralType = event.params.collateralType.toString()
@@ -88,12 +97,36 @@ export function handleModifyParametersUint(event: ModifyParametersUint): void {
   } else if (what == 'redemptionRate') {
     let system = getSystemState(event)
     let rate = new RedemptionRate(eventUid(event))
-    rate.block = event.block.number
-    rate.timestamp = event.block.timestamp
-    rate.value = decimal.fromRay(event.params.data)
-    let relayer = OracleRelayer.bind(dataSource.address())
-    // TODO: Test, does that work ? `redemptionPrice` is not view
-    rate.redemptionPrice = decimal.fromRay(relayer.redemptionPrice())
+
+    let perSecondRate = decimal.fromRay(event.params.data)
+    let perSecondRateRay = event.params.data
+    rate.perSecondRate = perSecondRate
+
+    // Calculate solidity annualized rate by calling the contract
+    let secondPerYear = BigInt.fromI32(31536000)
+    let rateSetterContract = RateSetter.bind(addresses.get('GEB_RRFM_SETTER') as Address)
+
+    if (perSecondRate.lt(decimal.ONE)) {
+      //  -1 * rpower(2 * RAY - perSecondRateRay, 31536000, RAY)
+      rate.annualizedRate = decimal.fromRay(
+        rateSetterContract
+          .rpower(
+            decimal.rayBigInt.times(new BigInt(2)).minus(perSecondRateRay),
+            secondPerYear,
+            decimal.rayBigInt,
+          )
+          .times(new BigInt(-1)),
+      )
+    } else {
+      // rpower(perSecondRateRay, 31536000, RAY)
+      rate.annualizedRate = decimal.fromRay(
+        rateSetterContract.rpower(perSecondRateRay, secondPerYear, decimal.rayBigInt),
+      )
+    }
+    rate.createdAt = event.block.timestamp
+    rate.createdAtBlock = event.block.number
+    rate.createdAtTransaction = event.transaction.hash
+
     system.currentRedemptionRate = rate.id
 
     rate.save()

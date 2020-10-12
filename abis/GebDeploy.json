@@ -232,7 +232,7 @@
         "type": "bytes32"
       },
       { "internalType": "address", "name": "adapter", "type": "address" },
-      { "internalType": "address", "name": "collateralOSM", "type": "address" },
+      { "internalType": "address", "name": "collateralFSM", "type": "address" },
       {
         "internalType": "address",
         "name": "collateralMedian",
@@ -299,13 +299,6 @@
   {
     "inputs": [],
     "name": "deploySavingsAccount",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "deploySettlementSurplusAuctioneer",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -506,32 +499,6 @@
   },
   {
     "inputs": [],
-    "name": "postSettlementSurplusAuctionHouse",
-    "outputs": [
-      {
-        "internalType": "contract PostSettlementSurplusAuctionHouse",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "postSettlementSurplusAuctionHouseFactory",
-    "outputs": [
-      {
-        "internalType": "contract PostSettlementSurplusAuctionHouseFactory",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "preSettlementSurplusAuctionHouse",
     "outputs": [
       {
@@ -674,11 +641,6 @@
         "internalType": "contract CoinSavingsAccountFactory",
         "name": "coinSavingsAccountFactory_",
         "type": "address"
-      },
-      {
-        "internalType": "contract SettlementSurplusAuctioneerFactory",
-        "name": "settlementSurplusAuctioneerFactory_",
-        "type": "address"
       }
     ],
     "name": "setFirstFactoryBatch",
@@ -700,11 +662,6 @@
       {
         "internalType": "contract PreSettlementSurplusAuctionHouseFactory",
         "name": "preSettlementSurplusAuctionHouseFactory_",
-        "type": "address"
-      },
-      {
-        "internalType": "contract PostSettlementSurplusAuctionHouseFactory",
-        "name": "postSettlementSurplusAuctionHouseFactory_",
         "type": "address"
       },
       {
@@ -764,32 +721,6 @@
     "name": "setThirdFactoryBatch",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "settlementSurplusAuctioneer",
-    "outputs": [
-      {
-        "internalType": "contract SettlementSurplusAuctioneer",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "settlementSurplusAuctioneerFactory",
-    "outputs": [
-      {
-        "internalType": "contract SettlementSurplusAuctioneerFactory",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   },
   {

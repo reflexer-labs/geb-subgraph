@@ -431,28 +431,6 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "oracleRelayer",
-    "outputs": [
-      {
-        "internalType": "contract OracleRelayerLike",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "osm",
-    "outputs": [
-      { "internalType": "contract OracleLike", "name": "", "type": "address" }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [{ "internalType": "uint256", "name": "id", "type": "uint256" }],
     "name": "remainingAmountToSell",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],

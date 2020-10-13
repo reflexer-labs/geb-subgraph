@@ -14,7 +14,7 @@ jobs:
     - name: executing remote ssh commands using ssh key
       uses: appleboy/ssh-action@master
       env:
-       ETHEREUM_RPC: ${{secrets.ETHEREUM_RPC}}
+       ETHEREUM_RPC: ${{secrets.ETHEREUM_RPC_MAINNET}}
        POSTGRES_PASSWORD: ${{secrets.POSTGRES_PASSWORD}}
        NETWORK: ${{secrets.NETWORK}}
       with:

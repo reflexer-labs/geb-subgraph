@@ -24,6 +24,7 @@ import { getSystemState } from '../../../entities'
 import { getOrCreateCollateral } from '../../../entities/collateral'
 import { eventUid } from '../../../utils/ethereum'
 import { addresses } from '../../../utils/addresses'
+import { SECOND_PER_YEAR } from '../../../utils/integer'
 
 export function handleUpdateCollateralPrice(event: UpdateCollateralPrice): void {
   let collateralType = event.params.collateralType.toString()
@@ -103,7 +104,6 @@ export function handleModifyParametersUint(event: ModifyParametersUint): void {
     rate.perSecondRate = perSecondRate
 
     // Calculate solidity annualized rate by calling the contract
-    let secondPerYear = BigInt.fromI32(31536000)
     let rateSetterContract = RateSetter.bind(addresses.get('GEB_RRFM_SETTER') as Address)
 
     if (perSecondRate.lt(decimal.ONE)) {
@@ -112,7 +112,7 @@ export function handleModifyParametersUint(event: ModifyParametersUint): void {
         rateSetterContract
           .rpower(
             decimal.rayBigInt.times(new BigInt(2)).minus(perSecondRateRay),
-            secondPerYear,
+            SECOND_PER_YEAR,
             decimal.rayBigInt,
           )
           .times(new BigInt(-1)),
@@ -120,7 +120,7 @@ export function handleModifyParametersUint(event: ModifyParametersUint): void {
     } else {
       // rpower(perSecondRateRay, 31536000, RAY)
       rate.annualizedRate = decimal.fromRay(
-        rateSetterContract.rpower(perSecondRateRay, secondPerYear, decimal.rayBigInt),
+        rateSetterContract.rpower(perSecondRateRay, SECOND_PER_YEAR, decimal.rayBigInt),
       )
     }
     rate.createdAt = event.block.timestamp

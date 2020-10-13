@@ -186,6 +186,9 @@ type CollateralType @entity {
   " Per second stability fee "
   stabilityFee: BigDecimal!
 
+  " Total annualized stability calculated with solidity. It takes into account the global SF. Equals to (global SF + collateral SF)^(second per year)"
+  totalAnnualizedStabilityFee: BigDecimal!
+
   " Time of the last stability fee update "
   stabilityFeeLastUpdatedAt: BigInt!
 

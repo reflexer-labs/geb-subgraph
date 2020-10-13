@@ -4,6 +4,7 @@ export let ONE = BigInt.fromI32(1)
 export let ZERO = BigInt.fromI32(0)
 export let HOUR = BigInt.fromI32(60).times(BigInt.fromI32(60))
 export let DAY = HOUR.times(BigInt.fromI32(24))
+export let SECOND_PER_YEAR = BigInt.fromI32(31536000)
 
 export function fromNumber(value: i32): BigInt {
   return BigInt.fromI32(value)

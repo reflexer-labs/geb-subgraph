@@ -17,6 +17,9 @@ Then, open a terminal and run:
 ```
 npm install -D
 
+# To run once with the token from the dashboard
+npm run auth <GRAPH AUTH TOKEN>
+
 # For kovan testnet
 npm run deploy-hosted-kovan
 # For mainnet

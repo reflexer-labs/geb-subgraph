@@ -130,6 +130,8 @@ dataSources:
       abis:
         - name: TaxCollector
           file: ./abis/TaxCollector.json
+        - name: RateSetter
+          file: ./abis/RateSetter.json
       eventHandlers:
         - event: ModifyParameters(bytes32,bytes32,uint256) # Type 0
           handler: handleModifyParametersCollateralTypeUint

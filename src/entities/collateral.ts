@@ -4,9 +4,11 @@ import { Bytes, ethereum, BigInt, Entity, Address } from '@graphprotocol/graph-t
 import * as decimal from '../utils/decimal'
 import * as integer from '../utils/integer'
 
-export function getOrCreateCollateral(collateralType: Bytes, event: ethereum.Event): CollateralType {
+export function getOrCreateCollateral(
+  collateralType: Bytes,
+  event: ethereum.Event,
+): CollateralType {
   let collateral = CollateralType.load(collateralType.toString())
-
   if (collateral == null) {
     collateral = new CollateralType(collateralType.toString())
     collateral.debtCeiling = decimal.ZERO
@@ -25,6 +27,7 @@ export function getOrCreateCollateral(collateralType: Bytes, event: ethereum.Eve
     collateral.accumulatedRate = decimal.fromRay(BigInt.fromI32(10).pow(27))
 
     collateral.stabilityFee = decimal.ONE
+    collateral.totalAnnualizedStabilityFee = decimal.ONE
     collateral.stabilityFeeLastUpdatedAt = event.block.timestamp
 
     collateral.unmanagedSafeCount = integer.ZERO
@@ -42,7 +45,10 @@ export function getOrCreateCollateral(collateralType: Bytes, event: ethereum.Eve
   return collateral as CollateralType
 }
 
-export function updateLastModifyCollateralType(collateral: CollateralType, event: ethereum.Event): void {
+export function updateLastModifyCollateralType(
+  collateral: CollateralType,
+  event: ethereum.Event,
+): void {
   collateral.modifiedAt = event.block.timestamp
   collateral.modifiedAtBlock = event.block.number
   collateral.modifiedAtTransaction = event.transaction.hash

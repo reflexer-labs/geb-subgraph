@@ -3,11 +3,11 @@ on:
     branches:
       - mainnet
 
-name: Deploy to VM
+name: Deploy mainnet to VM
 
 jobs:
   deploy:
-    name: Deploy
+    name: Deploy Mainnet
     runs-on: ubuntu-latest
 
     steps:

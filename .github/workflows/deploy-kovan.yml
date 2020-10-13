@@ -3,11 +3,11 @@ on:
     branches:
       - kovan
 
-name: Deploy to VM
+name: Deploy kovan to VM
 
 jobs:
   deploy:
-    name: Deploy
+    name: Deploy Kovan
     runs-on: ubuntu-latest
 
     steps:

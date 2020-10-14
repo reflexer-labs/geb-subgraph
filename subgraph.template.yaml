@@ -95,6 +95,7 @@ dataSources:
         - CollateralType
         - SystemState
         - Safe
+        - RedemptionPrice
       abis:
         - name: OracleRelayer
           file: ./abis/OracleRelayer.json

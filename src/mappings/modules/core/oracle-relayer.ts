@@ -62,7 +62,9 @@ export function handleUpdateRedemptionPrice(event: UpdateRedemptionPrice): void 
   price.save()
 }
 
-export function handleModifyParametersCollateralTypeAddress(event: ModifyParametersCollateralTypeAddress): void {
+export function handleModifyParametersCollateralTypeAddress(
+  event: ModifyParametersCollateralTypeAddress,
+): void {
   let what = event.params.parameter.toString()
 
   if (what == 'orcl') {
@@ -77,7 +79,9 @@ export function handleModifyParametersCollateralTypeAddress(event: ModifyParamet
   }
 }
 
-export function handleModifyParametersCollateralTypeUint(event: ModifyParametersCollateralTypeUint): void {
+export function handleModifyParametersCollateralTypeUint(
+  event: ModifyParametersCollateralTypeUint,
+): void {
   let what = event.params.parameter.toString()
   let collateralType = CollateralType.load(event.params.collateralType.toString())
 
@@ -108,15 +112,15 @@ export function handleModifyParametersUint(event: ModifyParametersUint): void {
 
     if (perSecondRate.lt(decimal.ONE)) {
       //  -1 * rpower(2 * RAY - perSecondRateRay, 31536000, RAY)
-      rate.annualizedRate = decimal.fromRay(
-        rateSetterContract
-          .rpower(
-            decimal.rayBigInt.times(new BigInt(2)).minus(perSecondRateRay),
+      rate.annualizedRate = decimal
+        .fromRay(
+          rateSetterContract.rpower(
+            decimal.rayBigInt.plus(decimal.rayBigInt).minus(perSecondRateRay),
             SECOND_PER_YEAR,
             decimal.rayBigInt,
-          )
-          .times(new BigInt(-1)),
-      )
+          ),
+        )
+        .times(decimal.fromNumber(-1))
     } else {
       // rpower(perSecondRateRay, 31536000, RAY)
       rate.annualizedRate = decimal.fromRay(

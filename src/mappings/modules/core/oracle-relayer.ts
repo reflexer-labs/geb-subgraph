@@ -108,25 +108,19 @@ export function handleModifyParametersUint(event: ModifyParametersUint): void {
     rate.perSecondRate = perSecondRate
 
     // Calculate solidity annualized rate by calling the contract
-    let rateSetterContract = RateSetter.bind(addresses.get('GEB_RRFM_SETTER') as Address)
 
-    if (perSecondRate.lt(decimal.ONE)) {
-      //  -1 * rpower(2 * RAY - perSecondRateRay, 31536000, RAY)
-      rate.annualizedRate = decimal
-        .fromRay(
-          rateSetterContract.rpower(
-            decimal.rayBigInt.plus(decimal.rayBigInt).minus(perSecondRateRay),
-            SECOND_PER_YEAR,
-            decimal.rayBigInt,
-          ),
-        )
-        .times(decimal.fromNumber(-1))
-    } else {
-      // rpower(perSecondRateRay, 31536000, RAY)
-      rate.annualizedRate = decimal.fromRay(
-        rateSetterContract.rpower(perSecondRateRay, SECOND_PER_YEAR, decimal.rayBigInt),
+    const rpowerRate = (rate: BigInt, nSeconds: i32): decimal.BigDecimal => {
+      let rateSetterContract = RateSetter.bind(addresses.get('GEB_RRFM_SETTER') as Address)
+      return decimal.fromRay(
+        rateSetterContract.rpower(rate, BigInt.fromI32(nSeconds), decimal.rayBigInt),
       )
     }
+
+    rate.annualizedRate = rpowerRate(perSecondRateRay, 31536000)
+    rate.eightHourlyRate = rpowerRate(perSecondRateRay, 3600 * 8)
+    rate.twentyFourHourlyRate = rpowerRate(perSecondRateRay, 3600 * 24)
+    rate.hourlyRate = rpowerRate(perSecondRateRay, 3600)
+
     rate.createdAt = event.block.timestamp
     rate.createdAtBlock = event.block.number
     rate.createdAtTransaction = event.transaction.hash

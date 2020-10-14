@@ -636,6 +636,15 @@ type RedemptionRate @entity {
   " The rate of change of the redemption price "
   perSecondRate: BigDecimal!
 
+  " 8 hour redemption rate "
+  eightHourlyRate: BigDecimal!
+
+  " 24 hour redemption rate "
+  twentyFourHourlyRate: BigDecimal!
+
+  " One hour redemption rate "
+  hourlyRate: BigDecimal!
+
   " Annualized redemption rate "
   annualizedRate: BigDecimal!
 

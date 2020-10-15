@@ -2,8 +2,9 @@ import { ethereum } from '@graphprotocol/graph-ts'
 import { DailyStat, HourlyStat, SystemState } from '../../../entities'
 import * as integer from '../../../utils/integer'
 
-export function blockHandler(block: ethereum.Block): void {
-  let timestamp = block.timestamp
+export function periodicHandler(event: ethereum.Block): void {
+  // let timestamp = event.block.timestamp
+  let timestamp = event.timestamp
   let dailyId = timestamp.div(integer.fromNumber(86400)).toString()
   let hourlyId = timestamp.div(integer.fromNumber(3600)).toString()
   let daily = DailyStat.load(dailyId)
@@ -18,7 +19,8 @@ export function blockHandler(block: ethereum.Block): void {
     if (daily == null) {
       daily = new DailyStat(dailyId)
       daily.timestamp = timestamp
-      daily.blockNumber = block.number
+      // daily.blockNumber = event.block.number
+      daily.blockNumber = event.number
       daily.redemptionRate = state.currentRedemptionRate
       daily.redemptionPrice = state.currentRedemptionPrice
       daily.globalDebt = state.globalDebt
@@ -27,7 +29,8 @@ export function blockHandler(block: ethereum.Block): void {
     } else if (hourly == null) {
       hourly = new HourlyStat(dailyId)
       hourly.timestamp = timestamp
-      hourly.blockNumber = block.number
+      // hourly.blockNumber = event.block.number
+      hourly.blockNumber = event.number
       hourly.redemptionRate = state.currentRedemptionRate
       hourly.redemptionPrice = state.currentRedemptionPrice
       hourly.globalDebt = state.globalDebt

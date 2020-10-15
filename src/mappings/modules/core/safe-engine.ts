@@ -37,7 +37,7 @@ import {
 import { createUnmanagedSafe, updateSafeCollateralization } from '../../../entities/safe'
 import { updateLastModifySystemState } from '../../../entities/system'
 import { eventUid } from '../../../utils/ethereum'
-import { blockHandler } from './block-handler'
+import { periodicHandler } from './periodic-handler'
 
 // Register a new collateral type
 export function handleInitializeCollateralType(event: InitializeCollateralType): void {
@@ -322,5 +322,5 @@ export function handleUpdateAccumulatedRate(event: UpdateAccumulatedRate): void 
 }
 
 export function handleBlock(block: ethereum.Block): void {
-  blockHandler(block)
+  periodicHandler(block)
 }

@@ -29,6 +29,7 @@ jobs:
           echo "Redeploy subgraph only..."
           cd geb-subgraph/docker
           docker-compose stop graph-node postgres
+          git checkout kovan
           git pull
           sudo chmod -R +rwx data/
           docker-compose up --build graph-deployer
@@ -38,6 +39,7 @@ jobs:
           docker rm $(docker ps -aq)
           sudo rm -rf geb-subgraph
           git clone https://github.com/reflexer-labs/geb-subgraph
+          git checkout kovan
           cd geb-subgraph/docker
           echo ETHEREUM_RPC=$ETHEREUM_RPC >> .env
           echo NETWORK=$NETWORK >> .env

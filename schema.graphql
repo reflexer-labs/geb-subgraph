@@ -1160,3 +1160,51 @@ type UniswapPair @entity {
   " Transaction hash at which the pair was last modified "
   modifiedAtTransaction: Bytes
 }
+
+# --- Periodic updates ---
+
+type DailyStat @entity {
+  " block timestamp / 86400 "
+  id: ID!
+
+  " Time of the snapshot "
+  timestamp: BigInt!
+
+  " Block Number"
+  blockNumber: BigInt!
+
+  " Redemption rate "
+  redemptionRate: RedemptionRate!
+
+  " Redemption price "
+  redemptionPrice: RedemptionPrice!
+
+  " Global debt "
+  globalDebt: BigDecimal!
+
+  " ERC20 Supply "
+  erc20CoinTotalSupply: BigDecimal!
+}
+
+type HourlyStat @entity {
+  " block timestamp / 86400 "
+  id: ID!
+
+  " Time of the snapshot "
+  timestamp: BigInt!
+
+  " Block Number"
+  blockNumber: BigInt!
+
+  " Redemption rate "
+  redemptionRate: RedemptionRate!
+
+  " Redemption price "
+  redemptionPrice: RedemptionPrice!
+
+  " Global debt "
+  globalDebt: BigDecimal!
+
+  " ERC20 Supply "
+  erc20CoinTotalSupply: BigDecimal!
+}

@@ -20,9 +20,13 @@ dataSources:
         - CollateralType
         - SystemState
         - Safe
+        - HourlyStats
+        - DailyStats
       abis:
         - name: SAFEEngine
           file: ./abis/SAFEEngine.json
+      blockHandlers:
+        - handler: handleBlock
       eventHandlers:
         - event: InitializeCollateralType(bytes32)
           handler: handleInitializeCollateralType

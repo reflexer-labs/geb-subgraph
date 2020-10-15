@@ -37,6 +37,7 @@ import {
 import { createUnmanagedSafe, updateSafeCollateralization } from '../../../entities/safe'
 import { updateLastModifySystemState } from '../../../entities/system'
 import { eventUid } from '../../../utils/ethereum'
+import { blockHandler } from './block-handler'
 
 // Register a new collateral type
 export function handleInitializeCollateralType(event: InitializeCollateralType): void {
@@ -318,4 +319,8 @@ export function handleUpdateAccumulatedRate(event: UpdateAccumulatedRate): void 
   let dst = getOrCreateCoinBalance(event.params.surplusDst, event)
   updateCoinBalance(dst, dst.balance.plus(decimal.fromRad(event.params.dstCoinBalance)), event)
   dst.save()
+}
+
+export function handleBlock(block: ethereum.Block): void {
+  blockHandler(block)
 }

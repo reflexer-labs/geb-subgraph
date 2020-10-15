@@ -30,6 +30,7 @@ export function getSystemState(event: ethereum.Event): SystemState {
     state.savingsRate = decimal.ONE
     state.globalDebtCeiling = decimal.ZERO
     state.globalUnbackedDebt = decimal.ZERO
+    state.lastPeriodicUpdate = integer.ZERO
   }
 
   state.createdAtBlock = event.block.number

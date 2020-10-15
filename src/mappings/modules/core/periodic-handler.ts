@@ -1,5 +1,5 @@
 import { ethereum } from '@graphprotocol/graph-ts'
-import { DailyStat, HourlyStat, SystemState } from '../../../entities'
+import { DailyStat, getSystemState, HourlyStat } from '../../../entities'
 import * as integer from '../../../utils/integer'
 
 export function periodicHandler(event: ethereum.Event): void {
@@ -9,30 +9,28 @@ export function periodicHandler(event: ethereum.Event): void {
   let daily = DailyStat.load(dailyId)
   let hourly = HourlyStat.load(hourlyId)
 
-  if (hourly == null || daily == null) {
-    let state = SystemState.load('current')
-    if (state == null) {
-      return
-    }
+  let state = getSystemState(event)
 
-    if (daily == null) {
-      daily = new DailyStat(dailyId)
-      daily.timestamp = timestamp
-      daily.blockNumber = event.block.number
-      daily.redemptionRate = state.currentRedemptionRate
-      daily.redemptionPrice = state.currentRedemptionPrice
-      daily.globalDebt = state.globalDebt
-      daily.erc20CoinTotalSupply = state.erc20CoinTotalSupply
-      daily.save()
-    } else if (hourly == null) {
-      hourly = new HourlyStat(dailyId)
-      hourly.timestamp = timestamp
-      hourly.blockNumber = event.block.number
-      hourly.redemptionRate = state.currentRedemptionRate
-      hourly.redemptionPrice = state.currentRedemptionPrice
-      hourly.globalDebt = state.globalDebt
-      hourly.erc20CoinTotalSupply = state.erc20CoinTotalSupply
-      hourly.save()
-    }
+  state.lastPeriodicUpdate = timestamp
+  state.save()
+
+  if (daily == null) {
+    daily = new DailyStat(dailyId)
+    daily.timestamp = timestamp
+    daily.blockNumber = event.block.number
+    daily.redemptionRate = state.currentRedemptionRate
+    daily.redemptionPrice = state.currentRedemptionPrice
+    daily.globalDebt = state.globalDebt
+    daily.erc20CoinTotalSupply = state.erc20CoinTotalSupply
+    daily.save()
+  } else if (hourly == null) {
+    hourly = new HourlyStat(hourlyId)
+    hourly.timestamp = timestamp
+    hourly.blockNumber = event.block.number
+    hourly.redemptionRate = state.currentRedemptionRate
+    hourly.redemptionPrice = state.currentRedemptionPrice
+    hourly.globalDebt = state.globalDebt
+    hourly.erc20CoinTotalSupply = state.erc20CoinTotalSupply
+    hourly.save()
   }
 }

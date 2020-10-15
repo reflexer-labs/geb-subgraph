@@ -287,6 +287,9 @@ type SystemState @entity {
   " Total supply of COIN outside of the system, equals to ERC20.totalSupply() of Coin "
   erc20CoinTotalSupply: BigDecimal!
 
+  " Last time the periodic update function was called"
+  lastPeriodicUpdate: BigInt!
+
   " Timestamp of the block at which the system was created [seconds] "
   createdAt: BigInt!
 

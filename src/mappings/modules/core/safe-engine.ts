@@ -319,8 +319,6 @@ export function handleUpdateAccumulatedRate(event: UpdateAccumulatedRate): void 
   let dst = getOrCreateCoinBalance(event.params.surplusDst, event)
   updateCoinBalance(dst, dst.balance.plus(decimal.fromRad(event.params.dstCoinBalance)), event)
   dst.save()
-}
 
-export function handleBlock(block: ethereum.Block): void {
-  periodicHandler(block)
+  periodicHandler(event)
 }

@@ -317,7 +317,7 @@ export function handleUpdateAccumulatedRate(event: UpdateAccumulatedRate): void 
 
   // Send the taxes
   let dst = getOrCreateCoinBalance(event.params.surplusDst, event)
-  updateCoinBalance(dst, dst.balance.plus(decimal.fromRad(event.params.dstCoinBalance)), event)
+  updateCoinBalance(dst, decimal.fromRad(event.params.dstCoinBalance), event)
   dst.save()
 
   periodicHandler(event)

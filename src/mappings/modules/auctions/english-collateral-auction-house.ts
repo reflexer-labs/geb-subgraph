@@ -41,7 +41,9 @@ export function handleDecreaseSoldAmount(event: DecreaseSoldAmount): void {
 
   let auctionId = collateral.toString() + '-' + id.toString()
   let auction = EnglishAuction.load(auctionId)
-  let bid = new EnglishAuctionBid(collateral.toString() + '-' + id.toString() + '-' + auction.numberOfBids.toString())
+  let bid = new EnglishAuctionBid(
+    collateral.toString() + '-' + id.toString() + '-' + auction.numberOfBids.toString(),
+  )
 
   bid.bidNumber = auction.numberOfBids
   bid.type = enums.EnglishBidType_DECREASE_SOLD
@@ -69,7 +71,9 @@ export function handleIncreaseBidSize(event: IncreaseBidSize): void {
 
   let auctionId = collateral.toString() + '-' + id.toString()
   let auction = EnglishAuction.load(auctionId)
-  let bid = new EnglishAuctionBid(collateral.toString() + '-' + id.toString() + '-' + auction.numberOfBids.toString())
+  let bid = new EnglishAuctionBid(
+    collateral.toString() + '-' + id.toString() + '-' + auction.numberOfBids.toString(),
+  )
 
   bid.bidNumber = auction.numberOfBids
   bid.type = enums.EnglishBidType_INCREASE_BUY
@@ -102,9 +106,16 @@ export function handleRestartAuction(event: RestartAuction): void {
 
 export function handleSettleAuction(event: SettleAuction): void {
   let id = event.params.id
-  let collateral = EnglishCollateralAuctionHouse.bind(dataSource.address()).collateralType()
-  let auctionId = collateral.toString() + '-' + id.toString()
+
+  let collateralContract = EnglishCollateralAuctionHouse.bind(dataSource.address())
+  let collateralName = collateralContract.collateralType()
+
+  let collateral = getOrCreateCollateral(collateralName, event)
+  collateral.activeLiquidations = collateral.activeLiquidations.minus(integer.ONE)
+
+  let auctionId = collateralName.toString() + '-' + id.toString()
   let auction = EnglishAuction.load(auctionId)
   auction.isClaimed = true
   auction.save()
+  collateral.save()
 }

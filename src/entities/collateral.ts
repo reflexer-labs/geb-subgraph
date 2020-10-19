@@ -36,6 +36,9 @@ export function getOrCreateCollateral(
     collateral.totalCollateral = decimal.ZERO
     collateral.totalCollateralLockedInSafes = decimal.ZERO
 
+    collateral.liquidationsStarted = integer.ZERO
+    collateral.activeLiquidations = integer.ZERO
+
     collateral.createdAt = event.block.timestamp
     collateral.createdAtBlock = event.block.number
     collateral.createdAtTransaction = event.transaction.hash

@@ -104,10 +104,16 @@ export function handleBuyCollateral(event: BuyCollateral): void {
 
 export function handleSettleAuction(event: SettleAuction): void {
   let id = event.params.id
-  let collateral = FixedDiscountCollateralAuctionHouse.bind(dataSource.address()).collateralType()
-  let auctionId = collateral.toString() + '-' + id.toString()
+  let collateralContract = FixedDiscountCollateralAuctionHouse.bind(dataSource.address())
+  let collateralName = collateralContract.collateralType()
+  
+  let collateral = getOrCreateCollateral(collateralName, event)
+  collateral.activeLiquidations = collateral.activeLiquidations.minus(integer.ONE)
+  
+  let auctionId = collateralName.toString() + '-' + id.toString()
   let auction = FixedDiscountAuction.load(auctionId)
 
   auction.isSettled = true
   auction.save()
+  collateral.save()
 }

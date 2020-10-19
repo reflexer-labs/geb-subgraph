@@ -163,4 +163,9 @@ export function handleLiquidate(event: Liquidate): void {
     liquidation.createdAtTransaction = event.transaction.hash
     liquidation.save()
   }
+
+  // Update collateral variables 
+  collateral.liquidationsStarted = collateral.liquidationsStarted.plus(integer.ONE)
+  collateral.activeLiquidations = collateral.activeLiquidations.plus(integer.ONE)
+  collateral.save()
 }

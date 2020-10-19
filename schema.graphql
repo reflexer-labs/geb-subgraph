@@ -210,6 +210,12 @@ type CollateralType @entity {
   " Max amount of system coins to sell in one auction "
   liquidationQuantity: BigDecimal
 
+  " Number of liquidations started "
+  liquidationsStarted: BigInt!
+
+  " Number of active liquidations "
+  activeLiquidations: BigInt!
+
   " Auction configuration (English only) "
   englishAuctionConfiguration: EnglishAuctionConfiguration
 

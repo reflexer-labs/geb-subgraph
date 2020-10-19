@@ -1,4 +1,4 @@
-import { ethereum } from '@graphprotocol/graph-ts'
+import { ethereum, log } from '@graphprotocol/graph-ts'
 import { DailyStat, getSystemState, HourlyStat } from '../../../entities'
 import * as integer from '../../../utils/integer'
 
@@ -15,6 +15,7 @@ export function periodicHandler(event: ethereum.Event): void {
   state.save()
 
   if (daily == null) {
+    // Daily record
     daily = new DailyStat(dailyId)
     daily.timestamp = timestamp
     daily.blockNumber = event.block.number
@@ -24,6 +25,7 @@ export function periodicHandler(event: ethereum.Event): void {
     daily.erc20CoinTotalSupply = state.erc20CoinTotalSupply
     daily.save()
   } else if (hourly == null) {
+    // Hourly record
     hourly = new HourlyStat(hourlyId)
     hourly.timestamp = timestamp
     hourly.blockNumber = event.block.number
@@ -32,5 +34,17 @@ export function periodicHandler(event: ethereum.Event): void {
     hourly.globalDebt = state.globalDebt
     hourly.erc20CoinTotalSupply = state.erc20CoinTotalSupply
     hourly.save()
+
+    // Update Global debt from 24h ago for TVL 24h % change
+    // Get the hourly record from 24 ago
+    let time = timestamp
+      .minus(integer.fromNumber(24 * 3600))
+      .div(integer.fromNumber(3600))
+      .toString()
+    let record = HourlyStat.load(time)
+    if (record != null) {
+      state.globalDebt24hAgo = record.globalDebt
+      state.save()
+    }
   }
 }

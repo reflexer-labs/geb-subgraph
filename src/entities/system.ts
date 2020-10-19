@@ -15,6 +15,7 @@ export function getSystemState(event: ethereum.Event): SystemState {
 
     // Protocol-wide stats
     state.globalDebt = decimal.ZERO
+    state.globalDebt24hAgo = decimal.ZERO
     state.erc20CoinTotalSupply = decimal.ZERO
 
     // Entities counters

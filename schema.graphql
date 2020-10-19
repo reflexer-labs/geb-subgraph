@@ -260,6 +260,9 @@ type SystemState @entity {
   " Total debt issued across all collateral types "
   globalDebt: BigDecimal!
 
+  " Global debt from 24h ago to calculate 24h TVL % change "
+  globalDebt24hAgo: BigDecimal!
+
   " Total unbacked debt across all collateral types "
   globalUnbackedDebt: BigDecimal!
 

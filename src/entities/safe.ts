@@ -1,4 +1,4 @@
-import { Bytes, ethereum, Address, BigInt } from '@graphprotocol/graph-ts'
+import { Bytes, ethereum, Address, BigInt, log } from '@graphprotocol/graph-ts'
 import { Safe, UserProxy, SafeHandlerOwner } from '../../generated/schema'
 import { getOrCreateCollateral, updateLastModifyCollateralType } from './collateral'
 
@@ -42,9 +42,8 @@ export function createManagedSafe(
   handlerOwner.save()
 
   // Increase SAFE counters
-  collateralObj.safeCount = collateralObj.unmanagedSafeCount.plus(integer.ONE)
-  system.safeCount = system.unmanagedSafeCount.plus(integer.ONE)
-
+  collateralObj.safeCount = collateralObj.safeCount.plus(integer.ONE)
+  system.safeCount = system.safeCount.plus(integer.ONE)
   updateLastModifyCollateralType(collateralObj, event)
   updateLastModifySystemState(system, event)
 
@@ -55,7 +54,11 @@ export function createManagedSafe(
   return safe
 }
 
-export function createUnmanagedSafe(safeHandler: Bytes, collateral: Bytes, event: ethereum.Event): Safe {
+export function createUnmanagedSafe(
+  safeHandler: Bytes,
+  collateral: Bytes,
+  event: ethereum.Event,
+): Safe {
   let collateralObj = getOrCreateCollateral(collateral, event)
   let system = getSystemState(event)
   let safe = createSafe(safeHandler, collateral, event)

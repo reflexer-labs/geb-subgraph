@@ -13,6 +13,7 @@ import * as decimal from '../utils/decimal'
 import * as integer from '../utils/integer'
 import { getOrCreateUser, findUltimateOwner } from './user'
 import { findProxy } from '../mappings/modules/proxy/proxy-factory'
+import { SAFEEngine } from '../../generated/SAFEEngine/SAFEEngine'
 
 // --- Coin balance ---
 
@@ -33,7 +34,11 @@ export function getOrCreateCoinBalance(
   }
 }
 
-export function createCoinBalance(address: Bytes, balance: BigDecimal, event: ethereum.Event): InternalCoinBalance {
+export function createCoinBalance(
+  address: Bytes,
+  balance: BigDecimal,
+  event: ethereum.Event,
+): InternalCoinBalance {
   let bal = new InternalCoinBalance(address.toHexString())
   bal.accountHandler = address
   bal.owner = getOrCreateUser(findUltimateOwner(address)).id
@@ -46,8 +51,11 @@ export function createCoinBalance(address: Bytes, balance: BigDecimal, event: et
   return bal
 }
 
-export function updateCoinBalance(balance: InternalCoinBalance, amount: BigDecimal, event: ethereum.Event): void {
-  balance.balance = amount
+export function updateCoinBalance(balance: InternalCoinBalance, event: ethereum.Event): void {
+  let safeEninge = SAFEEngine.bind(event.address)
+  let bal = decimal.fromRad(safeEninge.coinBalance(balance.accountHandler))
+
+  balance.balance = bal
   balance.modifiedAt = event.block.timestamp
   balance.modifiedAtBlock = event.block.number
   balance.modifiedAtTransaction = event.transaction.hash
@@ -67,7 +75,9 @@ export function getOrCreateCollateralBalance(
     return bal as InternalCollateralBalance
   } else {
     if (!canCreate) {
-      log.error(" Collateral balance of address {} not found and can't be created", [address.toHexString()])
+      log.error(" Collateral balance of address {} not found and can't be created", [
+        address.toHexString(),
+      ])
     }
     return createCollateralBalance(address, collateralType, decimal.ZERO, event)
   }
@@ -94,10 +104,13 @@ export function createCollateralBalance(
 
 export function updateCollateralBalance(
   balance: InternalCollateralBalance,
-  amount: BigDecimal,
+  collateralType: Bytes,
   event: ethereum.Event,
 ): void {
-  balance.balance = amount
+  let safeEninge = SAFEEngine.bind(event.address)
+  let bal = decimal.fromRad(safeEninge.tokenCollateral(collateralType, balance.accountHandler))
+
+  balance.balance = bal
   balance.modifiedAt = event.block.timestamp
   balance.modifiedAtBlock = event.block.number
   balance.modifiedAtTransaction = event.transaction.hash
@@ -121,7 +134,11 @@ export function getOrCreateDebtBalance(
   }
 }
 
-export function createDebtBalance(address: Bytes, balance: BigDecimal, event: ethereum.Event): InternalDebtBalance {
+export function createDebtBalance(
+  address: Bytes,
+  balance: BigDecimal,
+  event: ethereum.Event,
+): InternalDebtBalance {
   let bal = new InternalDebtBalance(address.toHexString())
   bal.accountHandler = address
   bal.owner = address.toHexString()
@@ -133,8 +150,14 @@ export function createDebtBalance(address: Bytes, balance: BigDecimal, event: et
   return bal
 }
 
-export function updateDebtBalance(balance: InternalDebtBalance, amount: BigDecimal, event: ethereum.Event): void {
-  balance.balance = amount
+export function updateDebtBalance(
+  balance: InternalDebtBalance,
+  amount: BigDecimal,
+  event: ethereum.Event,
+): void {
+  let safeEninge = SAFEEngine.bind(event.address)
+  let bal = decimal.fromRad(safeEninge.debtBalance(balance.accountHandler))
+  balance.balance = bal
   balance.modifiedAt = event.block.timestamp
   balance.modifiedAtBlock = event.block.number
   balance.modifiedAtTransaction = event.transaction.hash

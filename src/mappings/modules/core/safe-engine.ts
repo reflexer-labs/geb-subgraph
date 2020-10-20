@@ -65,7 +65,9 @@ export function handleModifyParametersUint(event: ModifyParametersUint): void {
   }
 }
 
-export function handleModifyParametersCollateralTypeUint(event: ModifyParametersCollateralTypeUint): void {
+export function handleModifyParametersCollateralTypeUint(
+  event: ModifyParametersCollateralTypeUint,
+): void {
   let collateralType = event.params.collateralType.toString()
   let what = event.params.parameter.toString()
   let data = event.params.data
@@ -96,7 +98,7 @@ export function handleModifyCollateralBalance(event: ModifyCollateralBalance): v
 
   // Update user balance
   let balance = getOrCreateCollateralBalance(account, collateral, event)
-  updateCollateralBalance(balance, balance.balance.plus(amount), event)
+  updateCollateralBalance(balance, collateral, event)
   balance.save()
 
   // Update collateral counter
@@ -110,8 +112,8 @@ export function handleTransferCollateral(event: TransferCollateral): void {
   let collateral = event.params.collateralType
   let src = getOrCreateCollateralBalance(event.params.src, collateral, event, false)
   let dst = getOrCreateCollateralBalance(event.params.dst, collateral, event)
-  updateCollateralBalance(src, src.balance.minus(decimal.fromWad(event.params.wad)), event)
-  updateCollateralBalance(dst, dst.balance.plus(decimal.fromWad(event.params.wad)), event)
+  updateCollateralBalance(src, collateral, event)
+  updateCollateralBalance(dst, collateral, event)
   src.save()
   dst.save()
 }
@@ -120,8 +122,8 @@ export function handleTransferCollateral(event: TransferCollateral): void {
 export function handleTransferInternalCoins(event: TransferInternalCoins): void {
   let src = getOrCreateCoinBalance(event.params.src, event, false)
   let dst = getOrCreateCoinBalance(event.params.dst, event)
-  updateCoinBalance(src, src.balance.minus(decimal.fromRad(event.params.rad)), event)
-  updateCoinBalance(dst, dst.balance.plus(decimal.fromRad(event.params.rad)), event)
+  updateCoinBalance(src, event)
+  updateCoinBalance(dst, event)
   src.save()
   dst.save()
 }
@@ -148,13 +150,20 @@ export function handleModifySAFECollateralization(event: ModifySAFECollateraliza
   } else {
     // Update existing Vault
     log.info('Update cpd collateralization of: ', [safe.id])
-    updateSafeCollateralization(safe as Safe, safe.collateral.plus(collateralBalance), safe.debt.plus(deltaDebt), event)
+    updateSafeCollateralization(
+      safe as Safe,
+      safe.collateral.plus(collateralBalance),
+      safe.debt.plus(deltaDebt),
+      event,
+    )
   }
   safe.save()
 
   // Update debt and collateral counters
   collateral.debtAmount = collateral.debtAmount.plus(deltaDebt)
-  collateral.totalCollateralLockedInSafes = collateral.totalCollateralLockedInSafes.plus(deltaCollateral)
+  collateral.totalCollateralLockedInSafes = collateral.totalCollateralLockedInSafes.plus(
+    deltaCollateral,
+  )
   updateLastModifyCollateralType(collateral as CollateralType, event)
   collateral.save()
 
@@ -169,11 +178,11 @@ export function handleModifySAFECollateralization(event: ModifySAFECollateraliza
     event,
     false,
   )
-  updateCollateralBalance(internalCollateralBalance, internalCollateralBalance.balance.minus(deltaCollateral), event)
+  updateCollateralBalance(internalCollateralBalance, event.params.collateralType, event)
   internalCollateralBalance.save()
 
   let internalCoinBalance = getOrCreateCoinBalance(event.params.debtDestination, event)
-  updateCoinBalance(internalCoinBalance, internalCoinBalance.balance.plus(deltaDebt), event)
+  updateCoinBalance(internalCoinBalance, event)
   internalCoinBalance.save()
 
   // Create a new modify collateralization update
@@ -192,8 +201,12 @@ export function handleModifySAFECollateralization(event: ModifySAFECollateraliza
 // Split a SAFE - binary approval or splitting/merging Vaults
 export function handleTransferSAFECollateralAndDebt(event: TransferSAFECollateralAndDebt): void {
   // Both should be non dusty so they exist
-  let srcSafe = Safe.load(event.params.src.toHexString() + '-' + event.params.collateralType.toString()) as Safe
-  let dstSafe = Safe.load(event.params.src.toHexString() + '-' + event.params.collateralType.toString()) as Safe
+  let srcSafe = Safe.load(
+    event.params.src.toHexString() + '-' + event.params.collateralType.toString(),
+  ) as Safe
+  let dstSafe = Safe.load(
+    event.params.src.toHexString() + '-' + event.params.collateralType.toString(),
+  ) as Safe
 
   updateSafeCollateralization(
     srcSafe,
@@ -214,19 +227,28 @@ export function handleTransferSAFECollateralAndDebt(event: TransferSAFECollatera
 }
 
 // Liquidate a SAFE
-export function handleConfiscateSAFECollateralAndDebt(event: ConfiscateSAFECollateralAndDebt): void {
+export function handleConfiscateSAFECollateralAndDebt(
+  event: ConfiscateSAFECollateralAndDebt,
+): void {
   let collateralType = event.params.collateralType
   let deltaDebt = decimal.fromWad(event.params.deltaDebt)
   let deltaCollateral = decimal.fromWad(event.params.deltaCollateral)
 
   let safe = Safe.load(event.params.safe.toHexString() + '-' + collateralType.toString())
-  updateSafeCollateralization(safe as Safe, safe.collateral.plus(deltaCollateral), safe.debt.plus(deltaDebt), event)
+  updateSafeCollateralization(
+    safe as Safe,
+    safe.collateral.plus(deltaCollateral),
+    safe.debt.plus(deltaDebt),
+    event,
+  )
   safe.save()
 
   // Update collateral debt counter
   let collateral = getOrCreateCollateral(collateralType, event)
   collateral.debtAmount = collateral.debtAmount.plus(deltaDebt)
-  collateral.totalCollateralLockedInSafes = collateral.totalCollateralLockedInSafes.plus(deltaCollateral)
+  collateral.totalCollateralLockedInSafes = collateral.totalCollateralLockedInSafes.plus(
+    deltaCollateral,
+  )
   collateral.save()
 
   // Update counter party collateral
@@ -236,17 +258,17 @@ export function handleConfiscateSAFECollateralAndDebt(event: ConfiscateSAFEColla
     event,
   )
 
-  updateCollateralBalance(
-    collateraCounterPartyBalance,
-    collateraCounterPartyBalance.balance.minus(deltaCollateral),
-    event,
-  )
+  updateCollateralBalance(collateraCounterPartyBalance, collateralType, event)
   collateraCounterPartyBalance.save()
 
   // Update counter party debt
   let deltaTotalIssuedDebt = deltaDebt.times(collateral.accumulatedRate)
   let debtCounterPartyBalance = getOrCreateDebtBalance(event.params.debtCounterparty, event)
-  updateDebtBalance(debtCounterPartyBalance, debtCounterPartyBalance.balance.minus(deltaTotalIssuedDebt), event)
+  updateDebtBalance(
+    debtCounterPartyBalance,
+    debtCounterPartyBalance.balance.minus(deltaTotalIssuedDebt),
+    event,
+  )
   debtCounterPartyBalance.save()
 
   // Update global debt counter
@@ -270,7 +292,7 @@ export function handleSettleDebt(event: SettleDebt): void {
   let account = event.address // msg.sender
   let balance = getOrCreateCoinBalance(account, event)
   let debt = getOrCreateDebtBalance(account, event)
-  updateCoinBalance(balance, balance.balance.minus(rad), event)
+  updateCoinBalance(balance, event)
   updateDebtBalance(debt, debt.balance.minus(rad), event)
   balance.save()
   debt.save()
@@ -289,7 +311,7 @@ export function handleCreateUnbackedDebt(event: CreateUnbackedDebt): void {
 
   // Credit the coins
   let balance = getOrCreateCoinBalance(event.params.coinDestination, event)
-  updateCoinBalance(balance, balance.balance.plus(rad), event)
+  updateCoinBalance(balance, event)
   balance.save()
 
   // Add the debt
@@ -317,7 +339,7 @@ export function handleUpdateAccumulatedRate(event: UpdateAccumulatedRate): void 
 
   // Send the taxes
   let dst = getOrCreateCoinBalance(event.params.surplusDst, event)
-  updateCoinBalance(dst, decimal.fromRad(event.params.dstCoinBalance), event)
+  updateCoinBalance(dst, event)
   dst.save()
 
   periodicHandler(event)

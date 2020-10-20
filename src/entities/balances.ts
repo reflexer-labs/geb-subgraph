@@ -53,7 +53,7 @@ export function createCoinBalance(
 
 export function updateCoinBalance(balance: InternalCoinBalance, event: ethereum.Event): void {
   let safeEninge = SAFEEngine.bind(event.address)
-  let bal = decimal.fromRad(safeEninge.coinBalance(balance.accountHandler))
+  let bal = decimal.fromRad(safeEninge.coinBalance(balance.accountHandler as Address))
 
   balance.balance = bal
   balance.modifiedAt = event.block.timestamp
@@ -108,7 +108,7 @@ export function updateCollateralBalance(
   event: ethereum.Event,
 ): void {
   let safeEninge = SAFEEngine.bind(event.address)
-  let bal = decimal.fromRad(safeEninge.tokenCollateral(collateralType, balance.accountHandler))
+  let bal = decimal.fromRad(safeEninge.tokenCollateral(collateralType, balance.accountHandler as Address))
 
   balance.balance = bal
   balance.modifiedAt = event.block.timestamp
@@ -156,7 +156,7 @@ export function updateDebtBalance(
   event: ethereum.Event,
 ): void {
   let safeEninge = SAFEEngine.bind(event.address)
-  let bal = decimal.fromRad(safeEninge.debtBalance(balance.accountHandler))
+  let bal = decimal.fromRad(safeEninge.debtBalance(balance.accountHandler as Address))
   balance.balance = bal
   balance.modifiedAt = event.block.timestamp
   balance.modifiedAtBlock = event.block.number

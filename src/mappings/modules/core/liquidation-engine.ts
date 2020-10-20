@@ -4,7 +4,10 @@ import {
   Liquidate,
 } from '../../../../generated/LiquidationEngine/LiquidationEngine'
 
-import { EnglishCollateralAuctionHouse, FixedDiscountCollateralAuctionHouse } from '../../../../generated/templates'
+import {
+  EnglishCollateralAuctionHouse,
+  FixedDiscountCollateralAuctionHouse,
+} from '../../../../generated/templates'
 import { EnglishCollateralAuctionHouse as EnglishCollateralAuctionHouseBind } from '../../../../generated/templates/EnglishCollateralAuctionHouse/EnglishCollateralAuctionHouse'
 import {
   getOrCreateCollateral,
@@ -23,7 +26,9 @@ import { updateLastModifyCollateralType } from '../../../entities/collateral'
 import * as enums from '../../../utils/enums'
 import { getOrCreateEnglishAuctionConfiguration } from '../../../entities/auctions'
 
-export function handleModifyParametersCollateralTypeUint(event: ModifyParametersCollateralTypeUint): void {
+export function handleModifyParametersCollateralTypeUint(
+  event: ModifyParametersCollateralTypeUint,
+): void {
   let what = event.params.parameter.toString()
   let collateral = getOrCreateCollateral(event.params.collateralType, event)
 
@@ -37,7 +42,9 @@ export function handleModifyParametersCollateralTypeUint(event: ModifyParameters
   collateral.save()
 }
 
-export function handleModifyParametersCollateralTypeAddress(event: ModifyParametersCollateralTypeAddress): void {
+export function handleModifyParametersCollateralTypeAddress(
+  event: ModifyParametersCollateralTypeAddress,
+): void {
   let what = event.params.parameter.toString()
   let collateral = getOrCreateCollateral(event.params.collateralType, event)
 
@@ -164,7 +171,7 @@ export function handleLiquidate(event: Liquidate): void {
     liquidation.save()
   }
 
-  // Update collateral variables 
+  // Update collateral variables
   collateral.liquidationsStarted = collateral.liquidationsStarted.plus(integer.ONE)
   collateral.activeLiquidations = collateral.activeLiquidations.plus(integer.ONE)
   collateral.save()

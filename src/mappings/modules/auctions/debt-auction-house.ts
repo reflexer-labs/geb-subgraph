@@ -15,7 +15,10 @@ import { getOrCreateEnglishAuctionConfiguration } from '../../../entities/auctio
 export function handleModifyParametersUint(event: ModifyParametersUint): void {
   let what = event.params.parameter.toString()
 
-  let config = getOrCreateEnglishAuctionConfiguration(dataSource.address(), enums.EnglishAuctionType_DEBT)
+  let config = getOrCreateEnglishAuctionConfiguration(
+    dataSource.address(),
+    enums.EnglishAuctionType_DEBT,
+  )
   let val = event.params.data
 
   if (what == 'bidIncrease') {

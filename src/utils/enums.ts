@@ -1,4 +1,4 @@
-// Note: Assemblyscript does not support string enums or objects 
+// Note: Assemblyscript does not support string enums or objects
 
 export let EnglishAuctionType_LIQUIDATION = 'LIQUIDATION'
 export let EnglishAuctionType_DEBT = 'DEBT'

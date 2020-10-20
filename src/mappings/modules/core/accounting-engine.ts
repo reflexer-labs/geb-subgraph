@@ -75,10 +75,15 @@ export function handleModifyParametersUint(event: ModifyParametersUint): void {
 
 export function handleAuctionDebt(event: AuctionDebt): void {
   let accounting = getOrCreateAccountingEngine(event)
-  let config = getOrCreateEnglishAuctionConfiguration(accounting.debtAuctionHouse, enums.EnglishAuctionType_DEBT)
+  let config = getOrCreateEnglishAuctionConfiguration(
+    accounting.debtAuctionHouse,
+    enums.EnglishAuctionType_DEBT,
+  )
 
   if (config == null) {
-    log.error('handleAuctionDebt - auction configuration {} not found', [enums.EnglishAuctionType_DEBT])
+    log.error('handleAuctionDebt - auction configuration {} not found', [
+      enums.EnglishAuctionType_DEBT,
+    ])
   }
 
   accounting.totalOnAuctionDebt = accounting.totalOnAuctionDebt.plus(accounting.debtAuctionBidSize)
@@ -113,7 +118,9 @@ export function handleAuctionSurplus(event: AuctionSurplus): void {
   )
 
   if (config == null) {
-    log.error('handleAuctionSurplus - auction configuration {} not found', [enums.EnglishAuctionType_DEBT])
+    log.error('handleAuctionSurplus - auction configuration {} not found', [
+      enums.EnglishAuctionType_DEBT,
+    ])
   }
 
   accounting.lastSurplusAuctionTime = event.block.timestamp

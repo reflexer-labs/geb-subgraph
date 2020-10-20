@@ -28,7 +28,13 @@ export function handleOpenSAFE(event: OpenSAFE): void {
 
   if (collateral != null) {
     // Register new vault
-    let safe = createManagedSafe(safeAddress, event.params.own, collateralType, event.params.safe, event)
+    let safe = createManagedSafe(
+      safeAddress,
+      event.params.own,
+      collateralType,
+      event.params.safe,
+      event,
+    )
     log.info('New Manged SAFE, id: #{}, owner {}, address: {}', [
       safe.safeId.toString(),
       safe.owner,
@@ -59,7 +65,9 @@ export function handleTransferSAFEOwnership(event: TransferSAFEOwnership): void 
   if (coinBalance) coinBalance.owner = safe.owner
   let debtBalance = InternalDebtBalance.load(safeHandler.toHexString())
   if (debtBalance) debtBalance.owner = safe.owner
-  let collateralBalance = InternalCollateralBalance.load(safeHandler.toHexString() + '-' + collateralType.toString())
+  let collateralBalance = InternalCollateralBalance.load(
+    safeHandler.toHexString() + '-' + collateralType.toString(),
+  )
   if (collateralBalance) collateralBalance.owner = safe.owner
 }
 

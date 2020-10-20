@@ -14,7 +14,10 @@ import * as enums from '../../../utils/enums'
 import { getOrCreateEnglishAuctionConfiguration } from '../../../entities/auctions'
 
 export function handleModifyParametersPre(event: ModifyParametersPre): void {
-  let config = getOrCreateEnglishAuctionConfiguration(dataSource.address(), enums.EnglishAuctionType_SURPLUS)
+  let config = getOrCreateEnglishAuctionConfiguration(
+    dataSource.address(),
+    enums.EnglishAuctionType_SURPLUS,
+  )
   modifyParameter(config, event.params.parameter.toString(), event.params.data)
 }
 

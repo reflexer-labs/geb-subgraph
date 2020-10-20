@@ -34,7 +34,8 @@ export function getOrCreateERC20BAllowance(
   event: ethereum.Event,
   canCreate: boolean = true,
 ): ERC20Allowance {
-  let id = tokenAddress.toHexString() + '-' + address.toHexString() + '-' + approvedAddress.toHexString()
+  let id =
+    tokenAddress.toHexString() + '-' + address.toHexString() + '-' + approvedAddress.toHexString()
   let allowance = ERC20Allowance.load(id)
 
   if (allowance == null) {

@@ -108,7 +108,9 @@ export function updateCollateralBalance(
   event: ethereum.Event,
 ): void {
   let safeEninge = SAFEEngine.bind(event.address)
-  let bal = decimal.fromRad(safeEninge.tokenCollateral(collateralType, balance.accountHandler as Address))
+  let bal = decimal.fromRad(
+    safeEninge.tokenCollateral(collateralType, balance.accountHandler as Address),
+  )
 
   balance.balance = bal
   balance.modifiedAt = event.block.timestamp

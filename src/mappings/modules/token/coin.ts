@@ -13,7 +13,7 @@ export function handleTransfer(event: Transfer): void {
   let amount = decimal.fromWad(event.params.amount)
   let nullAddress = Address.fromHexString('0x0000000000000000000000000000000000000000')
   let system = getSystemState(event)
-  
+
   // Check if it's not a burn before updating destination
   if (!destination.equals(nullAddress)) {
     let destBalance = getOrCreateERC20Balance(destination, tokenAddress, event)
@@ -24,7 +24,7 @@ export function handleTransfer(event: Transfer): void {
     destBalance.save()
   } else {
     // Burn
-    system.erc20CoinTotalSupply = system.erc20CoinTotalSupply.minus(amount)  
+    system.erc20CoinTotalSupply = system.erc20CoinTotalSupply.minus(amount)
   }
 
   // Check if it's not a mint before updating source
@@ -37,7 +37,7 @@ export function handleTransfer(event: Transfer): void {
     srcBalance.save()
   } else {
     // Mint
-    system.erc20CoinTotalSupply = system.erc20CoinTotalSupply.plus(amount)  
+    system.erc20CoinTotalSupply = system.erc20CoinTotalSupply.plus(amount)
   }
 
   system.save()
@@ -86,7 +86,12 @@ export function handleTransfer(event: Transfer): void {
 
 export function handleApproval(event: Approval): void {
   let tokenAddress = dataSource.address()
-  let allowance = getOrCreateERC20BAllowance(event.params.src, tokenAddress, event.params.guy, event)
+  let allowance = getOrCreateERC20BAllowance(
+    event.params.src,
+    tokenAddress,
+    event.params.guy,
+    event,
+  )
   allowance.amount = decimal.fromWad(event.params.amount)
   allowance.modifiedAt = event.block.timestamp
   allowance.modifiedAtBlock = event.block.number

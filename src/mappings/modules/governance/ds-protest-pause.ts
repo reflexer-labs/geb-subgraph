@@ -1,6 +1,6 @@
 import { dataSource } from '@graphprotocol/graph-ts'
 import {
-    AbandonTransaction,
+  AbandonTransaction,
   AttachTransactionDescription,
   DSProtestPause,
   ExecuteTransaction,
@@ -70,16 +70,16 @@ export function handleExecuteTransaction(event: ExecuteTransaction): void {
 }
 
 export function handleAbandonTransaction(event: AbandonTransaction): void {
-    let contract = DSProtestPause.bind(dataSource.address())
-    let fullHash = contract.getTransactionDataHash1(
-      event.params.usr,
-      event.params.codeHash,
-      event.params.parameters,
-      event.params.earliestExecutionTime,
-    )
-  
-    let proposal = DsPauseScheduledTransaction.load(fullHash.toHexString())
-    proposal.abandoned = true
-  
-    proposal.save()
+  let contract = DSProtestPause.bind(dataSource.address())
+  let fullHash = contract.getTransactionDataHash1(
+    event.params.usr,
+    event.params.codeHash,
+    event.params.parameters,
+    event.params.earliestExecutionTime,
+  )
+
+  let proposal = DsPauseScheduledTransaction.load(fullHash.toHexString())
+  proposal.abandoned = true
+
+  proposal.save()
 }

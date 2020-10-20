@@ -12,17 +12,11 @@ let RAY_PRECISION = <u8>27
 // @ts-ignore
 let RAD_PRECISION = <u8>45
 
-let WAD = BigInt.fromI32(10)
-  .pow(WAD_PRECISION)
-  .toBigDecimal()
+let WAD = BigInt.fromI32(10).pow(WAD_PRECISION).toBigDecimal()
 
-let RAY = BigInt.fromI32(10)
-  .pow(RAY_PRECISION)
-  .toBigDecimal()
+let RAY = BigInt.fromI32(10).pow(RAY_PRECISION).toBigDecimal()
 
-let RAD = BigInt.fromI32(10)
-  .pow(RAD_PRECISION)
-  .toBigDecimal()
+let RAD = BigInt.fromI32(10).pow(RAD_PRECISION).toBigDecimal()
 
 // TODO
 // let SECONDS_IN_YEAR = <u8>(60 * 60 * 24 * 365)

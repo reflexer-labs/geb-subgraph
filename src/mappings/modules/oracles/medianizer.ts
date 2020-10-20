@@ -26,9 +26,7 @@ export function handleUpdateResult(event: UpdateResult): void {
 
   update.medianizerAddress = contractAddress
   update.value = decimal.fromWad(event.params.medianPrice)
-  update.symbol = ChainlinkMedianizer.bind(contractAddress)
-    .symbol()
-    .toString()
+  update.symbol = ChainlinkMedianizer.bind(contractAddress).symbol().toString()
   update.createdAt = event.block.timestamp
   update.createdAtBlock = event.block.number
   update.createdAtTransaction = event.transaction.hash

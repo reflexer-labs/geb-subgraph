@@ -38,6 +38,7 @@ import { createUnmanagedSafe, updateSafeCollateralization } from '../../../entit
 import { updateLastModifySystemState } from '../../../entities/system'
 import { eventUid } from '../../../utils/ethereum'
 import { periodicHandler } from './periodic-handler'
+import { addresses } from '../../../utils/addresses'
 
 // Register a new collateral type
 export function handleInitializeCollateralType(event: InitializeCollateralType): void {
@@ -281,6 +282,10 @@ export function handleConfiscateSAFECollateralAndDebt(
 export function handleSettleDebt(event: SettleDebt): void {
   let rad = decimal.fromRad(event.params.rad)
 
+  // TODO: This address is missing from the event. Currently only the accounting engine is supposed to do this.
+  // Replace with the event param when it's there
+  let account = addresses.get('GEB_ACCOUNTING_ENGINE')
+
   // Update debt counters
   let system = getSystemState(event)
   system.globalDebt = system.globalDebt.minus(rad)
@@ -289,7 +294,6 @@ export function handleSettleDebt(event: SettleDebt): void {
   system.save()
 
   // Update debt and coin balance
-  let account = event.address // msg.sender
   let balance = getOrCreateCoinBalance(account, event)
   let debt = getOrCreateDebtBalance(account, event)
   updateCoinBalance(balance, event)

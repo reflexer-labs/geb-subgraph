@@ -70,6 +70,10 @@ export function getOrCreateAccountingEngine(event: ethereum.Event): AccountingEn
     engine.debtAuctionHouse = engineContract.debtAuctionHouse()
     engine.protocolTokenAuthority = engineContract.protocolTokenAuthority()
     engine.postSettlementSurplusDrain = engineContract.postSettlementSurplusDrain()
+    engine.debtAuctionCount = integer.ZERO
+    engine.surplusAuctionCount = integer.ZERO
+    engine.activeDebtAuctions = integer.ZERO
+    engine.activeSurplusAuctions = integer.ZERO
   }
 
   return engine as AccountingEngine

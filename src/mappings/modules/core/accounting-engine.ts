@@ -87,6 +87,8 @@ export function handleAuctionDebt(event: AuctionDebt): void {
   }
 
   accounting.totalOnAuctionDebt = accounting.totalOnAuctionDebt.plus(accounting.debtAuctionBidSize)
+  accounting.debtAuctionCount = accounting.debtAuctionCount.plus(integer.ONE)
+  accounting.activeDebtAuctions = accounting.activeDebtAuctions.plus(integer.ONE)
 
   let id = event.params.id
   let auction = new EnglishAuction(enums.EnglishAuctionType_DEBT + '-' + id.toString())
@@ -124,6 +126,8 @@ export function handleAuctionSurplus(event: AuctionSurplus): void {
   }
 
   accounting.lastSurplusAuctionTime = event.block.timestamp
+  accounting.surplusAuctionCount = accounting.surplusAuctionCount.plus(integer.ONE)
+  accounting.activeSurplusAuctions = accounting.activeSurplusAuctions.plus(integer.ONE)
 
   let id = event.params.id
   let auction = new EnglishAuction(enums.EnglishAuctionType_SURPLUS + '-' + id.toString())

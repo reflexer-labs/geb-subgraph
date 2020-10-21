@@ -12,6 +12,7 @@ import * as decimal from '../../../utils/decimal'
 import * as integer from '../../../utils/integer'
 import * as enums from '../../../utils/enums'
 import { getOrCreateEnglishAuctionConfiguration } from '../../../entities/auctions'
+import { getOrCreateAccountingEngine } from '../../../entities/system'
 
 export function handleModifyParametersPre(event: ModifyParametersPre): void {
   let config = getOrCreateEnglishAuctionConfiguration(
@@ -81,7 +82,7 @@ export function handleRestartAuctionPre(event: RestartAuctionPre): void {
 }
 
 export function handleSettleAuctionPre(event: SettleAuctionPre): void {
-  settleAuction(event.params.id, true)
+  settleAuction(event.params.id, true, event)
 }
 
 function restartAuction(id: BigInt, auctionDeadline: BigInt, isPre: boolean): void {
@@ -90,7 +91,11 @@ function restartAuction(id: BigInt, auctionDeadline: BigInt, isPre: boolean): vo
   auction.save()
 }
 
-function settleAuction(id: BigInt, isPre: boolean): void {
+function settleAuction(id: BigInt, isPre: boolean, event: ethereum.Event): void {
+  let accounting = getOrCreateAccountingEngine(event)
+  accounting.activeSurplusAuctions = accounting.activeSurplusAuctions.minus(integer.ONE)
+  accounting.save()
+
   let auction = EnglishAuction.load(auctionId(id, isPre))
   auction.isClaimed = true
   auction.save()

@@ -364,6 +364,18 @@ type AccountingEngine @entity {
   " Contract that handles auctions for surplus stability fees "
   surplusAuctionHouse: Bytes!
 
+  " Number debt auctions since the beginning "
+  debtAuctionCount: BigInt!
+
+  " Number debt auctions since the beginning "
+  surplusAuctionCount: BigInt!
+
+  " Currently ongoing debt auction "
+  activeDebtAuctions: BigInt!
+
+  " Currently ongoing surplus auction "
+  activeSurplusAuctions: BigInt!
+
   " Contract that handles auctions for debt that couldn't be covered by collateral auctions "
   debtAuctionHouse: Bytes!
 

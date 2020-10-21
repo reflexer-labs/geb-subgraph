@@ -11,6 +11,7 @@ import * as decimal from '../../../utils/decimal'
 import * as integer from '../../../utils/integer'
 import * as enums from '../../../utils/enums'
 import { getOrCreateEnglishAuctionConfiguration } from '../../../entities/auctions'
+import { getOrCreateAccountingEngine } from '../../../entities/system'
 
 export function handleModifyParametersUint(event: ModifyParametersUint): void {
   let what = event.params.parameter.toString()
@@ -66,6 +67,9 @@ export function handleRestartAuction(event: RestartAuction): void {
 }
 
 export function handleSettleAuction(event: SettleAuction): void {
+  let accounting = getOrCreateAccountingEngine(event)
+  accounting.activeDebtAuctions = accounting.activeDebtAuctions.minus(integer.ONE)
+  accounting.save()
   let auction = EnglishAuction.load(auctionId(event.params.id))
   auction.isClaimed = true
   auction.save()

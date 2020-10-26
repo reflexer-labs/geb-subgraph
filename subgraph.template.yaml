@@ -25,10 +25,6 @@ dataSources:
       abis:
         - name: SAFEEngine
           file: ./abis/SAFEEngine.json
-      blockHandlers:
-        - handler: handleBlock
-          filter:
-            kind: call
       eventHandlers:
         - event: InitializeCollateralType(bytes32)
           handler: handleInitializeCollateralType

@@ -4,7 +4,7 @@ import { getOrCreateCollateral, updateLastModifyCollateralType } from './collate
 
 import * as decimal from '../utils/decimal'
 import * as integer from '../utils/integer'
-import { getSystemState, updateLastModifySystemState } from './system'
+import { getSystemState } from './system'
 import { getOrCreateUser } from './user'
 
 // There is 4 different SAFE ownership relation possible:
@@ -45,7 +45,6 @@ export function createManagedSafe(
   collateralObj.safeCount = collateralObj.safeCount.plus(integer.ONE)
   system.safeCount = system.safeCount.plus(integer.ONE)
   updateLastModifyCollateralType(collateralObj, event)
-  updateLastModifySystemState(system, event)
 
   collateralObj.save()
   system.save()
@@ -84,7 +83,6 @@ export function createUnmanagedSafe(
   system.unmanagedSafeCount = system.unmanagedSafeCount.plus(integer.ONE)
 
   updateLastModifyCollateralType(collateralObj, event)
-  updateLastModifySystemState(system, event)
 
   collateralObj.save()
   system.save()

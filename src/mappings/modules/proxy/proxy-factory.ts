@@ -3,7 +3,6 @@ import { Created } from '../../../../generated/ProxyFactory/DSProxyFactory'
 import { getOrCreateUser, getSystemState } from '../../../entities'
 
 import * as integer from '../../../utils/integer'
-import { updateLastModifySystemState } from '../../../entities/system'
 import { Bytes } from '@graphprotocol/graph-ts'
 
 export function handleCreated(event: Created): void {
@@ -19,7 +18,6 @@ export function handleCreated(event: Created): void {
   // Update system state
   let system = getSystemState(event)
   system.proxyCount = system.proxyCount.plus(integer.ONE)
-  updateLastModifySystemState(system, event)
   system.save()
 }
 

@@ -35,7 +35,6 @@ import {
   getOrCreateCollateralBalance,
 } from '../../../entities/balances'
 import { createUnmanagedSafe, updateSafeCollateralization } from '../../../entities/safe'
-import { updateLastModifySystemState } from '../../../entities/system'
 import { eventUid } from '../../../utils/ethereum'
 import { periodicHandler } from './periodic-handler'
 import { addresses } from '../../../utils/addresses'
@@ -49,7 +48,6 @@ export function handleInitializeCollateralType(event: InitializeCollateralType):
   // Update system state
   let system = getSystemState(event)
   system.collateralCount = system.collateralCount.plus(integer.ONE)
-  updateLastModifySystemState(system, event)
   system.save()
 }
 
@@ -61,7 +59,6 @@ export function handleModifyParametersUint(event: ModifyParametersUint): void {
 
   if (what == 'globalDebtCeiling') {
     system.globalDebtCeiling = decimal.fromRad(data)
-    updateLastModifySystemState(system, event)
     system.save()
   }
 }
@@ -169,7 +166,6 @@ export function handleModifySAFECollateralization(event: ModifySAFECollateraliza
   collateral.save()
 
   system.globalDebt = system.globalDebt.plus(deltaDebt)
-  updateLastModifySystemState(system, event)
   system.save()
 
   // Update balances
@@ -290,7 +286,6 @@ export function handleSettleDebt(event: SettleDebt): void {
   let system = getSystemState(event)
   system.globalDebt = system.globalDebt.minus(rad)
   system.globalUnbackedDebt = system.globalUnbackedDebt.minus(rad)
-  updateLastModifySystemState(system, event)
   system.save()
 
   // Update debt and coin balance
@@ -310,7 +305,6 @@ export function handleCreateUnbackedDebt(event: CreateUnbackedDebt): void {
   let system = getSystemState(event)
   system.globalDebt = system.globalDebt.plus(rad)
   system.globalUnbackedDebt = system.globalUnbackedDebt.plus(rad)
-  updateLastModifySystemState(system, event)
   system.save()
 
   // Credit the coins
@@ -338,7 +332,6 @@ export function handleUpdateAccumulatedRate(event: UpdateAccumulatedRate): void 
   // Update debt counter
   let system = getSystemState(event)
   system.globalDebt = decimal.fromRad(event.params.globalDebt)
-  updateLastModifySystemState(system, event)
   system.save()
 
   // Send the taxes

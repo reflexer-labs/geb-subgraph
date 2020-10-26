@@ -32,21 +32,20 @@ export function getSystemState(event: ethereum.Event): SystemState {
     state.globalDebtCeiling = decimal.ZERO
     state.globalUnbackedDebt = decimal.ZERO
     state.lastPeriodicUpdate = integer.ZERO
+
+    // Created at 
+    state.createdAtBlock = event.block.number
+    state.createdAt = event.block.timestamp
+    state.createdAtTransaction = event.transaction.hash
   }
 
-  state.createdAtBlock = event.block.number
-  state.createdAt = event.block.timestamp
-  state.createdAtTransaction = event.transaction.hash
+  state.modifiedAt = event.block.timestamp
+  state.modifiedAtBlock = event.block.number
+  state.modifiedAtTransaction = event.transaction.hash
 
   state.save()
 
   return state as SystemState
-}
-
-export function updateLastModifySystemState(system: SystemState, event: ethereum.Event): void {
-  system.modifiedAt = event.block.timestamp
-  system.modifiedAtBlock = event.block.number
-  system.modifiedAtTransaction = event.transaction.hash
 }
 
 export function getOrCreateAccountingEngine(event: ethereum.Event): AccountingEngine {
@@ -75,6 +74,12 @@ export function getOrCreateAccountingEngine(event: ethereum.Event): AccountingEn
     engine.activeDebtAuctions = integer.ZERO
     engine.activeSurplusAuctions = integer.ZERO
   }
+
+  engine.modifiedAt = event.block.timestamp
+  engine.modifiedAtBlock = event.block.number
+  engine.modifiedAtTransaction = event.transaction.hash
+
+  engine.save()
 
   return engine as AccountingEngine
 }

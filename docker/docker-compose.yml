@@ -1,7 +1,7 @@
 version: "3"
 services:
   graph-node:
-    image: graphprotocol/graph-node
+    image: graphprotocol/graph-node:v0.19.2
     ports:
       - "80:8000"
     depends_on:
@@ -14,7 +14,9 @@ services:
       postgres_db: graph-node
       ipfs: "ipfs:5001"
       ethereum: "${NETWORK}:${ETHEREUM_RPC}"
-      RUST_LOG: info
+      RUST_LOG: error
+      GRAPH_LOG: info
+      GRAPH_ETH_CALL_BY_NUMBER: "true"
     restart: always
   ipfs:
     image: ipfs/go-ipfs:v0.4.23

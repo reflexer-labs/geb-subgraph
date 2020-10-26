@@ -16,7 +16,7 @@ jobs:
       env:
        ETHEREUM_RPC: ${{secrets.ETHEREUM_RPC_MAINNET}}
        POSTGRES_PASSWORD: ${{secrets.POSTGRES_PASSWORD}}
-       NETWORK: ${{secrets.NETWORK}}
+       NETWORK: 'mainnet'
       with:
         host: ${{secrets.DEPLOY_MAINNET_URL}}
         username: ubuntu

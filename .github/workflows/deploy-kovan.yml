@@ -16,7 +16,7 @@ jobs:
       env:
        ETHEREUM_RPC: ${{secrets.ETHEREUM_RPC_KOVAN}}
        POSTGRES_PASSWORD: ${{secrets.POSTGRES_PASSWORD}}
-       NETWORK: ${{secrets.NETWORK}}
+       NETWORK: 'kovan'
       with:
         host: ${{secrets.DEPLOY_KOVAN_URL}}
         username: ubuntu

@@ -25,7 +25,7 @@ import {
 
 import * as decimal from '../../../utils/decimal'
 import * as integer from '../../../utils/integer'
-import { getOrCreateCollateral, updateLastModifyCollateralType } from '../../../entities/collateral'
+import { getOrCreateCollateral } from '../../../entities/collateral'
 import {
   updateCoinBalance,
   updateCollateralBalance,
@@ -84,7 +84,6 @@ export function handleModifyParametersCollateralTypeUint(
     } else {
       return
     }
-    updateLastModifyCollateralType(collateral as CollateralType, event)
     collateral.save()
   }
 }
@@ -140,8 +139,8 @@ export function handleModifySAFECollateralization(event: ModifySAFECollateraliza
   let system = getSystemState(event)
 
   if (safe == null) {
-    // It was means that the SafeManager was not used, otherwise they would be a Safe entity already created.
-    log.info('New unmanaged: {}', [safe.id])
+    // It means that the SafeManager was not used, otherwise they would be a Safe entity already created.
+    log.info('New unmanaged: {}', [safeId])
     // Register new unmanaged safe
     safe = createUnmanagedSafe(safeAddress, event.params.collateralType, event)
     updateSafeCollateralization(safe as Safe, collateralBalance, deltaDebt, event)
@@ -162,7 +161,6 @@ export function handleModifySAFECollateralization(event: ModifySAFECollateraliza
   collateral.totalCollateralLockedInSafes = collateral.totalCollateralLockedInSafes.plus(
     deltaCollateral,
   )
-  updateLastModifyCollateralType(collateral as CollateralType, event)
   collateral.save()
 
   system.globalDebt = system.globalDebt.plus(deltaDebt)
@@ -326,7 +324,6 @@ export function handleUpdateAccumulatedRate(event: UpdateAccumulatedRate): void 
 
   // Set the new rate
   collateral.accumulatedRate = collateral.accumulatedRate.plus(rate)
-  updateLastModifyCollateralType(collateral as CollateralType, event)
   collateral.save()
 
   // Update debt counter

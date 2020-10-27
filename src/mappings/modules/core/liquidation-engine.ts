@@ -22,7 +22,6 @@ import * as decimal from '../../../utils/decimal'
 import * as integer from '../../../utils/integer'
 
 import { log } from '@graphprotocol/graph-ts'
-import { updateLastModifyCollateralType } from '../../../entities/collateral'
 import * as enums from '../../../utils/enums'
 import { getOrCreateEnglishAuctionConfiguration } from '../../../entities/auctions'
 
@@ -38,7 +37,6 @@ export function handleModifyParametersCollateralTypeUint(
     collateral.liquidationQuantity = decimal.fromRad(event.params.data)
   }
 
-  updateLastModifyCollateralType(collateral, event)
   collateral.save()
 }
 
@@ -98,7 +96,6 @@ export function handleModifyParametersCollateralTypeAddress(
     }
   }
 
-  updateLastModifyCollateralType(collateral, event)
   collateral.save()
 }
 

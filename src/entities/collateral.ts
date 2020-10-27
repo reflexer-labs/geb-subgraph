@@ -45,14 +45,11 @@ export function getOrCreateCollateral(
 
     collateral.save()
   }
-  return collateral as CollateralType
-}
 
-export function updateLastModifyCollateralType(
-  collateral: CollateralType,
-  event: ethereum.Event,
-): void {
   collateral.modifiedAt = event.block.timestamp
   collateral.modifiedAtBlock = event.block.number
   collateral.modifiedAtTransaction = event.transaction.hash
+  collateral.save()
+
+  return collateral as CollateralType
 }

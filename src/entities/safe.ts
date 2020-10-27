@@ -1,6 +1,6 @@
 import { Bytes, ethereum, Address, BigInt, log } from '@graphprotocol/graph-ts'
 import { Safe, UserProxy, SafeHandlerOwner } from '../../generated/schema'
-import { getOrCreateCollateral, updateLastModifyCollateralType } from './collateral'
+import { getOrCreateCollateral } from './collateral'
 
 import * as decimal from '../utils/decimal'
 import * as integer from '../utils/integer'
@@ -44,7 +44,6 @@ export function createManagedSafe(
   // Increase SAFE counters
   collateralObj.safeCount = collateralObj.safeCount.plus(integer.ONE)
   system.safeCount = system.safeCount.plus(integer.ONE)
-  updateLastModifyCollateralType(collateralObj, event)
 
   collateralObj.save()
   system.save()
@@ -82,7 +81,6 @@ export function createUnmanagedSafe(
   collateralObj.unmanagedSafeCount = collateralObj.unmanagedSafeCount.plus(integer.ONE)
   system.unmanagedSafeCount = system.unmanagedSafeCount.plus(integer.ONE)
 
-  updateLastModifyCollateralType(collateralObj, event)
 
   collateralObj.save()
   system.save()

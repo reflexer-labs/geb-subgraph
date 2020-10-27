@@ -132,11 +132,9 @@ export function handleModifySAFECollateralization(event: ModifySAFECollateraliza
   let deltaCollateral = decimal.fromWad(event.params.deltaCollateral)
   let deltaDebt = decimal.fromWad(event.params.deltaDebt)
 
-  let collateral = getOrCreateCollateral(event.params.collateralType, event)
   let collateralBalance = deltaCollateral
   let safeId = safeAddress.toHexString() + '-' + collateralType
   let safe = Safe.load(safeId)
-  let system = getSystemState(event)
 
   if (safe == null) {
     // It means that the SafeManager was not used, otherwise they would be a Safe entity already created.
@@ -157,12 +155,14 @@ export function handleModifySAFECollateralization(event: ModifySAFECollateraliza
   safe.save()
 
   // Update debt and collateral counters
+  let collateral = getOrCreateCollateral(event.params.collateralType, event)
   collateral.debtAmount = collateral.debtAmount.plus(deltaDebt)
   collateral.totalCollateralLockedInSafes = collateral.totalCollateralLockedInSafes.plus(
     deltaCollateral,
   )
   collateral.save()
 
+  let system = getSystemState(event)
   system.globalDebt = system.globalDebt.plus(deltaDebt)
   system.save()
 

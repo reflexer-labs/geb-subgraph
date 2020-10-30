@@ -130,7 +130,7 @@ export function updateSafeCollateralization(
 
 // @ts-ignore
 function isEmptySafe(safe: Safe): bool {
-  return safe.collateral.gt(decimal.ZERO) && safe.debt.gt(decimal.ZERO)
+  return safe.collateral.equals(decimal.ZERO) && safe.debt.equals(decimal.ZERO)
 }
 
 export function updateLastModifySafe(safe: Safe, event: ethereum.Event): void {

@@ -1154,7 +1154,7 @@ type GebAuthorization @entity {
 
   " Authorized account label"
   accountLabel: String
-  
+
   " Whether the account is currently authorized or not (An authorization can be revoked)"
   isAuthorized: Boolean!
 
@@ -1175,7 +1175,6 @@ type GebAuthorization @entity {
 
   " Transaction hash at which the authorization was last modified "
   modifiedAtTransaction: Bytes
-
 }
 
 # --- Uniswap ---
@@ -1224,6 +1223,37 @@ type UniswapPair @entity {
   modifiedAtTransaction: Bytes
 }
 
+type UniswapSwap @entity {
+  "<TX hash>-<Log index>"
+  id: ID!
+
+  "Pair of the swap"
+  pair: UniswapPair!
+
+  " Address that made the swap "
+  sender: Bytes!
+
+  " Amount in token 0 "
+  amount0In: BigDecimal!
+
+  " Amount in token 1 "
+  amount1In: BigDecimal!
+
+  " Amount out token 0 "
+  amount0Out: BigDecimal!
+
+  " Amount out token 1 "
+  amount1Out: BigDecimal!
+
+  " Timestamp of the block at which the swap was made [seconds] "
+  createdAt: BigInt!
+
+  " Block number at which the swap was made "
+  createdAtBlock: BigInt!
+
+  " Hash of the transaction that created the swap "
+  createdAtTransaction: Bytes!
+}
 # --- Periodic updates ---
 
 type DailyStat @entity {

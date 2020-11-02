@@ -1,6 +1,7 @@
-import { Sync } from '../../../../generated/templates/UniswapPair/UniswapPair'
-import { UniswapPair } from '../../../entities'
+import { Swap, Sync } from '../../../../generated/templates/UniswapPair/UniswapPair'
+import { UniswapPair, UniswapSwap } from '../../../entities'
 import * as decimal from '../../../utils/decimal'
+import { eventUid } from '../../../utils/ethereum'
 
 export function handleSync(event: Sync): void {
   let pair = UniswapPair.load(event.address.toHex())
@@ -18,4 +19,18 @@ export function handleSync(event: Sync): void {
   pair.modifiedAtTransaction = event.transaction.hash
 
   pair.save()
+}
+
+export function handleSwap(event: Swap): void {
+  let swap = new UniswapSwap(eventUid(event))
+  swap.pair = event.address.toHexString()
+  swap.amount0In = decimal.fromWad(event.params.amount0In)
+  swap.amount1In = decimal.fromWad(event.params.amount1In)
+  swap.amount0Out = decimal.fromWad(event.params.amount0Out)
+  swap.amount1Out = decimal.fromWad(event.params.amount1Out)
+  swap.sender = event.params.sender
+  swap.createdAt = event.block.timestamp
+  swap.createdAtBlock = event.block.number
+  swap.createdAtTransaction = event.transaction.hash
+  swap.save()
 }

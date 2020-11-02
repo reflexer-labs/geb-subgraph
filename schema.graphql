@@ -1139,6 +1139,45 @@ type DsPauseScheduledTransaction @entity {
   createdAtTransaction: Bytes!
 }
 
+type GebAuthorization @entity {
+  "<Contract address>-<Authorized account>"
+  id: ID!
+
+  " Contract address of the authorization "
+  contract: Bytes!
+
+  " Label of the smart-contract "
+  contractLabel: String
+
+  " Authorized account address "
+  account: Bytes!
+
+  " Authorized account label"
+  accountLabel: String
+  
+  " Whether the account is currently authorized or not (An authorization can be revoked)"
+  isAuthorized: Boolean!
+
+  " Timestamp of the block at which the authorization was created [seconds] "
+  createdAt: BigInt!
+
+  " Block number at which the authorization was created "
+  createdAtBlock: BigInt!
+
+  " Hash of the transaction that created the authorization "
+  createdAtTransaction: Bytes!
+
+  " Timestamp of the block at which the authorization was last modified [seconds] "
+  modifiedAt: BigInt
+
+  " Block number at which the authorization was last modified "
+  modifiedAtBlock: BigInt
+
+  " Transaction hash at which the authorization was last modified "
+  modifiedAtTransaction: Bytes
+
+}
+
 # --- Uniswap ---
 
 type UniswapPair @entity {

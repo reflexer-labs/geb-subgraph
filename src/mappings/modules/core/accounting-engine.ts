@@ -5,13 +5,16 @@ import {
   ModifyParameters1 as ModifyParametersAddress,
   AuctionDebt,
   AuctionSurplus,
+  AddAuthorization,
+  RemoveAuthorization,
 } from '../../../../generated/AccountingEngine/AccountingEngine'
 import { getOrCreateAccountingEngine } from '../../../entities/system'
-import { EnglishAuction, EnglishAuctionConfiguration } from '../../../entities'
+import { EnglishAuction } from '../../../entities'
 import { log } from '@graphprotocol/graph-ts'
 import * as enums from '../../../utils/enums'
 import { DebtAuctionHouse, PreSettlementSurplusAuctionHouse } from '../../../../generated/templates'
 import { getOrCreateEnglishAuctionConfiguration } from '../../../entities/auctions'
+import { addAuthorization, removeAuthorization } from '../governance/authorizations'
 
 export function handleModifyParametersAddress(event: ModifyParametersAddress): void {
   let what = event.params.parameter.toString()
@@ -150,4 +153,12 @@ export function handleAuctionSurplus(event: AuctionSurplus): void {
 
   auction.save()
   accounting.save()
+}
+
+export function handleAddAuthorization(event: AddAuthorization): void {
+  addAuthorization(event.params.account, event)
+}
+
+export function handleRemoveAuthorization(event: RemoveAuthorization): void {
+  removeAuthorization(event.params.account, event)
 }

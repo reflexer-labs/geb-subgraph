@@ -10,6 +10,8 @@ import {
   ModifyParameters1 as ModifyParametersUint,
   ModifyParameters2 as ModifyParametersCollateralTypeUint,
   OracleRelayer,
+  AddAuthorization,
+  RemoveAuthorization,
 } from '../../../../generated/OracleRelayer/OracleRelayer'
 
 import { RateSetter } from '../../../../generated/OracleRelayer/RateSetter'
@@ -23,8 +25,9 @@ import {
 import { getSystemState } from '../../../entities'
 import { getOrCreateCollateral } from '../../../entities/collateral'
 import { eventUid } from '../../../utils/ethereum'
-import { addresses } from '../../../utils/addresses'
+import { addressMap } from '../../../utils/addresses'
 import { SECOND_PER_YEAR } from '../../../utils/integer'
+import { addAuthorization, removeAuthorization } from '../governance/authorizations'
 
 export function handleUpdateCollateralPrice(event: UpdateCollateralPrice): void {
   let collateralType = event.params.collateralType.toString()
@@ -110,7 +113,7 @@ export function handleModifyParametersUint(event: ModifyParametersUint): void {
     // Calculate solidity annualized rate by calling the contract
 
     const rpowerRate = (rate: BigInt, nSeconds: i32): decimal.BigDecimal => {
-      let rateSetterContract = RateSetter.bind(addresses.get('GEB_RRFM_SETTER') as Address)
+      let rateSetterContract = RateSetter.bind(addressMap.get('GEB_RRFM_SETTER') as Address)
       return decimal.fromRay(
         rateSetterContract.rpower(rate, BigInt.fromI32(nSeconds), decimal.rayBigInt),
       )
@@ -130,4 +133,12 @@ export function handleModifyParametersUint(event: ModifyParametersUint): void {
     rate.save()
     system.save()
   }
+}
+
+export function handleAddAuthorization(event: AddAuthorization): void {
+  addAuthorization(event.params.account, event)
+}
+
+export function handleRemoveAuthorization(event: RemoveAuthorization): void {
+  removeAuthorization(event.params.account, event)
 }

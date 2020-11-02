@@ -1,4 +1,4 @@
-import { BasicCollateralJoin, Exit, Join } from '../../../../generated/EthAJoin/BasicCollateralJoin'
+import { AddAuthorization, BasicCollateralJoin, Exit, Join, RemoveAuthorization } from '../../../../generated/EthAJoin/BasicCollateralJoin'
 import {
   CollateralExitTransaction,
   CollateralJoinTransaction,
@@ -8,6 +8,7 @@ import { eventUid } from '../../../utils/ethereum'
 import * as decimal from '../../../utils/decimal'
 import { findUltimateOwner } from '../../../entities/user'
 import { dataSource } from '@graphprotocol/graph-ts'
+import { addAuthorization, removeAuthorization } from '../governance/authorizations'
 
 export function handleJoin(event: Join): void {
   let join = new CollateralJoinTransaction(eventUid(event))
@@ -37,4 +38,12 @@ export function handleExit(event: Exit): void {
   exit.createdAtTransaction = event.transaction.hash
 
   exit.save()
+}
+
+export function handleAddAuthorization(event: AddAuthorization): void {
+  addAuthorization(event.params.account, event)
+}
+
+export function handleRemoveAuthorization(event: RemoveAuthorization): void {
+  removeAuthorization(event.params.account, event)
 }

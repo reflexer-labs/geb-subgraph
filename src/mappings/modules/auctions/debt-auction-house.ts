@@ -3,6 +3,8 @@ import {
   DecreaseSoldAmount,
   RestartAuction,
   SettleAuction,
+  AddAuthorization,
+  RemoveAuthorization,
 } from '../../../../generated/templates/DebtAuctionHouse/DebtAuctionHouse'
 import { EnglishAuctionConfiguration, EnglishAuctionBid, EnglishAuction } from '../../../entities'
 import { dataSource, log, BigInt } from '@graphprotocol/graph-ts'
@@ -12,6 +14,7 @@ import * as integer from '../../../utils/integer'
 import * as enums from '../../../utils/enums'
 import { getOrCreateEnglishAuctionConfiguration } from '../../../entities/auctions'
 import { getOrCreateAccountingEngine } from '../../../entities/system'
+import { addAuthorization, removeAuthorization } from '../governance/authorizations'
 
 export function handleModifyParametersUint(event: ModifyParametersUint): void {
   let what = event.params.parameter.toString()
@@ -81,4 +84,12 @@ function auctionId(auctionId: BigInt): string {
 
 function bidAuctionId(auctionId: BigInt, bidNumber: BigInt): string {
   return enums.EnglishAuctionType_DEBT + '-' + auctionId.toString() + '-' + bidNumber.toString()
+}
+
+export function handleAddAuthorization(event: AddAuthorization): void {
+  addAuthorization(event.params.account, event)
+}
+
+export function handleRemoveAuthorization(event: RemoveAuthorization): void {
+  removeAuthorization(event.params.account, event)
 }

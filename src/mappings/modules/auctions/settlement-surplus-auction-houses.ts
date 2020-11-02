@@ -3,6 +3,8 @@ import {
   IncreaseBidSize as IncreaseBidSizePre,
   RestartAuction as RestartAuctionPre,
   SettleAuction as SettleAuctionPre,
+  AddAuthorization,
+  RemoveAuthorization,
 } from '../../../../generated/templates/PreSettlementSurplusAuctionHouse/PreSettlementSurplusAuctionHouse'
 
 import { EnglishAuctionConfiguration, EnglishAuctionBid, EnglishAuction } from '../../../entities'
@@ -13,6 +15,7 @@ import * as integer from '../../../utils/integer'
 import * as enums from '../../../utils/enums'
 import { getOrCreateEnglishAuctionConfiguration } from '../../../entities/auctions'
 import { getOrCreateAccountingEngine } from '../../../entities/system'
+import { addAuthorization, removeAuthorization } from '../governance/authorizations'
 
 export function handleModifyParametersPre(event: ModifyParametersPre): void {
   let config = getOrCreateEnglishAuctionConfiguration(
@@ -111,4 +114,12 @@ function bidAuctionId(auctionId: BigInt, bidNumber: BigInt, isPre: boolean): str
   return isPre
     ? enums.EnglishAuctionType_SURPLUS
     : enums.EnglishAuctionType_SURPLUS + '-' + auctionId.toString() + '-' + bidNumber.toString()
+}
+
+export function handleAddAuthorization(event: AddAuthorization): void {
+  addAuthorization(event.params.account, event)
+}
+
+export function handleRemoveAuthorization(event: RemoveAuthorization): void {
+  removeAuthorization(event.params.account, event)
 }

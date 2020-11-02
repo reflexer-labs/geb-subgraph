@@ -1,10 +1,11 @@
 import { dataSource, log } from '@graphprotocol/graph-ts'
-import { UpdateResult } from '../../../../generated/EthOsm/Osm'
+import { AddAuthorization, RemoveAuthorization, UpdateResult } from '../../../../generated/EthOsm/Osm'
 import { FsmUpdate, getOrCreateCollateral, getSystemState } from '../../../entities'
 import { eventUid } from '../../../utils/ethereum'
 import * as decimal from '../../../utils/decimal'
-import { addresses } from '../../../utils/addresses'
+import { addressMap } from '../../../utils/addresses'
 import { ETH_A } from '../../../utils/bytes'
+import { addAuthorization, removeAuthorization } from '../governance/authorizations'
 
 export function handleUpdateResult(event: UpdateResult): void {
   let id = eventUid(event)
@@ -17,15 +18,23 @@ export function handleUpdateResult(event: UpdateResult): void {
   update.createdAtTransaction = event.transaction.hash
   update.save()
 
-  if (contractAddress.equals(addresses.get('FEED_SECURITY_MODULE_ETH'))) {
+  if (contractAddress.equals(addressMap.get('FEED_SECURITY_MODULE_ETH'))) {
     let collateral = getOrCreateCollateral(ETH_A, event)
     collateral.currentFsmUpdate = id
     collateral.save()
-  } else if (contractAddress.equals(addresses.get('FEED_SECURITY_MODULE_PRAI'))) {
+  } else if (contractAddress.equals(addressMap.get('FEED_SECURITY_MODULE_PRAI'))) {
     let system = getSystemState(event)
     system.currentCoinFsmUpdate = id
     system.save()
   } else {
     log.error('FSM address not found', [])
   }
+}
+
+export function handleAddAuthorization(event: AddAuthorization): void {
+  addAuthorization(event.params.account, event)
+}
+
+export function handleRemoveAuthorization(event: RemoveAuthorization): void {
+  removeAuthorization(event.params.account, event)
 }

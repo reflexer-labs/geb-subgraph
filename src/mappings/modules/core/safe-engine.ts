@@ -21,6 +21,8 @@ import {
   CreateUnbackedDebt,
   UpdateAccumulatedRate,
   ModifySAFECollateralization,
+  AddAuthorization,
+  RemoveAuthorization,
 } from '../../../../generated/SAFEEngine/SAFEEngine'
 
 import * as decimal from '../../../utils/decimal'
@@ -37,7 +39,8 @@ import {
 import { createUnmanagedSafe, updateSafeCollateralization } from '../../../entities/safe'
 import { eventUid } from '../../../utils/ethereum'
 import { periodicHandler } from './periodic-handler'
-import { addresses } from '../../../utils/addresses'
+import { addressMap } from '../../../utils/addresses'
+import { addAuthorization, removeAuthorization } from '../governance/authorizations'
 
 // Register a new collateral type
 export function handleInitializeCollateralType(event: InitializeCollateralType): void {
@@ -281,7 +284,7 @@ export function handleSettleDebt(event: SettleDebt): void {
 
   // TODO: This address is missing from the event. Currently only the accounting engine is supposed to do this.
   // Replace with the event param when it's there
-  let account = addresses.get('GEB_ACCOUNTING_ENGINE')
+  let account = addressMap.get('GEB_ACCOUNTING_ENGINE')
 
   // Update debt counters
   let system = getSystemState(event)
@@ -341,4 +344,12 @@ export function handleUpdateAccumulatedRate(event: UpdateAccumulatedRate): void 
 
   // This needs tbe call at least once an hour. We call it from here since it's a popular function.
   periodicHandler(event)
+}
+
+export function handleAddAuthorization(event: AddAuthorization): void {
+  addAuthorization(event.params.account, event)
+}
+
+export function handleRemoveAuthorization(event: RemoveAuthorization): void {
+  removeAuthorization(event.params.account, event)
 }

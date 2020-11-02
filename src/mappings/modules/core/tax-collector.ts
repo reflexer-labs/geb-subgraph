@@ -1,13 +1,16 @@
 import { Address, log } from '@graphprotocol/graph-ts'
 import { RateSetter } from '../../../../generated/TaxCollector/RateSetter'
 import {
+  AddAuthorization,
   ModifyParameters as ModifyParametersCollateralTypeUint,
   ModifyParameters1 as ModifyParametersUint,
+  RemoveAuthorization,
 } from '../../../../generated/TaxCollector/TaxCollector'
 import { getSystemState, getOrCreateCollateral } from '../../../entities'
-import { addresses } from '../../../utils/addresses'
+import { addressMap } from '../../../utils/addresses'
 import * as decimal from '../../../utils/decimal'
 import { SECOND_PER_YEAR } from '../../../utils/integer'
+import { addAuthorization, removeAuthorization } from '../governance/authorizations'
 
 // TODO: Authorizations
 // TODO: Tax Recipients
@@ -24,7 +27,7 @@ export function handleModifyParametersCollateralTypeUint(
 
     // Calculate the annualized
     let system = getSystemState(event)
-    let rateSetterContract = RateSetter.bind(addresses.get('GEB_RRFM_SETTER') as Address)
+    let rateSetterContract = RateSetter.bind(addressMap.get('GEB_RRFM_SETTER') as Address)
     let totalPerSecondRate = decimal.toRay(system.globalStabilityFee).plus(event.params.data)
 
     collateral.totalAnnualizedStabilityFee = decimal.fromRay(
@@ -49,4 +52,12 @@ export function handleModifyParametersUint(event: ModifyParametersUint): void {
       [],
     )
   }
+}
+
+export function handleAddAuthorization(event: AddAuthorization): void {
+  addAuthorization(event.params.account, event)
+}
+
+export function handleRemoveAuthorization(event: RemoveAuthorization): void {
+  removeAuthorization(event.params.account, event)
 }

@@ -6,6 +6,8 @@ import {
   FixedDiscountCollateralAuctionHouse,
   BuyCollateral,
   SettleAuction,
+  AddAuthorization,
+  RemoveAuthorization,
 } from '../../../../generated/templates/FixedDiscountCollateralAuctionHouse/FixedDiscountCollateralAuctionHouse'
 import { dataSource, log } from '@graphprotocol/graph-ts'
 import {
@@ -14,6 +16,7 @@ import {
   FixedDiscountAuction,
   FixedDiscountAuctionBatch,
 } from '../../../entities'
+import { addAuthorization, removeAuthorization } from '../governance/authorizations'
 
 export function handleModifyParametersUint(event: ModifyParametersUint): void {
   let what = event.params.parameter.toString()
@@ -116,4 +119,12 @@ export function handleSettleAuction(event: SettleAuction): void {
   auction.isSettled = true
   auction.save()
   collateral.save()
+}
+
+export function handleAddAuthorization(event: AddAuthorization): void {
+  addAuthorization(event.params.account, event)
+}
+
+export function handleRemoveAuthorization(event: RemoveAuthorization): void {
+  removeAuthorization(event.params.account, event)
 }

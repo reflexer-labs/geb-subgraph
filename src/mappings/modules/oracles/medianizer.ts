@@ -3,6 +3,8 @@ import {
   UpdateResult,
   Medianizer as ChainlinkMedianizer,
   ModifyParameters,
+  AddAuthorization,
+  RemoveAuthorization,
 } from '../../../../generated/EthMedianizer/Medianizer'
 import { Medianizer as UniMedianizer } from '../../../../generated/CoinMedianizer/Medianizer'
 import { UniswapPair as UniswapPairContract } from '../../../../generated/templates/UniswapPair/UniswapPair'
@@ -15,8 +17,9 @@ import {
 } from '../../../entities'
 import { eventUid, NULL_ADDRESS } from '../../../utils/ethereum'
 import * as decimal from '../../../utils/decimal'
-import { addresses } from '../../../utils/addresses'
+import { addressMap } from '../../../utils/addresses'
 import { ETH_A } from '../../../utils/bytes'
+import { addAuthorization, removeAuthorization } from '../governance/authorizations'
 
 // Called for both Chainlink and Uniswap medianizer
 export function handleUpdateResult(event: UpdateResult): void {
@@ -26,17 +29,19 @@ export function handleUpdateResult(event: UpdateResult): void {
 
   update.medianizerAddress = contractAddress
   update.value = decimal.fromWad(event.params.medianPrice)
-  update.symbol = ChainlinkMedianizer.bind(contractAddress).symbol().toString()
+  update.symbol = ChainlinkMedianizer.bind(contractAddress)
+    .symbol()
+    .toString()
   update.createdAt = event.block.timestamp
   update.createdAtBlock = event.block.number
   update.createdAtTransaction = event.transaction.hash
   update.save()
 
-  if (contractAddress.equals(addresses.get('MEDIANIZER_ETH'))) {
+  if (contractAddress.equals(addressMap.get('MEDIANIZER_ETH'))) {
     let collateral = getOrCreateCollateral(ETH_A, event)
     collateral.currentMedianizerUpdate = id
     collateral.save()
-  } else if (contractAddress.equals(addresses.get('MEDIANIZER_PRAI'))) {
+  } else if (contractAddress.equals(addressMap.get('MEDIANIZER_PRAI'))) {
     let system = getSystemState(event)
     system.currentCoinMedianizerUpdate = id
     system.save()
@@ -87,4 +92,12 @@ export function handleModifyParameters(event: ModifyParameters): void {
 
   // Start indexing
   UniswapPairIndexer.create(pairAddress)
+}
+
+export function handleAddAuthorization(event: AddAuthorization): void {
+  addAuthorization(event.params.account, event)
+}
+
+export function handleRemoveAuthorization(event: RemoveAuthorization): void {
+  removeAuthorization(event.params.account, event)
 }

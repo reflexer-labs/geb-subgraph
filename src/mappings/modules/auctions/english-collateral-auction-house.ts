@@ -6,6 +6,8 @@ import {
   IncreaseBidSize,
   RestartAuction,
   SettleAuction,
+  AddAuthorization,
+  RemoveAuthorization,
 } from '../../../../generated/templates/EnglishCollateralAuctionHouse/EnglishCollateralAuctionHouse'
 import { EnglishAuctionBid, EnglishAuction, getOrCreateCollateral } from '../../../entities'
 import { dataSource, BigDecimal } from '@graphprotocol/graph-ts'
@@ -14,6 +16,7 @@ import * as decimal from '../../../utils/decimal'
 import * as integer from '../../../utils/integer'
 import * as enums from '../../../utils/enums'
 import { getOrCreateEnglishAuctionConfiguration } from '../../../entities/auctions'
+import { addAuthorization, removeAuthorization } from '../governance/authorizations'
 
 export function handleModifyParametersUint(event: ModifyParametersUint): void {
   let what = event.params.parameter.toString()
@@ -118,4 +121,12 @@ export function handleSettleAuction(event: SettleAuction): void {
   auction.isClaimed = true
   auction.save()
   collateral.save()
+}
+
+export function handleAddAuthorization(event: AddAuthorization): void {
+  addAuthorization(event.params.account, event)
+}
+
+export function handleRemoveAuthorization(event: RemoveAuthorization): void {
+  removeAuthorization(event.params.account, event)
 }

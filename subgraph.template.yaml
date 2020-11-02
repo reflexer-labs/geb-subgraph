@@ -50,6 +50,10 @@ dataSources:
           handler: handleCreateUnbackedDebt
         - event: UpdateAccumulatedRate(bytes32,address,int256,uint256,uint256)
           handler: handleUpdateAccumulatedRate
+        - event: AddAuthorization(address)
+          handler: handleAddAuthorization
+        - event: RemoveAuthorization(address)
+          handler: handleRemoveAuthorization
   
   - name: GebSafeManager
     kind: ethereum/contract
@@ -114,6 +118,10 @@ dataSources:
           handler: handleModifyParametersCollateralTypeUint
         - event: ModifyParameters(bytes32,uint256)
           handler: handleModifyParametersUint
+        - event: AddAuthorization(address)
+          handler: handleAddAuthorization
+        - event: RemoveAuthorization(address)
+          handler: handleRemoveAuthorization
   
   - name: TaxCollector
     kind: ethereum/contract
@@ -140,10 +148,12 @@ dataSources:
           handler: handleModifyParametersCollateralTypeUint
         - event: ModifyParameters(bytes32,uint256) # Type 1
           handler: handleModifyParametersUint
+        - event: AddAuthorization(address)
+          handler: handleAddAuthorization
+        - event: RemoveAuthorization(address)
+          handler: handleRemoveAuthorization
         
         # Remaining events
-        # - event: AddAuthorization(address)
-        #   handle: handleAddAuthorization
         # - event: AddSecondaryReceiver(bytes32,uint256,uint256,uint256,uint256)
         #   handle: handleAddSecondaryReceiver
         # - event: CollectTax(bytes32,uint256,int256)
@@ -160,8 +170,6 @@ dataSources:
         #   handle: handleModifyParameters
         # - event: ModifySecondaryReceiver(bytes32,uint256,uint256,uint256,uint256)
         #   handle: handleModifySecondaryReceiver
-        # - event: RemoveAuthorization(address)
-        #   handle: handleRemoveAuthorization
   
   - name: LiquidationEngine
     kind: ethereum/contract
@@ -192,10 +200,12 @@ dataSources:
           handler: handleModifyParametersCollateralTypeAddress
         - event: ModifyParameters(bytes32,bytes32,uint256)
           handler: handleModifyParametersCollateralTypeUint
-        
+        - event: AddAuthorization(address)
+          handler: handleAddAuthorization
+        - event: RemoveAuthorization(address)
+          handler: handleRemoveAuthorization
+
         # Remaining events:
-        # - event: AddAuthorization(address)
-        #   handler: handleAddAuthorization
         # - event: ConnectSAFESaviour(address)
         #   handler: handleConnectSAFESaviour
         # - event: DisableContract()
@@ -206,8 +216,6 @@ dataSources:
         #   handler: handleFailedSAFESave
         # - event: ProtectSAFE(bytes32,address,address)
         #   handler: handleProtectSAFE
-        # - event: RemoveAuthorization(address)
-        #   handler: handleRemoveAuthorization
         # - event: SaveSAFE(indexed bytes32,indexed address,uint256)
         #   handler: handleSaveSAFE
   
@@ -245,9 +253,12 @@ dataSources:
           handler: handleAuctionDebt
         - event: AuctionSurplus(uint256,uint256,uint256)
           handler: handleAuctionSurplus
+        - event: AddAuthorization(address)
+          handler: handleAddAuthorization
+        - event: RemoveAuthorization(address)
+          handler: handleRemoveAuthorization
+
         # Remaining events:
-        # - event: AddAuthorization(address)
-        #   handler: handleAddAuthorization
         # - event: CancelAuctionedDebtWithSurplus(uint256,uint256,uint256,uint256)
         #   handler: handleCancelAuctionedDebtWithSurplus
         # - event: DisableContract(uint256,uint256,uint256,uint256)
@@ -256,8 +267,6 @@ dataSources:
         #   handler: handlePopDebtFromQueue
         # - event: PushDebtToQueue(uint256,uint256,uint256)
         #   handler: handlePushDebtToQueue
-        # - event: RemoveAuthorization(address)
-        #   handler: handleRemoveAuthorization
         # - event: SettleDebt(uint256,uint256,uint256)
         #   handler: handleSettleDebt
         # - event: TransferPostSettlementSurplus(address,uint256,uint256)
@@ -306,12 +315,13 @@ dataSources:
           handler: handleExit
         - event: Join(address,address,uint256)
           handler: handleJoin
-        # - event: AddAuthorization(address)
-        #   handler: handleAddAuthorization
+        - event: AddAuthorization(address)
+          handler: handleAddAuthorization
+        - event: RemoveAuthorization(address)
+          handler: handleRemoveAuthorization
+
         # - event: DisableContract()
         #   handler: handleDisableContract
-        # - event: RemoveAuthorization(address)
-        #   handler: handleRemoveAuthorization
   
   - name: EthAJoin
     kind: ethereum/contract
@@ -335,12 +345,14 @@ dataSources:
           handler: handleExit
         - event: Join(address,address,uint256)
           handler: handleJoin
-        # - event: AddAuthorization(address)
-        #   handler: handleAddAuthorization
+        - event: AddAuthorization(address)
+          handler: handleAddAuthorization
+        - event: RemoveAuthorization(address)
+          handler: handleRemoveAuthorization
+
         # - event: DisableContract()
         #   handler: handleDisableContract
-        # - event: RemoveAuthorization(address)
-        #   handler: handleRemoveAuthorization
+
   
   - name: Coin
     kind: ethereum/contract
@@ -366,10 +378,10 @@ dataSources:
           handler: handleTransfer 
         - event: Approval(indexed address,indexed address,uint256)
           handler: handleApproval 
-        # - event: AddAuthorization(address)
-        #   handler: handleAddAuthorization 
-        # - event: RemoveAuthorization(address)
-        #   handler: handleRemoveAuthorization 
+        - event: AddAuthorization(address)
+          handler: handleAddAuthorization
+        - event: RemoveAuthorization(address)
+          handler: handleRemoveAuthorization
   
   - name: ProtestPause
     kind: ethereum/contract
@@ -433,14 +445,15 @@ dataSources:
       eventHandlers:
         - event: UpdateResult(uint256,uint256)
           handler: handleUpdateResult
-        # - event: AddAuthorization(address)
-        #   handler: handleAddAuthorization
+        - event: AddAuthorization(address)
+          handler: handleAddAuthorization
+        - event: RemoveAuthorization(address)
+          handler: handleRemoveAuthorization
+
         # - event: ChangeDelay(uint16)
         #   handler: handleChangeDelay
         # - event: ChangePriceSource(address)
         #   handler: handleChangePriceSource
-        # - event: RemoveAuthorization(address)
-        #   handler: handleRemoveAuthorization
         # - event: RestartValue()
         #   handler: handleRestartValue
         # - event: Start()
@@ -468,14 +481,15 @@ dataSources:
       eventHandlers:
         - event: UpdateResult(uint256,uint256)
           handler: handleUpdateResult
-        # - event: AddAuthorization(address)
-        #   handler: handleAddAuthorization
+        - event: AddAuthorization(address)
+          handler: handleAddAuthorization
+        - event: RemoveAuthorization(address)
+          handler: handleRemoveAuthorization
+
         # - event: ChangeDelay(uint16)
         #   handler: handleChangeDelay
         # - event: ChangePriceSource(address)
         #   handler: handleChangePriceSource
-        # - event: RemoveAuthorization(address)
-        #   handler: handleRemoveAuthorization
         # - event: RestartValue()
         #   handler: handleRestartValue
         # - event: Start()
@@ -503,16 +517,17 @@ dataSources:
       eventHandlers:
         - event:  UpdateResult(uint256,uint256)
           handler: handleUpdateResult
-        # - event:  AddAuthorization(address)
-        #   handler: handleAddAuthorization
+        - event: AddAuthorization(address)
+          handler: handleAddAuthorization
+        - event: RemoveAuthorization(address)
+          handler: handleRemoveAuthorization
+
         # - event:  FailRewardCaller(bytes,address,uint256)
         #   handler: handleFailRewardCaller
         # - event:  ModifyParameters(bytes32,address)
         #   handler: handleModifyParameters
         # - event:  ModifyParameters(bytes32,uint256)
         #   handler: handleModifyParameters
-        # - event:  RemoveAuthorization(address)
-        #   handler: handleRemoveAuthorization
         # - event:  RewardCaller(address,uint256)
         #   handler: handleRewardCaller
   
@@ -540,14 +555,15 @@ dataSources:
           handler: handleUpdateResult
         - event:  ModifyParameters(bytes32,address)
           handler: handleModifyParameters
-        # - event:  AddAuthorization(address)
-        #   handler: handleAddAuthorization
+        - event: AddAuthorization(address)
+          handler: handleAddAuthorization
+        - event: RemoveAuthorization(address)
+          handler: handleRemoveAuthorization
+
         # - event:  FailRewardCaller(bytes,address,uint256)
         #   handler: handleFailRewardCaller
         # - event:  ModifyParameters(bytes32,uint256)
         #   handler: handleModifyParameters
-        # - event:  RemoveAuthorization(address)
-        #   handler: handleRemoveAuthorization
         # - event:  RewardCaller(address,uint256)
         #   handler: handleRewardCaller
 
@@ -579,12 +595,12 @@ templates:
           handler: handleModifyParametersUint
         - event: SettleAuction(uint256)
           handler: handleSettleAuction
-        
+        - event: AddAuthorization(address)
+          handler: handleAddAuthorization
+        - event: RemoveAuthorization(address)
+          handler: handleRemoveAuthorization
+
         # Remaining events:
-        # - event: AddAuthorization(address)
-        #   handler: handleAddAuthorization
-        # - event: RemoveAuthorization(address)
-        #   handler: handleRemoveAuthorization
         # - event: RestartAuction(uint256,uint256)
         #   handler: handleRestartAuction
         # - event: StartAuction(uint256,uint256,uint256,uint256,uint256,indexed address,indexed address,uint256)
@@ -619,12 +635,12 @@ templates:
           handler: handleBuyCollateral
         - event: SettleAuction(uint256,uint256)
           handler: handleSettleAuction
-        
+        - event: AddAuthorization(address)
+          handler: handleAddAuthorization
+        - event: RemoveAuthorization(address)
+          handler: handleRemoveAuthorization
+
         # Remaining events:
-        # - event: AddAuthorization(address)
-        #   handler: handleAddAuthorization
-        # - event: RemoveAuthorization(address)
-        #   handler: handleRemoveAuthorization
         # - event: StartAuction(uint256,uint256,uint256,uint256,uint256,indexed address,indexed address,uint256)
         #   handler: handleStartAuction
         # - event: TerminateAuctionPrematurely(uint256,address,uint256)
@@ -655,14 +671,14 @@ templates:
           handler: handleRestartAuctionPre
         - event: SettleAuction(uint256)
           handler: handleSettleAuctionPre
+        - event: AddAuthorization(address)
+          handler: handleAddAuthorization
+        - event: RemoveAuthorization(address)
+          handler: handleRemoveAuthorization
 
         # Remaining events:
-        # - event: AddAuthorization(address)
-        #   handler: handleAddAuthorization
         # - event: DisableContract()
         #   handler: handleDisableContract
-        # - event: RemoveAuthorization(address)
-        #   handler: handleRemoveAuthorization
         # - event: StartAuction(uint256,uint256,uint256,uint256,uint256)
         #   handler: handleStartAuction
         # - event: TerminateAuctionPrematurely(uint256,address,address,uint256)
@@ -689,18 +705,18 @@ templates:
       eventHandlers:
         - event: ModifyParameters(bytes32,uint256)
           handler: handleModifyParametersUint
-        
+        - event: AddAuthorization(address)
+          handler: handleAddAuthorization
+        - event: RemoveAuthorization(address)
+          handler: handleRemoveAuthorization
+
         # Remaining events:
         # - event: ModifyParameters(bytes32,address)
         #   handler: handleModifyParametersAddress
-        # - event: AddAuthorization(address)
-        #   handler: handleAddAuthorization
         # - event: DecreaseSoldAmount(uint256,address,uint256,uint256,uint256)
         #   handler: handleDecreaseSoldAmount
         # - event: DisableContract(address)
         #   handler: handleDisableContract
-        # - event: RemoveAuthorization(address)
-        #   handler: handleRemoveAuthorization
         # - event: RestartAuction(uint256,uint256)
         #   handler: handleRestartAuction
         # - event: SettleAuction(uint256,uint256)

@@ -1,9 +1,10 @@
 import { Address, dataSource, log } from '@graphprotocol/graph-ts'
-import { Transfer, Approval, Coin } from '../../../../generated/Coin/Coin'
+import { Transfer, Approval, Coin, AddAuthorization, RemoveAuthorization } from '../../../../generated/Coin/Coin'
 import { ERC20Allowance, ERC20Balance, ERC20Transfer, getSystemState } from '../../../entities'
 import { getOrCreateERC20Balance, getOrCreateERC20BAllowance } from '../../../entities/erc20'
 import * as decimal from '../../../utils/decimal'
 import { eventUid } from '../../../utils/ethereum'
+import { addAuthorization, removeAuthorization } from '../governance/authorizations'
 
 export function handleTransfer(event: Transfer): void {
   let tokenAddress = dataSource.address()
@@ -97,4 +98,12 @@ export function handleApproval(event: Approval): void {
   allowance.modifiedAtBlock = event.block.number
   allowance.modifiedAtTransaction = event.transaction.hash
   allowance.save()
+}
+
+export function handleAddAuthorization(event: AddAuthorization): void {
+  addAuthorization(event.params.account, event)
+}
+
+export function handleRemoveAuthorization(event: RemoveAuthorization): void {
+  removeAuthorization(event.params.account, event)
 }

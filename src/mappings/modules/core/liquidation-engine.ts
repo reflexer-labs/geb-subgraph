@@ -2,6 +2,8 @@ import {
   ModifyParameters2 as ModifyParametersCollateralTypeUint,
   ModifyParameters3 as ModifyParametersCollateralTypeAddress,
   Liquidate,
+  AddAuthorization,
+  RemoveAuthorization,
 } from '../../../../generated/LiquidationEngine/LiquidationEngine'
 
 import {
@@ -24,6 +26,7 @@ import * as integer from '../../../utils/integer'
 import { log } from '@graphprotocol/graph-ts'
 import * as enums from '../../../utils/enums'
 import { getOrCreateEnglishAuctionConfiguration } from '../../../entities/auctions'
+import { addAuthorization, removeAuthorization } from '../governance/authorizations'
 
 export function handleModifyParametersCollateralTypeUint(
   event: ModifyParametersCollateralTypeUint,
@@ -172,4 +175,12 @@ export function handleLiquidate(event: Liquidate): void {
   collateral.liquidationsStarted = collateral.liquidationsStarted.plus(integer.ONE)
   collateral.activeLiquidations = collateral.activeLiquidations.plus(integer.ONE)
   collateral.save()
+}
+
+export function handleAddAuthorization(event: AddAuthorization): void {
+  addAuthorization(event.params.account, event)
+}
+
+export function handleRemoveAuthorization(event: RemoveAuthorization): void {
+  removeAuthorization(event.params.account, event)
 }

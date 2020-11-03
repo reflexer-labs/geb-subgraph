@@ -353,7 +353,6 @@ dataSources:
         # - event: DisableContract()
         #   handler: handleDisableContract
 
-  
   - name: Coin
     kind: ethereum/contract
     network: {{NETWORK}}
@@ -566,6 +565,75 @@ dataSources:
         #   handler: handleModifyParameters
         # - event:  RewardCaller(address,uint256)
         #   handler: handleRewardCaller
+
+  - name: GebPrintingPermissions
+    kind: ethereum/contract
+    network: {{NETWORK}}
+    source:
+      abi: GebPrintingPermissions
+      address: '{{PRINTING_PERMISSIONS_REGISTRY}}'
+      startBlock: {{STARTING_BLOCK_NUMBER}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/modules/governance/printing-permission.ts
+      entities:
+        - GebAuthorization
+      abis:
+        - name: GebPrintingPermissions
+          file: ./abis/GebPrintingPermissions.json
+      eventHandlers:
+        - event: AddAuthorization(address)
+          handler: handleAddAuthorization
+        - event: RemoveAuthorization(address)
+          handler: handleRemoveAuthorization
+
+  - name: GlobalSettlement
+    kind: ethereum/contract
+    network: {{NETWORK}}
+    source:
+      abi: GlobalSettlement
+      address: '{{GEB_GLOBAL_SETTLEMENT}}'
+      startBlock: {{STARTING_BLOCK_NUMBER}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/modules/core/global-settlement.ts
+      entities:
+        - GebAuthorization
+      abis:
+        - name: GlobalSettlement
+          file: ./abis/GlobalSettlement.json
+      eventHandlers:
+        - event: AddAuthorization(address)
+          handler: handleAddAuthorization
+        - event: RemoveAuthorization(address)
+          handler: handleRemoveAuthorization
+
+  - name: StabilityFeeTreasury
+    kind: ethereum/contract
+    network: {{NETWORK}}
+    source:
+      abi: StabilityFeeTreasury
+      address: '{{GEB_STABILITY_FEE_TREASURY}}'
+      startBlock: {{STARTING_BLOCK_NUMBER}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/modules/core/stability-fee-treasury.ts
+      entities:
+        - GebAuthorization
+      abis:
+        - name: StabilityFeeTreasury
+          file: ./abis/StabilityFeeTreasury.json
+      eventHandlers:
+        - event: AddAuthorization(address)
+          handler: handleAddAuthorization
+        - event: RemoveAuthorization(address)
+          handler: handleRemoveAuthorization
 
 templates:
   - name: EnglishCollateralAuctionHouse

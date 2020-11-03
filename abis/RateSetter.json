@@ -64,6 +64,25 @@
       {
         "indexed": false,
         "internalType": "bytes",
+        "name": "revertReason",
+        "type": "bytes"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "orcl",
+        "type": "address"
+      }
+    ],
+    "name": "FailUpdateOracle",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "bytes",
         "name": "reason",
         "type": "bytes"
       }

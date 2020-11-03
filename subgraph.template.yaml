@@ -635,6 +635,33 @@ dataSources:
         - event: RemoveAuthorization(address)
           handler: handleRemoveAuthorization
 
+  - name: ProtocolTokenAuthority
+    kind: ethereum/contract
+    network: {{NETWORK}}
+    source:
+      abi: ProtocolTokenAuthority
+      address: '{{PROTOCOL_TOKEN_AUTHORITY}}'
+      startBlock: {{STARTING_BLOCK_NUMBER}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/modules/governance/protocol-token-authority.ts
+      entities:
+        - GebAuthorization
+      abis:
+        - name: ProtocolTokenAuthority
+          file: ./abis/ProtocolTokenAuthority.json
+      eventHandlers:
+        - event: AddAuthorization(indexed address)
+          handler: handleAddAuthorization
+        - event: RemoveAuthorization(indexed address)
+          handler: handleRemoveAuthorization
+        # - event: SetOwner(indexed address)
+        #   handler: handleSetOwner
+        # - event: SetRoot(indexed address)
+        #   handler: handleSetRoot
+
 templates:
   - name: EnglishCollateralAuctionHouse
     kind: ethereum/contract

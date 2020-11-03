@@ -4,7 +4,7 @@ export var addressMap = new Map<string, Address>()
 export var addressLabels: string[] = []
 export var addressValues: Address[] = []
 
-function addEntry(label: string, address: string) : void {
+function addEntry(label: string, address: string): void {
   addressMap.set(label, Address.fromHexString(address) as Address)
   addressLabels.push(label)
   addressValues.push(Address.fromHexString(address) as Address)
@@ -18,6 +18,8 @@ addEntry('GEB_MULTISIG', '{{GEB_MULTISIG}}')
 addEntry('GEB_MULTISIG_PROXY', '{{GEB_MULTISIG_PROXY}}')
 addEntry('GEB_DEPLOY', '{{GEB_DEPLOY}}')
 addEntry('GEB_PROT', '{{GEB_PROT}}')
+addEntry('PROTOCOL_TOKEN_AUTHORITY', '{{PROTOCOL_TOKEN_AUTHORITY}}')
+addEntry('PRINTING_PERMISSIONS_REGISTRY', '{{PRINTING_PERMISSIONS_REGISTRY}}')
 addEntry('GEB_PAUSE_AUTHORITY', '{{GEB_PAUSE_AUTHORITY}}')
 addEntry('GEB_POLLING_EMITTER', '{{GEB_POLLING_EMITTER}}')
 addEntry('GEB_SAFE_ENGINE', '{{GEB_SAFE_ENGINE}}')
@@ -25,12 +27,7 @@ addEntry('GEB_TAX_COLLECTOR', '{{GEB_TAX_COLLECTOR}}')
 addEntry('GEB_LIQUIDATION_ENGINE', '{{GEB_LIQUIDATION_ENGINE}}')
 addEntry('GEB_ACCOUNTING_ENGINE', '{{GEB_ACCOUNTING_ENGINE}}')
 addEntry('GEB_COIN_JOIN', '{{GEB_COIN_JOIN}}')
-addEntry('GEB_SETTLEMENT_SURPLUS_AUCTIONEER', '{{GEB_SETTLEMENT_SURPLUS_AUCTIONEER}}')
 addEntry('GEB_PRE_SETTLEMENT_SURPLUS_AUCTION_HOUSE', '{{GEB_PRE_SETTLEMENT_SURPLUS_AUCTION_HOUSE}}')
-addEntry(
-  'GEB_POST_SETTLEMENT_SURPLUS_AUCTION_HOUSE',
-  '{{GEB_POST_SETTLEMENT_SURPLUS_AUCTION_HOUSE}}',
-)
 addEntry('GEB_DEBT_AUCTION_HOUSE', '{{GEB_DEBT_AUCTION_HOUSE}}')
 addEntry('GEB_PAUSE', '{{GEB_PAUSE}}')
 addEntry('GEB_PAUSE_PROXY', '{{GEB_PAUSE_PROXY}}')
@@ -40,7 +37,9 @@ addEntry('GEB_ORACLE_RELAYER', '{{GEB_ORACLE_RELAYER}}')
 addEntry('GEB_GLOBAL_SETTLEMENT', '{{GEB_GLOBAL_SETTLEMENT}}')
 addEntry('GEB_STABILITY_FEE_TREASURY', '{{GEB_STABILITY_FEE_TREASURY}}')
 addEntry('GEB_ESM', '{{GEB_ESM}}')
+addEntry('GEB_ESM_TOKEN_BURNER', '{{GEB_ESM_TOKEN_BURNER}}')
 addEntry('GEB_RRFM_VALIDATOR', '{{GEB_RRFM_VALIDATOR}}')
+addEntry('GEB_DUMMY_RRFM_VALIDATOR', '{{GEB_DUMMY_RRFM_VALIDATOR}}')
 addEntry('GEB_RRFM_SETTER', '{{GEB_RRFM_SETTER}}')
 addEntry('PROXY_ACTIONS', '{{PROXY_ACTIONS}}')
 addEntry('PROXY_ACTIONS_GLOBAL_SETTLEMENT', '{{PROXY_ACTIONS_GLOBAL_SETTLEMENT}}')

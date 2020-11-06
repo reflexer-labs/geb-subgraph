@@ -1,5 +1,11 @@
-import { Address, dataSource, log } from '@graphprotocol/graph-ts'
-import { Transfer, Approval, Coin, AddAuthorization, RemoveAuthorization } from '../../../../generated/Coin/Coin'
+import { Address, dataSource, ethereum, log } from '@graphprotocol/graph-ts'
+import {
+  Transfer,
+  Approval,
+  Coin,
+  AddAuthorization,
+  RemoveAuthorization,
+} from '../../../../generated/Coin/Coin'
 import { ERC20Allowance, ERC20Balance, ERC20Transfer, getSystemState } from '../../../entities'
 import { getOrCreateERC20Balance, getOrCreateERC20BAllowance } from '../../../entities/erc20'
 import * as decimal from '../../../utils/decimal'
@@ -42,39 +48,21 @@ export function handleTransfer(event: Transfer): void {
   }
 
   system.save()
-  // TODO: Deduct allowance when it's a transferFrom call. (Not possible )
-  // Hacky way to figure out if it's a transferFrom or a simple transfer
-  // First make sure it's not a burn or mint
-  // if (!source.equals(nullAddress) && !destination.equals(nullAddress)) {
-  //   let contract = Coin.bind(dataSource.address())
-  //   let srcBalance = getOrCreateERC20Balance(source, tokenAddress, event, false)
-  //   let msgDotSender: Address
 
-  // Loop over all the approvals of the source address
-  // for (let i = 0; i < srcBalance.approvals.length; i++) {
+  // Deduct the allowance
+  // If this transfer is a transferFrom we need deduct the allowance by the amount of the transfer.
+  // Updating the allowance is highly problematic because we don't have access to msg.sender who is
+  // the allowed address. We sync the allowance assuming msg.sender is the destination (a contract pulling
+  // funds) but it might not always be the case and therefore the allowance will be wrong. But it should work
+  // in most cases.
 
-  //     if(!srcBalance.approvals[0]) {
-  //         log.error("s",[])
-  //     }
-  //   let approval = ERC20Allowance.load(id)
+  updateAllowance(tokenAddress, destination, source)
 
-  //   // If this is not matching, it means that it's a transfer from
-  //   if (approval.amount.equals(decimal.fromWad(contract.allowance(source, approval.approvedAddress)))) {
-  //     msgDotSender = approval.approvedAddress
-  //   }
-  // }
+  // Sync these assuming msg.sender is the contract emitting the event or tx originator
+  updateAllowance(tokenAddress, event.address, source)
+  updateAllowance(tokenAddress, event.transaction.from, source)
 
-  // if (msgDotSender) {
-  //   // It was a transfer from, so deduct the allowance
-  //   let allowance = getOrCreateERC20BAllowance(source, tokenAddress, msgDotSender, event, false)
-  //   allowance.amount = allowance.amount.minus(decimal.fromWad(event.params.amount))
-  //   allowance.modifiedAt = event.block.timestamp
-  //   allowance.modifiedAtBlock = event.block.number
-  //   allowance.modifiedAtTransaction = event.transaction.hash
-  //   allowance.save()
-  // }
-  // }
-
+  // Create a transfer object
   let transfer = new ERC20Transfer(eventUid(event))
   transfer.tokenAddress = tokenAddress
   transfer.source = source
@@ -83,6 +71,27 @@ export function handleTransfer(event: Transfer): void {
   transfer.createdAtBlock = event.block.number
   transfer.createdAtTransaction = event.transaction.hash
   transfer.save()
+}
+
+function updateAllowance(
+  tokenAddress: Address,
+  allowedAddress: Address,
+  approvedAddress: Address,
+): void {
+  let id =
+    tokenAddress.toHexString() +
+    '-' +
+    allowedAddress.toHexString() +
+    '-' +
+    approvedAddress.toHexString()
+
+  let allowance = ERC20Allowance.load(id)
+
+  if (allowance) {
+    let tokenContract = Coin.bind(tokenAddress)
+    allowance.amount = decimal.fromWad(tokenContract.allowance(allowedAddress, approvedAddress))
+    allowance.save()
+  }
 }
 
 export function handleApproval(event: Approval): void {

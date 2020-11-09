@@ -265,11 +265,7 @@ export function handleConfiscateSAFECollateralAndDebt(
   // Update counter party debt
   let deltaTotalIssuedDebt = deltaDebt.times(collateral.accumulatedRate)
   let debtCounterPartyBalance = getOrCreateDebtBalance(event.params.debtCounterparty, event)
-  updateDebtBalance(
-    debtCounterPartyBalance,
-    debtCounterPartyBalance.balance.minus(deltaTotalIssuedDebt),
-    event,
-  )
+  updateDebtBalance(debtCounterPartyBalance, event)
   debtCounterPartyBalance.save()
 
   // Update global debt counter
@@ -282,9 +278,7 @@ export function handleConfiscateSAFECollateralAndDebt(
 export function handleSettleDebt(event: SettleDebt): void {
   let rad = decimal.fromRad(event.params.rad)
 
-  // TODO: This address is missing from the event. Currently only the accounting engine is supposed to do this.
-  // Replace with the event param when it's there
-  let account = addressMap.get('GEB_ACCOUNTING_ENGINE')
+  let account = event.params.account
 
   // Update debt counters
   let system = getSystemState(event)
@@ -296,7 +290,7 @@ export function handleSettleDebt(event: SettleDebt): void {
   let balance = getOrCreateCoinBalance(account, event)
   let debt = getOrCreateDebtBalance(account, event)
   updateCoinBalance(balance, event)
-  updateDebtBalance(debt, debt.balance.minus(rad), event)
+  updateDebtBalance(debt, event)
   balance.save()
   debt.save()
 }
@@ -318,7 +312,7 @@ export function handleCreateUnbackedDebt(event: CreateUnbackedDebt): void {
 
   // Add the debt
   let debt = getOrCreateDebtBalance(event.params.debtDestination, event)
-  updateDebtBalance(debt, debt.balance.plus(rad), event)
+  updateDebtBalance(debt, event)
   debt.save()
 }
 

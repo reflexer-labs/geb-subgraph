@@ -152,11 +152,7 @@ export function createDebtBalance(
   return bal
 }
 
-export function updateDebtBalance(
-  balance: InternalDebtBalance,
-  amount: BigDecimal,
-  event: ethereum.Event,
-): void {
+export function updateDebtBalance(balance: InternalDebtBalance, event: ethereum.Event): void {
   let safeEninge = SAFEEngine.bind(event.address)
   let bal = decimal.fromRad(safeEninge.debtBalance(balance.accountHandler as Address))
   balance.balance = bal

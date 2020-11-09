@@ -44,7 +44,7 @@ dataSources:
           handler: handleTransferSAFECollateralAndDebt
         - event: ConfiscateSAFECollateralAndDebt(bytes32,address,address,address,int256,int256,uint256)
           handler: handleConfiscateSAFECollateralAndDebt
-        - event: SettleDebt(uint256,uint256,uint256,uint256,uint256)
+        - event: SettleDebt(address,uint256,uint256,uint256,uint256,uint256)
           handler: handleSettleDebt
         - event: CreateUnbackedDebt(address,address,uint256,uint256,uint256,uint256,uint256)
           handler: handleCreateUnbackedDebt

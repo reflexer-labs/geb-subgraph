@@ -706,8 +706,14 @@ type FsmUpdate @entity {
   " FSM address "
   fsmAddress: Bytes!
 
-  " The rate of change of the redemption price "
+  " Price of the update "
   value: BigDecimal!
+
+  " Next price update "
+  nextValue: BigDecimal!
+
+  " Next update timestamp "
+  nextUpdateMinTimestamp: BigInt!
 
   " Timestamp of the block at which this transaction was executed [seconds] "
   createdAt: BigInt!

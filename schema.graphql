@@ -147,17 +147,29 @@ type CollateralType @entity {
   " Collateral type name "
   id: ID!
 
-  " Debt ceiling/upper limit "
-  debtCeiling: BigDecimal!
-
-  " Minimum permitted debt per Safe/lower limit "
-  debtFloor: BigDecimal!
+  # == Safe stats == 
+  
+  " Total debt backed by this collateral type "
+  debtAmount: BigDecimal!
 
   " Total collateral deposited in the system (deposited in this collateral's specific adapter) "
   totalCollateral: BigDecimal!
 
   " Total collateral deposited in the system and locked in Safes "
   totalCollateralLockedInSafes: BigDecimal!
+
+
+  " Total interest accrued on this collateral type "
+  accumulatedRate: BigDecimal!
+
+  " Number of Safes backed by this collateral type and NOT opened through the manager (GebSafeManager) "
+  unmanagedSafeCount: BigInt!
+
+  " Number of Safes backed by this collateral type that were opened through the manager (GebSafeManager) "
+  safeCount: BigInt!
+  
+
+  # == Prices == 
 
   " Current market price "
   currentPrice: CollateralPrice
@@ -168,11 +180,23 @@ type CollateralType @entity {
   " Latest Coin medianizer update "
   currentMedianizerUpdate: MedianizerUpdate
 
-  " Total interest accrued on this collateral type "
-  accumulatedRate: BigDecimal!
 
-  " Total debt backed by this collateral type "
-  debtAmount: BigDecimal!
+  # == Constants ==
+
+  " Address of the FSM contract used for this collateral type "
+  fsmAddress: Bytes
+
+  " Per second stability fee "
+  stabilityFee: BigDecimal!
+  
+  " Total annualized stability calculated with solidity. It takes into account the global SF. Equals to (global SF + collateral SF)^(second per year)"
+  totalAnnualizedStabilityFee: BigDecimal!
+  
+  " Debt ceiling/upper limit "
+  debtCeiling: BigDecimal!
+
+  " Minimum permitted debt per Safe/lower limit "
+  debtFloor: BigDecimal!
 
   " Collateral price with safety margin. Used to limit the amount of debt that can be generated per one unit of collateral "
   safetyCRatio: BigDecimal!
@@ -180,23 +204,8 @@ type CollateralType @entity {
   " Collateral price with liquidation margin. Used only in LiquidationEngine when a Safe is liquidated "
   liquidationCRatio: BigDecimal!
 
-  " Address of the FSM contract used for this colateral type "
-  fsmAddress: Bytes
 
-  " Per second stability fee "
-  stabilityFee: BigDecimal!
-
-  " Total annualized stability calculated with solidity. It takes into account the global SF. Equals to (global SF + collateral SF)^(second per year)"
-  totalAnnualizedStabilityFee: BigDecimal!
-
-  " Time of the last stability fee update "
-  stabilityFeeLastUpdatedAt: BigInt!
-
-  " Number of Safes backed by this collateral type and NOT opened through the manager (GebSafeManager) "
-  unmanagedSafeCount: BigInt!
-
-  " Number of Safes backed by this collateral type that were opened through the manager (GebSafeManager) "
-  safeCount: BigInt!
+  # == Auction/Liquidations == 
 
   " Penalty applied to every liquidation involving this collateral type "
   liquidationPenalty: BigDecimal!
@@ -221,6 +230,12 @@ type CollateralType @entity {
 
   " Auction configuration (fixed discount only) "
   fixedDiscountAuctionConfiguration: FixedDiscountAuctionConfiguration
+
+
+  # == Time == 
+
+  " Time of the last stability fee update "
+  stabilityFeeLastUpdatedAt: BigInt!
 
   " Timestamp of the block at which this collateral type was added [seconds] "
   createdAt: BigInt!

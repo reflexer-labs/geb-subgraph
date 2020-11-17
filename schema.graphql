@@ -317,6 +317,11 @@ type SystemState @entity {
   " Timestamp of the block at which the system was created [seconds] "
   createdAt: BigInt!
 
+  " Coin contract address "
+  coinAddress: Bytes!
+  
+  " WETH collateral address "
+  wethAddress : Bytes!
   " Block number at which the system was created "
   createdAtBlock: BigInt!
 

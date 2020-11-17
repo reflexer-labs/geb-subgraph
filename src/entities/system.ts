@@ -32,8 +32,10 @@ export function getSystemState(event: ethereum.Event): SystemState {
     state.globalDebtCeiling = decimal.ZERO
     state.globalUnbackedDebt = decimal.ZERO
     state.lastPeriodicUpdate = integer.ZERO
+    state.coinAddress = addressMap.get('GEB_COIN')
+    state.wethAddress = addressMap.get('ETH')
 
-    // Created at 
+    // Created at
     state.createdAtBlock = event.block.number
     state.createdAt = event.block.timestamp
     state.createdAtTransaction = event.transaction.hash

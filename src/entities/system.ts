@@ -6,6 +6,7 @@ import { AccountingEngine as AccountingEngineBind } from '../../generated/Accoun
 
 import * as decimal from '../utils/decimal'
 import * as integer from '../utils/integer'
+import { addressMap } from '../utils/addresses'
 
 export function getSystemState(event: ethereum.Event): SystemState {
   let state = SystemState.load('current')
@@ -17,6 +18,8 @@ export function getSystemState(event: ethereum.Event): SystemState {
     state.globalDebt = decimal.ZERO
     state.globalDebt24hAgo = decimal.ZERO
     state.erc20CoinTotalSupply = decimal.ZERO
+    state.debtAvailableToSettle = decimal.ZERO
+    state.systemSurplus = decimal.ZERO
 
     // Entities counters
     state.collateralCount = integer.ZERO

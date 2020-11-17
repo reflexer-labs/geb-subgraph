@@ -32,9 +32,6 @@ import {
   updateCoinBalance,
   updateCollateralBalance,
   updateDebtBalance,
-  getOrCreateCoinBalance,
-  getOrCreateDebtBalance,
-  getOrCreateCollateralBalance,
 } from '../../../entities/balances'
 import { createUnmanagedSafe, updateSafeCollateralization } from '../../../entities/safe'
 import { eventUid } from '../../../utils/ethereum'
@@ -97,9 +94,7 @@ export function handleModifyCollateralBalance(event: ModifyCollateralBalance): v
   let amount = decimal.fromWad(event.params.wad)
 
   // Update user balance
-  let balance = getOrCreateCollateralBalance(account, collateral, event)
-  updateCollateralBalance(balance, collateral, event)
-  balance.save()
+  updateCollateralBalance(account, collateral, event)
 
   // Update collateral counter
   let collateralObj = getOrCreateCollateral(collateral, event)
@@ -110,22 +105,15 @@ export function handleModifyCollateralBalance(event: ModifyCollateralBalance): v
 // Transfer collateral between users
 export function handleTransferCollateral(event: TransferCollateral): void {
   let collateral = event.params.collateralType
-  let src = getOrCreateCollateralBalance(event.params.src, collateral, event, false)
-  let dst = getOrCreateCollateralBalance(event.params.dst, collateral, event)
-  updateCollateralBalance(src, collateral, event)
-  updateCollateralBalance(dst, collateral, event)
-  src.save()
-  dst.save()
+
+  updateCollateralBalance(event.params.src, collateral, event)
+  updateCollateralBalance(event.params.dst, collateral, event)
 }
 
 // Transfer reflexer coin between users
 export function handleTransferInternalCoins(event: TransferInternalCoins): void {
-  let src = getOrCreateCoinBalance(event.params.src, event, false)
-  let dst = getOrCreateCoinBalance(event.params.dst, event)
-  updateCoinBalance(src, event)
-  updateCoinBalance(dst, event)
-  src.save()
-  dst.save()
+  updateCoinBalance(event.params.src, event)
+  updateCoinBalance(event.params.dst, event)
 }
 
 // Create or modify a SAFE
@@ -170,18 +158,8 @@ export function handleModifySAFECollateralization(event: ModifySAFECollateraliza
   system.save()
 
   // Update balances
-  let internalCollateralBalance = getOrCreateCollateralBalance(
-    event.params.collateralSource,
-    event.params.collateralType,
-    event,
-    false,
-  )
-  updateCollateralBalance(internalCollateralBalance, event.params.collateralType, event)
-  internalCollateralBalance.save()
-
-  let internalCoinBalance = getOrCreateCoinBalance(event.params.debtDestination, event)
-  updateCoinBalance(internalCoinBalance, event)
-  internalCoinBalance.save()
+  updateCollateralBalance(event.params.collateralSource, event.params.collateralType, event)
+  updateCoinBalance(event.params.debtDestination, event)
 
   // Create a new modify collateralization update
   let update = new ModifySAFECollateralizationEntity(eventUid(event))
@@ -253,23 +231,14 @@ export function handleConfiscateSAFECollateralAndDebt(
   collateral.save()
 
   // Update counter party collateral
-  let collateraCounterPartyBalance = getOrCreateCollateralBalance(
-    event.params.collateralCounterparty,
-    collateralType,
-    event,
-  )
-
-  updateCollateralBalance(collateraCounterPartyBalance, collateralType, event)
-  collateraCounterPartyBalance.save()
+  updateCollateralBalance(event.params.collateralCounterparty, collateralType, event)
 
   // Update counter party debt
-  let deltaTotalIssuedDebt = deltaDebt.times(collateral.accumulatedRate)
-  let debtCounterPartyBalance = getOrCreateDebtBalance(event.params.debtCounterparty, event)
-  updateDebtBalance(debtCounterPartyBalance, event)
-  debtCounterPartyBalance.save()
+  updateDebtBalance(event.params.debtCounterparty, event)
 
   // Update global debt counter
   let system = getSystemState(event)
+  let deltaTotalIssuedDebt = deltaDebt.times(collateral.accumulatedRate)
   system.globalUnbackedDebt = system.globalUnbackedDebt.minus(deltaTotalIssuedDebt)
   system.save()
 }
@@ -287,12 +256,8 @@ export function handleSettleDebt(event: SettleDebt): void {
   system.save()
 
   // Update debt and coin balance
-  let balance = getOrCreateCoinBalance(account, event)
-  let debt = getOrCreateDebtBalance(account, event)
-  updateCoinBalance(balance, event)
-  updateDebtBalance(debt, event)
-  balance.save()
-  debt.save()
+  updateCoinBalance(account, event)
+  updateDebtBalance(account, event)
 }
 
 // Mint unbacked reflexer coins
@@ -305,15 +270,9 @@ export function handleCreateUnbackedDebt(event: CreateUnbackedDebt): void {
   system.globalUnbackedDebt = system.globalUnbackedDebt.plus(rad)
   system.save()
 
-  // Credit the coins
-  let balance = getOrCreateCoinBalance(event.params.coinDestination, event)
-  updateCoinBalance(balance, event)
-  balance.save()
-
-  // Add the debt
-  let debt = getOrCreateDebtBalance(event.params.debtDestination, event)
-  updateDebtBalance(debt, event)
-  debt.save()
+  // Update coin and debt balances
+  updateCoinBalance(event.params.coinDestination, event)
+  updateDebtBalance(event.params.debtDestination, event)
 }
 
 // Modify the debt multiplier, creating/destroying corresponding debt
@@ -331,10 +290,8 @@ export function handleUpdateAccumulatedRate(event: UpdateAccumulatedRate): void 
   system.globalDebt = decimal.fromRad(event.params.globalDebt)
   system.save()
 
-  // Send the taxes
-  let dst = getOrCreateCoinBalance(event.params.surplusDst, event)
-  updateCoinBalance(dst, event)
-  dst.save()
+  // Update the balance
+  updateCoinBalance(event.params.surplusDst, event)
 
   // This needs tbe call at least once an hour. We call it from here since it's a popular function.
   periodicHandler(event)

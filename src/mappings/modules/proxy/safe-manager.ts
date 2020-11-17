@@ -69,6 +69,10 @@ export function handleTransferSAFEOwnership(event: TransferSAFEOwnership): void 
     safeHandler.toHexString() + '-' + collateralType.toString(),
   )
   if (collateralBalance) collateralBalance.owner = safe.owner
+
+  coinBalance.save()
+  debtBalance.save()
+  collateralBalance.save()
 }
 
 export function handleAllowSAFE(event: AllowSAFE): void {

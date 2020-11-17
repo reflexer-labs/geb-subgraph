@@ -322,6 +322,13 @@ type SystemState @entity {
   
   " WETH collateral address "
   wethAddress : Bytes!
+
+  " System surplus in the accounting engine "
+  systemSurplus: BigDecimal!
+
+  " Debt available to settle in the accounting engine "
+  debtAvailableToSettle: BigDecimal!
+
   " Block number at which the system was created "
   createdAtBlock: BigInt!
 

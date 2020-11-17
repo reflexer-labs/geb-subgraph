@@ -14,27 +14,38 @@ import * as integer from '../utils/integer'
 import { getOrCreateUser, findUltimateOwner } from './user'
 import { findProxy } from '../mappings/modules/proxy/proxy-factory'
 import { SAFEEngine } from '../../generated/SAFEEngine/SAFEEngine'
+import { addressMap } from '../utils/addresses'
+import { getSystemState } from './system'
 
 // --- Coin balance ---
 
-export function getOrCreateCoinBalance(
-  address: Bytes,
-  event: ethereum.Event,
-  // @ts-ignore
-  canCreate: bool = true,
-): InternalCoinBalance {
+export function updateCoinBalance(owner: Address, event: ethereum.Event): void {
+  let balance = getOrCreateCoinBalance(owner, event)
+  let safeEngine = SAFEEngine.bind(event.address)
+  let bal = decimal.fromRad(safeEngine.coinBalance(owner))
+
+  balance.balance = bal
+  balance.modifiedAt = event.block.timestamp
+  balance.modifiedAtBlock = event.block.number
+  balance.modifiedAtTransaction = event.transaction.hash
+  balance.save()
+
+  if (owner.equals(addressMap.get('GEB_ACCOUNTING_ENGINE'))) {
+    // Update the accounting engine status vars
+    setAccountingEngineParams(safeEngine, event)
+  }
+}
+
+function getOrCreateCoinBalance(address: Bytes, event: ethereum.Event): InternalCoinBalance {
   let bal = InternalCoinBalance.load(address.toHexString())
   if (bal != null) {
     return bal as InternalCoinBalance
   } else {
-    if (!canCreate) {
-      log.error(" Coin balance of address {} not found and can't created", [address.toHexString()])
-    }
     return createCoinBalance(address, decimal.ZERO, event)
   }
 }
 
-export function createCoinBalance(
+function createCoinBalance(
   address: Bytes,
   balance: BigDecimal,
   event: ethereum.Event,
@@ -47,43 +58,54 @@ export function createCoinBalance(
   bal.createdAt = event.block.timestamp
   bal.createdAtBlock = event.block.number
   bal.createdAtTransaction = event.transaction.hash
-
   return bal
 }
 
-export function updateCoinBalance(balance: InternalCoinBalance, event: ethereum.Event): void {
-  let safeEninge = SAFEEngine.bind(event.address)
-  let bal = decimal.fromRad(safeEninge.coinBalance(balance.accountHandler as Address))
+function setAccountingEngineParams(safeEngine: SAFEEngine, event: ethereum.Event): void {
+  let system = getSystemState(event)
+  let coinBal = decimal.fromRad(safeEngine.coinBalance(addressMap.get('GEB_ACCOUNTING_ENGINE')))
+  let debtBal = decimal.fromRad(safeEngine.debtBalance(addressMap.get('GEB_ACCOUNTING_ENGINE')))
+
+  // Set this to the min between coin balance and debt balance
+  system.debtAvailableToSettle = coinBal >= debtBal ? debtBal : coinBal
+
+  // Set the surplus to coin balance minus debt balance
+  system.systemSurplus = coinBal.minus(debtBal)
+  system.save()
+}
+
+// --- Collateral balance ---
+
+export function updateCollateralBalance(
+  owner: Address,
+  collateralType: Bytes,
+  event: ethereum.Event,
+): void {
+  let balance = getOrCreateCollateralBalance(owner, collateralType, event)
+  let safeEngine = SAFEEngine.bind(event.address)
+  let bal = decimal.fromRad(safeEngine.tokenCollateral(collateralType, owner))
 
   balance.balance = bal
   balance.modifiedAt = event.block.timestamp
   balance.modifiedAtBlock = event.block.number
   balance.modifiedAtTransaction = event.transaction.hash
+  balance.save()
 }
 
-// --- Collateral balance ---
-
-export function getOrCreateCollateralBalance(
+function getOrCreateCollateralBalance(
   address: Bytes,
   collateralType: Bytes,
   event: ethereum.Event,
-  // @ts-ignore
-  canCreate: bool = true,
 ): InternalCollateralBalance {
   let bal = InternalCollateralBalance.load(address.toHexString() + '-' + collateralType.toString())
   if (bal != null) {
     return bal as InternalCollateralBalance
   } else {
-    if (!canCreate) {
-      log.error(" Collateral balance of address {} not found and can't be created", [
-        address.toHexString(),
-      ])
-    }
     return createCollateralBalance(address, collateralType, decimal.ZERO, event)
   }
 }
 
-export function createCollateralBalance(
+function createCollateralBalance(
   address: Bytes,
   collateralType: Bytes,
   balance: BigDecimal,
@@ -102,41 +124,38 @@ export function createCollateralBalance(
   return bal
 }
 
-export function updateCollateralBalance(
-  balance: InternalCollateralBalance,
-  collateralType: Bytes,
-  event: ethereum.Event,
-): void {
-  let safeEninge = SAFEEngine.bind(event.address)
-  let bal = decimal.fromRad(
-    safeEninge.tokenCollateral(collateralType, balance.accountHandler as Address),
-  )
+// --- Debt balance ---
 
+export function updateDebtBalance(owner: Address, event: ethereum.Event): void {
+  let balance = getOrCreateDebtBalance(owner, event)
+  let safeEngine = SAFEEngine.bind(event.address)
+  let bal = decimal.fromRad(safeEngine.debtBalance(owner))
   balance.balance = bal
   balance.modifiedAt = event.block.timestamp
   balance.modifiedAtBlock = event.block.number
   balance.modifiedAtTransaction = event.transaction.hash
+  balance.save()
+
+  if (owner.equals(addressMap.get('GEB_ACCOUNTING_ENGINE'))) {
+    // Update the accounting engine status vars
+    setAccountingEngineParams(safeEngine, event)
+  }
 }
 
-// --- Debt balance ---
-export function getOrCreateDebtBalance(
+function getOrCreateDebtBalance(
   address: Bytes,
   event: ethereum.Event,
   // @ts-ignore
-  canCreate: bool = true,
 ): InternalDebtBalance {
   let bal = InternalDebtBalance.load(address.toHexString())
   if (bal != null) {
     return bal as InternalDebtBalance
   } else {
-    if (!canCreate) {
-      log.error(" Debt balance of address {} not found and can't create", [address.toHexString()])
-    }
     return createDebtBalance(address, decimal.ZERO, event)
   }
 }
 
-export function createDebtBalance(
+function createDebtBalance(
   address: Bytes,
   balance: BigDecimal,
   event: ethereum.Event,
@@ -150,13 +169,4 @@ export function createDebtBalance(
   bal.createdAtTransaction = event.transaction.hash
 
   return bal
-}
-
-export function updateDebtBalance(balance: InternalDebtBalance, event: ethereum.Event): void {
-  let safeEninge = SAFEEngine.bind(event.address)
-  let bal = decimal.fromRad(safeEninge.debtBalance(balance.accountHandler as Address))
-  balance.balance = bal
-  balance.modifiedAt = event.block.timestamp
-  balance.modifiedAtBlock = event.block.number
-  balance.modifiedAtTransaction = event.transaction.hash
 }

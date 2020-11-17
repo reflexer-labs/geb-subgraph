@@ -1,6 +1,9 @@
 import { Address } from '@graphprotocol/graph-ts'
 
+// A map of the addresses so the mapping have access to the geb contract addresses
 export var addressMap = new Map<string, Address>()
+
+// We also need arrays of the contract addresses because Assembly script does not support loop through maps
 export var addressLabels: string[] = []
 export var addressValues: Address[] = []
 

@@ -4,6 +4,7 @@ import { getOrCreateUser, getSystemState } from '../../../entities'
 
 import * as integer from '../../../utils/integer'
 import { Bytes } from '@graphprotocol/graph-ts'
+import { addressMap } from '../../../utils/addresses'
 
 export function handleCreated(event: Created): void {
   let user = getOrCreateUser(event.params.owner)
@@ -13,6 +14,13 @@ export function handleCreated(event: Created): void {
   proxy.address = event.params.proxy
   proxy.cache = event.params.cache
   proxy.owner = user.id
+  // We add a reference to the coin allowance, not that it might not yet exist.
+  proxy.coinAllowance =
+    addressMap.get('GEB_COIN').toHexString() +
+    '-' +
+    user.id +
+    '-' +
+    event.params.proxy.toHexString()
   proxy.save()
 
   // Update system state

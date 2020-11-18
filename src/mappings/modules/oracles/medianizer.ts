@@ -41,7 +41,7 @@ export function handleUpdateResult(event: UpdateResult): void {
     let collateral = getOrCreateCollateral(ETH_A, event)
     collateral.currentMedianizerUpdate = id
     collateral.save()
-  } else if (contractAddress.equals(addressMap.get('MEDIANIZER_PRAI'))) {
+  } else if (contractAddress.equals(addressMap.get('MEDIANIZER_RAI'))) {
     let system = getSystemState(event)
     system.currentCoinMedianizerUpdate = id
     system.save()

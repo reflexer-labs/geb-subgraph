@@ -465,7 +465,7 @@ dataSources:
     network: {{NETWORK}}
     source:
       abi: Osm
-      address: '{{FEED_SECURITY_MODULE_PRAI}}'
+      address: '{{FEED_SECURITY_MODULE_RAI}}'
       startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events
@@ -535,7 +535,7 @@ dataSources:
     network: {{NETWORK}}
     source:
       abi: Medianizer
-      address: '{{MEDIANIZER_PRAI}}'
+      address: '{{MEDIANIZER_RAI}}'
       startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events

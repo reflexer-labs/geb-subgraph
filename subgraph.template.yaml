@@ -32,23 +32,23 @@ dataSources:
           handler: handleModifyParametersCollateralTypeUint
         - event: ModifyParameters(bytes32,uint256)
           handler: handleModifyParametersUint
-        - event: ModifyCollateralBalance(bytes32,address,int256)
+        - event: ModifyCollateralBalance(indexed bytes32,indexed address,int256)
           handler: handleModifyCollateralBalance
-        - event: TransferCollateral(bytes32,address,address,uint256)
+        - event: TransferCollateral(indexed bytes32,indexed address,indexed address,uint256)
           handler: handleTransferCollateral
-        - event: TransferInternalCoins(address,address,uint256)
+        - event: TransferInternalCoins(indexed address,indexed address,uint256)
           handler: handleTransferInternalCoins
-        - event: ModifySAFECollateralization(bytes32,address,address,address,int256,int256,uint256,uint256,uint256)
+        - event: ModifySAFECollateralization(indexed bytes32,indexed address,address,address,int256,int256,uint256,uint256,uint256)
           handler: handleModifySAFECollateralization
-        - event: TransferSAFECollateralAndDebt(bytes32,address,address,int256,int256,uint256,uint256,uint256,uint256)
+        - event: TransferSAFECollateralAndDebt(indexed bytes32,indexed address,indexed address,int256,int256,uint256,uint256,uint256,uint256)
           handler: handleTransferSAFECollateralAndDebt
-        - event: ConfiscateSAFECollateralAndDebt(bytes32,address,address,address,int256,int256,uint256)
+        - event: ConfiscateSAFECollateralAndDebt(indexed bytes32,indexed address,address,address,int256,int256,uint256)
           handler: handleConfiscateSAFECollateralAndDebt
-        - event: SettleDebt(address,uint256,uint256,uint256,uint256,uint256)
+        - event: SettleDebt(indexed address,uint256,uint256,uint256,uint256,uint256)
           handler: handleSettleDebt
-        - event: CreateUnbackedDebt(address,address,uint256,uint256,uint256,uint256,uint256)
+        - event: CreateUnbackedDebt(indexed address,indexed address,uint256,uint256,uint256,uint256,uint256)
           handler: handleCreateUnbackedDebt
-        - event: UpdateAccumulatedRate(bytes32,address,int256,uint256,uint256)
+        - event: UpdateAccumulatedRate(indexed bytes32,address,int256,uint256,uint256)
           handler: handleUpdateAccumulatedRate
         - event: AddAuthorization(address)
           handler: handleAddAuthorization
@@ -108,7 +108,7 @@ dataSources:
         - name: RateSetter
           file: ./abis/RateSetter.json
       eventHandlers:
-        - event: UpdateCollateralPrice(bytes32,uint256,uint256,uint256)
+        - event: UpdateCollateralPrice(indexed bytes32,uint256,uint256,uint256)
           handler: handleUpdateCollateralPrice
         - event: UpdateRedemptionPrice(uint256)
           handler: handleUpdateRedemptionPrice
@@ -245,13 +245,13 @@ dataSources:
           file: ./abis/PreSettlementSurplusAuctionHouse.json
         
       eventHandlers:
-        - event: ModifyParameters(bytes32,address)
+        - event: ModifyParameters(indexed bytes32,address)
           handler: handleModifyParametersAddress
-        - event: ModifyParameters(bytes32,uint256)
+        - event: ModifyParameters(indexed bytes32,uint256)
           handler: handleModifyParametersUint
-        - event: AuctionDebt(uint256,uint256,uint256)
+        - event: AuctionDebt(indexed uint256,uint256,uint256)
           handler: handleAuctionDebt
-        - event: AuctionSurplus(uint256,uint256,uint256)
+        - event: AuctionSurplus(indexed uint256,uint256,uint256)
           handler: handleAuctionSurplus
         - event: AddAuthorization(address)
           handler: handleAddAuthorization
@@ -682,13 +682,13 @@ templates:
         - name: EnglishCollateralAuctionHouse
           file: ./abis/EnglishCollateralAuctionHouse.json
       eventHandlers:
-        - event: DecreaseSoldAmount(uint256,address,uint256,uint256,uint256)
+        - event: DecreaseSoldAmount(indexed uint256,address,uint256,uint256,uint256)
           handler: handleDecreaseSoldAmount
-        - event: IncreaseBidSize(uint256,address,uint256,uint256,uint256)
+        - event: IncreaseBidSize(indexed uint256,address,uint256,uint256,uint256)
           handler: handleIncreaseBidSize
         - event: ModifyParameters(bytes32,uint256)
           handler: handleModifyParametersUint
-        - event: SettleAuction(uint256)
+        - event: SettleAuction(indexed uint256)
           handler: handleSettleAuction
         - event: AddAuthorization(address)
           handler: handleAddAuthorization
@@ -726,9 +726,9 @@ templates:
           handler: handleModifyParametersAddress
         - event: ModifyParameters(bytes32,uint256)
           handler: handleModifyParametersUint
-        - event: BuyCollateral(uint256,uint256,uint256)
+        - event: BuyCollateral(indexed uint256,uint256,uint256)
           handler: handleBuyCollateral
-        - event: SettleAuction(uint256,uint256)
+        - event: SettleAuction(indexed uint256,uint256)
           handler: handleSettleAuction
         - event: AddAuthorization(address)
           handler: handleAddAuthorization
@@ -764,7 +764,7 @@ templates:
           handler: handleIncreaseBidSizePre
         - event: RestartAuction(uint256,uint256)
           handler: handleRestartAuctionPre
-        - event: SettleAuction(uint256)
+        - event: SettleAuction(indexed uint256)
           handler: handleSettleAuctionPre
         - event: AddAuthorization(address)
           handler: handleAddAuthorization

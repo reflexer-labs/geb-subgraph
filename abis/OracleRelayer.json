@@ -111,7 +111,7 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "bytes32",
         "name": "collateralType",
         "type": "bytes32"

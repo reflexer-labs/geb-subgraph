@@ -170,6 +170,7 @@ export function handleModifySAFECollateralization(event: ModifySAFECollateraliza
   update.deltaDebt = deltaDebt
   update.createdAt = event.block.timestamp
   update.createdAtBlock = event.block.number
+  update.accumulatedRate = collateral.accumulatedRate
   update.createdAtTransaction = event.transaction.hash
   update.save()
 

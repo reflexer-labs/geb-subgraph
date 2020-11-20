@@ -134,6 +134,9 @@ type ModifySAFECollateralization @entity {
   " Change in debt "
   deltaDebt: BigDecimal!
 
+  " Accumulated rate at the time of the transaction "
+  accumulatedRate: BigDecimal!
+
   " Timestamp of the block at which this Safe was created [seconds] "
   createdAt: BigInt!
 
@@ -150,8 +153,8 @@ type CollateralType @entity {
   " Collateral type name "
   id: ID!
 
-  # == Safe stats == 
-  
+  # == Safe stats ==
+
   " Total debt backed by this collateral type "
   debtAmount: BigDecimal!
 
@@ -161,7 +164,6 @@ type CollateralType @entity {
   " Total collateral deposited in the system and locked in Safes "
   totalCollateralLockedInSafes: BigDecimal!
 
-
   " Total interest accrued on this collateral type "
   accumulatedRate: BigDecimal!
 
@@ -170,9 +172,8 @@ type CollateralType @entity {
 
   " Number of Safes backed by this collateral type that were opened through the manager (GebSafeManager) "
   safeCount: BigInt!
-  
 
-  # == Prices == 
+  # == Prices ==
 
   " Current market price "
   currentPrice: CollateralPrice
@@ -183,7 +184,6 @@ type CollateralType @entity {
   " Latest Coin medianizer update "
   currentMedianizerUpdate: MedianizerUpdate
 
-
   # == Constants ==
 
   " Address of the FSM contract used for this collateral type "
@@ -191,10 +191,10 @@ type CollateralType @entity {
 
   " Per second stability fee "
   stabilityFee: BigDecimal!
-  
+
   " Total annualized stability calculated with solidity. It takes into account the global SF. Equals to (global SF + collateral SF)^(second per year)"
   totalAnnualizedStabilityFee: BigDecimal!
-  
+
   " Debt ceiling/upper limit "
   debtCeiling: BigDecimal!
 
@@ -207,8 +207,7 @@ type CollateralType @entity {
   " Collateral price with liquidation margin. Used only in LiquidationEngine when a Safe is liquidated "
   liquidationCRatio: BigDecimal!
 
-
-  # == Auction/Liquidations == 
+  # == Auction/Liquidations ==
 
   " Penalty applied to every liquidation involving this collateral type "
   liquidationPenalty: BigDecimal!
@@ -234,8 +233,7 @@ type CollateralType @entity {
   " Auction configuration (fixed discount only) "
   fixedDiscountAuctionConfiguration: FixedDiscountAuctionConfiguration
 
-
-  # == Time == 
+  # == Time ==
 
   " Time of the last stability fee update "
   stabilityFeeLastUpdatedAt: BigInt!
@@ -322,9 +320,9 @@ type SystemState @entity {
 
   " Coin contract address "
   coinAddress: Bytes!
-  
+
   " WETH collateral address "
-  wethAddress : Bytes!
+  wethAddress: Bytes!
 
   " System surplus in the accounting engine "
   systemSurplus: BigDecimal!

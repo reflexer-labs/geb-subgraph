@@ -285,6 +285,9 @@ type SystemState @entity {
   " Global debt ceiling "
   globalDebtCeiling: BigDecimal!
 
+  " Individual safe debt limit "
+  perSafeDebtCeiling: BigDecimal!
+
   " Number of collateral types registered "
   collateralCount: BigInt!
 

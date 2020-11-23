@@ -1,0 +1,2 @@
+# We need this otherwise build will fail because of permissions
+docker/data

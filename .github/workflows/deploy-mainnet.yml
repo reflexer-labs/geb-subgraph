@@ -28,8 +28,8 @@ jobs:
           then 
           echo "Redeploy subgraph only..."
           cd geb-subgraph/docker
+          git fetch
           git checkout origin/mainnet
-          git pull
           sudo chmod -R +rwx data/
           docker-compose up --build graph-deployer
           else

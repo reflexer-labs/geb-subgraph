@@ -60,6 +60,9 @@ export function handleModifyParametersUint(event: ModifyParametersUint): void {
   if (what == 'globalDebtCeiling') {
     system.globalDebtCeiling = decimal.fromRad(data)
     system.save()
+  } else if (what == 'safeDebtCeiling') {
+    system.perSafeDebtCeiling = decimal.fromWad(data)
+    system.save()
   }
 }
 

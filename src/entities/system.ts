@@ -33,6 +33,7 @@ export function getSystemState(event: ethereum.Event): SystemState {
     state.globalStabilityFee = decimal.ZERO
     state.savingsRate = decimal.ONE
     state.globalDebtCeiling = decimal.ZERO
+    state.perSafeDebtCeiling = decimal.fromWad(integer.MAX_UINT_256)
     state.globalUnbackedDebt = decimal.ZERO
     state.lastPeriodicUpdate = integer.ZERO
     state.coinAddress = addressMap.get('GEB_COIN')

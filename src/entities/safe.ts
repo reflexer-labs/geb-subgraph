@@ -81,7 +81,6 @@ export function createUnmanagedSafe(
   collateralObj.unmanagedSafeCount = collateralObj.unmanagedSafeCount.plus(integer.ONE)
   system.unmanagedSafeCount = system.unmanagedSafeCount.plus(integer.ONE)
 
-
   collateralObj.save()
   system.save()
   safe.save()

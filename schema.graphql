@@ -35,7 +35,7 @@ type Safe @entity {
   createdAtTransaction: Bytes!
 
   " Collateral balance of the safeHandler "
-  internalCollateralBalances: InternalCollateralBalance
+  internalCollateralBalance: InternalCollateralBalance
 
   " Coin balance of the safe handler "
   internalCoinBalance: InternalCoinBalance

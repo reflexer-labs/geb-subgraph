@@ -96,7 +96,7 @@ function createSafe(safeHandler: Bytes, collateral: Bytes, event: ethereum.Event
   safe.collateral = decimal.ZERO
   safe.debt = decimal.ZERO
   safe.safeHandler = safeHandler
-  safe.internalCollateralBalances = collateral.toHexString()
+  safe.internalCollateralBalances = safeHandler.toHexString() + "-" + collateral.toString()
   safe.internalCoinBalance = safeHandler.toHexString()
   safe.createdAt = event.block.timestamp
   safe.createdAtBlock = event.block.number

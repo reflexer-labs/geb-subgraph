@@ -34,6 +34,12 @@ type Safe @entity {
   " Hash of the transaction that opened the Safe "
   createdAtTransaction: Bytes!
 
+  " Collateral balance of the safeHandler "
+  internalCollateralBalances: InternalCollateralBalance
+
+  " Coin balance of the safe handler "
+  internalCoinBalance: InternalCoinBalance
+
   " Timestamp of the block at which this Safe was last modified [seconds] "
   modifiedAt: BigInt
 

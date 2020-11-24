@@ -81,7 +81,6 @@ export function createUnmanagedSafe(
   collateralObj.unmanagedSafeCount = collateralObj.unmanagedSafeCount.plus(integer.ONE)
   system.unmanagedSafeCount = system.unmanagedSafeCount.plus(integer.ONE)
 
-
   collateralObj.save()
   system.save()
   safe.save()
@@ -97,6 +96,8 @@ function createSafe(safeHandler: Bytes, collateral: Bytes, event: ethereum.Event
   safe.collateral = decimal.ZERO
   safe.debt = decimal.ZERO
   safe.safeHandler = safeHandler
+  safe.internalCollateralBalances = collateral.toHexString()
+  safe.internalCoinBalance = safeHandler.toHexString()
   safe.createdAt = event.block.timestamp
   safe.createdAtBlock = event.block.number
   safe.createdAtTransaction = event.transaction.hash

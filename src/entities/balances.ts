@@ -83,7 +83,7 @@ export function updateCollateralBalance(
 ): void {
   let balance = getOrCreateCollateralBalance(owner, collateralType, event)
   let safeEngine = SAFEEngine.bind(event.address)
-  let bal = decimal.fromRad(safeEngine.tokenCollateral(collateralType, owner))
+  let bal = decimal.fromWad(safeEngine.tokenCollateral(collateralType, owner))
 
   balance.balance = bal
   balance.modifiedAt = event.block.timestamp

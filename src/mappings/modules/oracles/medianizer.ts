@@ -67,7 +67,8 @@ export function handleModifyParameters(event: ModifyParameters): void {
     let pairContract = UniswapPairContract.bind(pairAddress)
 
     pair.medianizerSymbol = uniswapMedian.symbol().toString()
-
+    pair.address = pairAddress
+    
     pair.token0 = pairContract.token0()
     pair.token1 = pairContract.token1()
 
@@ -92,6 +93,11 @@ export function handleModifyParameters(event: ModifyParameters): void {
 
   // Start indexing
   UniswapPairIndexer.create(pairAddress)
+
+  // Set system reference to Coin medianizer
+  let system = getSystemState(event)
+  system.coinUniswapPair = pairAddress.toHexString()
+  system.save()
 }
 
 export function handleAddAuthorization(event: AddAuthorization): void {

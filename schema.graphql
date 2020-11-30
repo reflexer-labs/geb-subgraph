@@ -333,6 +333,9 @@ type SystemState @entity {
   " WETH collateral address "
   wethAddress: Bytes!
 
+  " Coin uniswap pair address "
+  coinUniswapPair: UniswapPair
+
   " System surplus in the accounting engine "
   systemSurplus: BigDecimal!
 
@@ -1226,8 +1229,11 @@ type UniswapPair @entity {
   " pair address "
   id: ID!
 
+  " Contract address of the pair "
+  address: Bytes!
+
   " Pair symbol "
-  medianizerSymbol: String!
+  medianizerSymbol: String
 
   " Base token address "
   token0: Bytes!

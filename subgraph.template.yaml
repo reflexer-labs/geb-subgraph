@@ -661,6 +661,45 @@ dataSources:
         #   handler: handleSetOwner
         # - event: SetRoot(indexed address)
         #   handler: handleSetRoot
+  
+  - name: UniswapRollingDistributionIncentives 
+    kind: ethereum/contract
+    network: {{NETWORK}}
+    source:
+      abi: GebUniswapRollingDistributionIncentives
+      address: '{{GEB_UNISWAP_INCENTIVE}}'
+      startBlock: {{STARTING_BLOCK_NUMBER}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/modules/incentive/uniswap-incentive.ts
+      entities:
+        - IncentiveBalance
+        - IncentiveCampaign
+      abis:
+        - name: GebUniswapRollingDistributionIncentives
+          file: ./abis/GebUniswapRollingDistributionIncentives.json
+      eventHandlers:
+        - event: CampaignAdded(uint256)
+          handler: handleCampaignAdded
+        - event: Staked(indexed address,uint256)
+          handler: handleStaked
+        - event: Withdrawn(indexed address,uint256)
+          handler: handleWithdrawn
+        - event: RewardPaid(indexed address,uint256)
+          handler: handleRewardPaid
+        - event: DelayReward(address,uint256,uint256,uint256)
+          handler: handleDelayReward
+        - event: DelayedRewardPaid(indexed address,uint256,uint256)
+          handler: handleDelayedRewardPaid
+        # - event: ModifyParameters(indexed bytes32,uint256)
+        #   handler: handleModifyParameters
+        # - event: ModifyParameters(indexed bytes32,uint256,uint256)
+        #   handler: handleModifyParameters
+        # - event: WithdrewExtraRewardTokens(address,uint256,uint256)
+        #   handler: handleWithdrewExtraRewardTokens
+  
 
 templates:
   - name: EnglishCollateralAuctionHouse

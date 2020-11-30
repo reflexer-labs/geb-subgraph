@@ -1297,6 +1297,113 @@ type UniswapSwap @entity {
   " Hash of the transaction that created the swap "
   createdAtTransaction: Bytes!
 }
+
+# --- Incentive ---
+
+type IncentiveCampaign @entity {
+  " <Campaign ID> "
+  id: ID!
+
+  " Start date of the campaign "
+  startTime: BigInt!
+
+  " Duration in second of the campaign "
+  duration: BigInt!
+
+  " Vesting period in seconds "
+  rewardDelay: BigInt!
+
+  " Share of the reward that can be exited instantly "
+  instantExitPercentage: BigDecimal!
+
+  " Total reward offered during the campaign "
+  reward: BigDecimal!
+
+  " Per second distributed reward "
+  rewardRate: BigDecimal!
+
+  " Total LP shares staked into the contract "
+  totalSupply: BigDecimal!
+
+  " Last update date of rewardPerTokenStored "
+  lastUpdatedTime: BigInt!
+
+  " Cumulative per token reward distributed so far "
+  rewardPerTokenStored: BigDecimal!
+
+  " Timestamp of the block at which the campaign was made [seconds] "
+  createdAt: BigInt!
+
+  " Block number at which the campaign was made "
+  createdAtBlock: BigInt!
+
+  " Hash of the transaction that created the campaign "
+  createdAtTransaction: Bytes!
+
+  " Timestamp of the block at which the campaign was last modified [seconds] "
+  modifiedAt: BigInt
+
+  " Block number at which the campaign was last modified "
+  modifiedAtBlock: BigInt
+
+  " Transaction hash at which the campaign was last modified "
+  modifiedAtTransaction: Bytes
+}
+
+type IncentiveBalance @entity {
+  " <address>-<Campaign ID> "
+  id: ID!
+
+  " Address of the staker "
+  address: Bytes!
+
+  " Owner of the address (proxy owner if address is a proxy)"
+  owner: User
+
+  " Amount of staked LP shares "
+  stakedBalance: BigDecimal!
+
+  " Cumulative reward available to claim (do not include the part since last update) "
+  reward: BigDecimal!
+
+  # To calculate to total reward up to now, do:
+  # claimableReward = IncentiveBalance[account].reward + IncentiveBalance[account].stakedBalance *
+  # (
+  #    (IncentiveCampaign[id].rewardPerTokenStored + (now - IncentiveCampaign[id].lastUpdatedTime))/lastUpdatedTime[id].totalSupply
+  #    - IncentiveBalance[account].userRewardPerTokenPaid
+  # )
+
+  " Paid out reward per token  accumulator "
+  userRewardPerTokenPaid: BigDecimal!
+
+  " Total vested reward (already paid out + not yet paid out)"
+  delayedRewardTotalAmount: BigDecimal!
+
+  " Paid out vested rewards out of delayedRewardTotalAmount "
+  delayedRewardExitedAmount: BigDecimal!
+
+  " Last time vested rewards were claimed "
+  delayedRewardLatestExitTime: BigInt!
+
+  " Timestamp of the block at which the campaign was made [seconds] "
+  createdAt: BigInt!
+
+  " Block number at which the staking balance was made "
+  createdAtBlock: BigInt!
+
+  " Hash of the transaction that created the staking balance "
+  createdAtTransaction: Bytes!
+
+  " Timestamp of the block at which the staking balance was last modified [seconds] "
+  modifiedAt: BigInt
+
+  " Block number at which the staking balance was last modified "
+  modifiedAtBlock: BigInt
+
+  " Transaction hash at which the staking balance was last modified "
+  modifiedAtTransaction: Bytes
+}
+
 # --- Periodic updates ---
 
 type DailyStat @entity {

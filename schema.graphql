@@ -1253,6 +1253,9 @@ type UniswapPair @entity {
   " reserve1 / reserve 0 "
   token1Price: BigDecimal!
 
+  " Supply of pool token shares "
+  totalSupply: BigDecimal!
+
   " Timestamp of the block at which the pair was created [seconds] "
   createdAt: BigInt!
 

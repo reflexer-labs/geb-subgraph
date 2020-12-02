@@ -1,4 +1,8 @@
-import { Swap, Sync } from '../../../../generated/templates/UniswapPair/UniswapPair'
+import {
+  Swap,
+  Sync,
+  UniswapPair as UniswapPairContract,
+} from '../../../../generated/templates/UniswapPair/UniswapPair'
 import { UniswapPair, UniswapSwap } from '../../../entities'
 import * as decimal from '../../../utils/decimal'
 import { eventUid } from '../../../utils/ethereum'
@@ -13,6 +17,9 @@ export function handleSync(event: Sync): void {
   else pair.token0Price = decimal.ZERO
   if (pair.reserve0.notEqual(decimal.ZERO)) pair.token1Price = pair.reserve1.div(pair.reserve0)
   else pair.token1Price = decimal.ZERO
+
+  let pairContract = UniswapPairContract.bind(event.address)
+  pair.totalSupply = decimal.fromWad(pairContract.totalSupply())
 
   pair.modifiedAt = event.block.timestamp
   pair.modifiedAtBlock = event.block.number

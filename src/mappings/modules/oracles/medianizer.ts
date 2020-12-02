@@ -68,7 +68,7 @@ export function handleModifyParameters(event: ModifyParameters): void {
 
     pair.medianizerSymbol = uniswapMedian.symbol().toString()
     pair.address = pairAddress
-    
+
     pair.token0 = pairContract.token0()
     pair.token1 = pairContract.token1()
 
@@ -80,6 +80,8 @@ export function handleModifyParameters(event: ModifyParameters): void {
     else pair.token0Price = decimal.ZERO
     if (pair.reserve0.notEqual(decimal.ZERO)) pair.token1Price = pair.reserve1.div(pair.reserve0)
     else pair.token1Price = decimal.ZERO
+
+    pair.totalSupply = decimal.fromWad(pairContract.totalSupply())
 
     pair.createdAt = event.block.timestamp
     pair.createdAtBlock = event.block.number

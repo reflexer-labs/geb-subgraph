@@ -1,6 +1,11 @@
 import * as decimal from '../../../utils/decimal'
 import * as integer from '../../../utils/integer'
-import { DelayedRewardPaid, DelayReward, GebUniswapRollingDistributionIncentives, RewardPaid } from '../../../../generated/UniswapRollingDistributionIncentives/GebUniswapRollingDistributionIncentives'
+import {
+  DelayedRewardPaid,
+  DelayReward,
+  GebUniswapRollingDistributionIncentives,
+  RewardPaid,
+} from '../../../../generated/UniswapRollingDistributionIncentives/GebUniswapRollingDistributionIncentives'
 import {
   CampaignAdded,
   Staked,
@@ -68,13 +73,15 @@ function updateAccountStake(account: Address, event: ethereum.Event): void {
       // Create ball
       bal = new IncentiveBalance(account.toHexString() + '-' + i.toString())
       bal.address = account
+      bal.campaignId = campaignId
+
       // If the account is a proxy, set the proxy owner as owner.
       let proxy = UserProxy.load(account.toHexString())
       bal.owner = proxy ? proxy.owner.toString() : null
       bal.createdAtBlock = event.block.number
       bal.createdAt = event.block.timestamp
       bal.createdAtTransaction = event.transaction.hash
-    } 
+    }
 
     // Update stake vars
     bal.stakedBalance = decimal.fromWad(contract.balanceOf(account))

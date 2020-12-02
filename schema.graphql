@@ -1363,6 +1363,9 @@ type IncentiveBalance @entity {
   " Address of the staker "
   address: Bytes!
 
+  " Campaign number "
+  campaignId: BigInt!
+
   " Owner of the address (proxy owner if address is a proxy)"
   owner: User
 

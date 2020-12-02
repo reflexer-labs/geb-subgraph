@@ -103,8 +103,10 @@ function updateAccountStake(account: Address, event: ethereum.Event): void {
     bal.save()
 
     // Update system wide vars
+    let campaignObj = contract.campaigns(campaignId)
     campaign.totalSupply = decimal.fromWad(contract.totalSupply())
-    campaign.rewardPerTokenStored = decimal.fromWad(contract.campaigns(campaignId).value5)
+    campaign.rewardPerTokenStored = decimal.fromWad(campaignObj.value5)
+    campaign.lastUpdatedTime = campaignObj.value4
     campaign.modifiedAt = event.block.timestamp
     campaign.modifiedAtBlock = event.block.number
     campaign.modifiedAtTransaction = event.transaction.hash

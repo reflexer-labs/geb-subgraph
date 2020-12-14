@@ -17,6 +17,8 @@ services:
       RUST_LOG: error
       GRAPH_LOG: info
       GRAPH_ETH_CALL_BY_NUMBER: "true"
+      ETHEREUM_ANCESTOR_COUNT: 0
+      ETHEREUM_REORG_THRESHOLD: 0
     restart: always
   ipfs:
     image: ipfs/go-ipfs:v0.4.23

@@ -24,6 +24,7 @@ services:
     image: ipfs/go-ipfs:v0.4.23
     ports:
       - "5001:5001"
+      - "8030:8030"
     volumes:
       - ./data/ipfs:/data/ipfs
     restart: always

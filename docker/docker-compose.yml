@@ -16,7 +16,6 @@ services:
       ethereum: "${NETWORK}:${ETHEREUM_RPC}"
       RUST_LOG: error
       GRAPH_LOG: info
-      GRAPH_ETH_CALL_BY_NUMBER: "true"
       ETHEREUM_ANCESTOR_COUNT: 0
       ETHEREUM_REORG_THRESHOLD: 0
     restart: always

@@ -1,5 +1,5 @@
 import { Address, ethereum, log } from '@graphprotocol/graph-ts'
-import { ERC20Balance, ERC20Allowance } from '../entities'
+import { ERC20Balance, ERC20Allowance, UserProxy } from '../entities'
 import * as decimal from '../utils/decimal'
 
 export function getOrCreateERC20Balance(
@@ -7,6 +7,7 @@ export function getOrCreateERC20Balance(
   tokenAddress: Address,
   event: ethereum.Event,
   canCreate: boolean = true,
+  label?: string,
 ): ERC20Balance {
   let id = tokenAddress.toHexString() + '-' + address.toHexString()
   let balance = ERC20Balance.load(id)
@@ -18,6 +19,14 @@ export function getOrCreateERC20Balance(
     balance.tokenAddress = tokenAddress
     balance.address = address
     balance.balance = decimal.ZERO
+
+    if (label) {
+      balance.label = label
+    }
+
+    // If a proxy with that address exist, set its owner to the owner of the balance
+    let proxy = UserProxy.load(address.toHexString())
+    balance.owner = proxy ? proxy.owner.toString() : null
 
     balance.modifiedAt = event.block.timestamp
     balance.modifiedAtBlock = event.block.number

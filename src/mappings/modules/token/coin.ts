@@ -12,6 +12,8 @@ import * as decimal from '../../../utils/decimal'
 import { eventUid } from '../../../utils/ethereum'
 import { addAuthorization, removeAuthorization } from '../governance/authorizations'
 
+const COIN_LABEL = "COIN"
+
 export function handleTransfer(event: Transfer): void {
   let tokenAddress = dataSource.address()
 
@@ -23,7 +25,7 @@ export function handleTransfer(event: Transfer): void {
 
   // Check if it's not a burn before updating destination
   if (!destination.equals(nullAddress)) {
-    let destBalance = getOrCreateERC20Balance(destination, tokenAddress, event)
+    let destBalance = getOrCreateERC20Balance(destination, tokenAddress, event, true, COIN_LABEL)
     destBalance.balance = destBalance.balance.plus(amount)
     destBalance.modifiedAt = event.block.timestamp
     destBalance.modifiedAtBlock = event.block.number

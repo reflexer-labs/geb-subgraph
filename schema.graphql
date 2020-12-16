@@ -1068,8 +1068,14 @@ type ERC20Balance @entity {
   " Address of the ERC20 token "
   tokenAddress: Bytes!
 
+  " Static label such as COIN, GOV, COIN_UNI_POOL to identify the asset "
+  label: String
+
   " Address of the owner that has the balance "
   address: Bytes!
+
+  " Either the address or the owner of the proxy if the address is a Proxy "
+  owner: User
 
   " Balance amount "
   balance: BigDecimal!
@@ -1377,13 +1383,6 @@ type IncentiveBalance @entity {
 
   " Cumulative reward available to claim (do not include the part since last update) "
   reward: BigDecimal!
-
-  # To calculate to total reward up to now, do:
-  # claimableReward = IncentiveBalance[account].reward + IncentiveBalance[account].stakedBalance *
-  # (
-  #    (IncentiveCampaign[id].rewardPerTokenStored + (now - IncentiveCampaign[id].lastUpdatedTime))/lastUpdatedTime[id].totalSupply
-  #    - IncentiveBalance[account].userRewardPerTokenPaid
-  # )
 
   " Paid out reward per token  accumulator "
   userRewardPerTokenPaid: BigDecimal!

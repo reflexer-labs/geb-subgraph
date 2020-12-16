@@ -14,8 +14,8 @@ import * as decimal from '../../../utils/decimal'
 import * as integer from '../../../utils/integer'
 import * as enums from '../../../utils/enums'
 import { getOrCreateEnglishAuctionConfiguration } from '../../../entities/auctions'
-import { getOrCreateAccountingEngine } from '../../../entities/system'
 import { addAuthorization, removeAuthorization } from '../governance/authorizations'
+import { getOrCreateAccountingEngine } from '../../../entities/accounting-engine'
 
 export function handleModifyParametersPre(event: ModifyParametersPre): void {
   let config = getOrCreateEnglishAuctionConfiguration(

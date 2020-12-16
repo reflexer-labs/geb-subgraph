@@ -8,13 +8,13 @@ import {
   AddAuthorization,
   RemoveAuthorization,
 } from '../../../../generated/AccountingEngine/AccountingEngine'
-import { getOrCreateAccountingEngine } from '../../../entities/system'
 import { EnglishAuction } from '../../../entities'
 import { log } from '@graphprotocol/graph-ts'
 import * as enums from '../../../utils/enums'
 import { DebtAuctionHouse, PreSettlementSurplusAuctionHouse } from '../../../../generated/templates'
 import { getOrCreateEnglishAuctionConfiguration } from '../../../entities/auctions'
 import { addAuthorization, removeAuthorization } from '../governance/authorizations'
+import { getOrCreateAccountingEngine } from '../../../entities/accounting-engine'
 
 export function handleModifyParametersAddress(event: ModifyParametersAddress): void {
   let what = event.params.parameter.toString()

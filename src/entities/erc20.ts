@@ -7,7 +7,7 @@ export function getOrCreateERC20Balance(
   tokenAddress: Address,
   event: ethereum.Event,
   canCreate: boolean = true,
-  label?: string,
+  label: string = null,
 ): ERC20Balance {
   let id = tokenAddress.toHexString() + '-' + address.toHexString()
   let balance = ERC20Balance.load(id)

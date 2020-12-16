@@ -5,15 +5,16 @@ import {
   DelayReward,
   GebUniswapRollingDistributionIncentives,
   RewardPaid,
-} from '../../../../generated/UniswapRollingDistributionIncentives/GebUniswapRollingDistributionIncentives'
-import {
   CampaignAdded,
   Staked,
   Withdrawn,
 } from '../../../../generated/UniswapRollingDistributionIncentives/GebUniswapRollingDistributionIncentives'
-import { IncentiveBalance, IncentiveCampaign, UserProxy } from '../../../entities'
-import { Address, ethereum, log } from '@graphprotocol/graph-ts'
 
+import { Address, ethereum, log, BigInt } from '@graphprotocol/graph-ts'
+import { getOrCreateERC20Balance } from '../../../entities/erc20'
+import { IncentiveBalance, IncentiveCampaign, UserProxy } from '../../../../generated/schema'
+
+const INCENTIVE_STAKE_LABEL = 'INCENTIVE_STAKE'
 export function handleCampaignAdded(event: CampaignAdded): void {
   let contract = GebUniswapRollingDistributionIncentives.bind(event.address)
   let campaign = new IncentiveCampaign(event.params.campaignId.toString())
@@ -56,39 +57,61 @@ export function handleDelayedRewardPaid(event: DelayedRewardPaid): void {
   updateAccountStake(event.params.user, event)
 }
 
+// This function replicates the updateReward reward modifier of the incentive contract
 function updateAccountStake(account: Address, event: ethereum.Event): void {
   let contract = GebUniswapRollingDistributionIncentives.bind(event.address)
   let firstCampaign = contract.firstCampaign().toI32()
-  let lastCampaign = contract.campaignCount().toI32()
-  for (let i = firstCampaign; i < lastCampaign + 1; i++) {
+  let lastCampaignBigInt = contract.campaignCount()
+  let lastCampaign = lastCampaignBigInt.toI32()
+
+  // ERC20 representation of the staked UNI token
+  let stakedBal = getOrCreateERC20Balance(
+    account,
+    event.address,
+    event,
+    true,
+    INCENTIVE_STAKE_LABEL,
+  )
+  stakedBal.balance = decimal.fromWad(contract.balanceOf(account))
+  stakedBal.save()
+
+  for (let i = lastCampaign; i >= firstCampaign; i--) {
+    // -- Incentive Campaign Update --
+
+    // Load campaign parameters
     let campaign = IncentiveCampaign.load(i.toString())
-    let bal = IncentiveBalance.load(account.toHexString() + '-' + i.toString())
-    let campaignId = integer.fromNumber(i)
     if (!campaign) {
       log.error('Try to update non existing campaign id {}', [i.toString()])
     }
 
-    // Update user specific vars
-    if (!bal) {
-      // Create ball
-      bal = new IncentiveBalance(account.toHexString() + '-' + i.toString())
-      bal.address = account
-      bal.campaignId = campaignId
+    let campaignId = integer.fromNumber(i)
+    let campaignObj = contract.campaigns(campaignId)
 
-      // If the account is a proxy, set the proxy owner as owner.
-      let proxy = UserProxy.load(account.toHexString())
-      bal.owner = proxy ? proxy.owner.toString() : null
-      bal.createdAtBlock = event.block.number
-      bal.createdAt = event.block.timestamp
-      bal.createdAtTransaction = event.transaction.hash
+    if (campaign.lastUpdatedTime.notEqual(campaignObj.value4)) {
+      campaign.totalSupply = decimal.fromWad(contract.totalSupply())
+      campaign.rewardPerTokenStored = decimal.fromWad(campaignObj.value5)
+      campaign.lastUpdatedTime = campaignObj.value4
+      campaign.modifiedAt = event.block.timestamp
+      campaign.modifiedAtBlock = event.block.number
+      campaign.modifiedAtTransaction = event.transaction.hash
+      campaign.save()
     }
 
-    // Update stake vars
-    bal.stakedBalance = decimal.fromWad(contract.balanceOf(account))
-    bal.reward = decimal.fromWad(contract.rewards(account, campaignId))
-    bal.userRewardPerTokenPaid = decimal.fromWad(
+    // -- Incentive balance update --
+
+    let userRewardPerTokenPaid = decimal.fromWad(
       contract.userRewardPerTokenPaid(account, campaignId),
     )
+    if (userRewardPerTokenPaid.equals(decimal.ZERO) && campaignId.lt(lastCampaignBigInt)) {
+      break
+    }
+
+    let bal = getOrCreateIncentiveBalance(account, campaignId, event)
+
+    // Update stake vars
+    bal.stakedBalance = stakedBal.balance
+    bal.reward = decimal.fromWad(contract.rewards(account, campaignId))
+    bal.userRewardPerTokenPaid = userRewardPerTokenPaid
 
     // Update vesting vars
     let vestingVars = contract.delayedRewards(account, campaignId)
@@ -101,13 +124,36 @@ function updateAccountStake(account: Address, event: ethereum.Event): void {
     bal.modifiedAtBlock = event.block.number
     bal.modifiedAtTransaction = event.transaction.hash
     bal.save()
-
-    // Update system wide vars
-    campaign.totalSupply = decimal.fromWad(contract.totalSupply())
-    campaign.rewardPerTokenStored = decimal.fromWad(contract.campaigns(campaignId).value5)
-    campaign.modifiedAt = event.block.timestamp
-    campaign.modifiedAtBlock = event.block.number
-    campaign.modifiedAtTransaction = event.transaction.hash
-    campaign.save()
   }
+}
+
+function getOrCreateIncentiveBalance(
+  account: Address,
+  campaignId: BigInt,
+  event: ethereum.Event,
+): IncentiveBalance {
+  let entityId = account.toHexString() + '-' + campaignId.toString()
+  let bal = IncentiveBalance.load(entityId)
+
+  if (!bal) {
+    bal = new IncentiveBalance(entityId)
+    bal.address = account
+    bal.campaignId = campaignId
+
+    // If the account is a proxy, set the proxy owner as owner.
+    let proxy = UserProxy.load(account.toHexString())
+    bal.owner = proxy ? proxy.owner.toString() : null
+    bal.stakedBalance = decimal.ZERO
+    bal.reward = decimal.ZERO
+    bal.userRewardPerTokenPaid = decimal.ZERO
+    bal.delayedRewardExitedAmount = decimal.ZERO
+    bal.delayedRewardTotalAmount = decimal.ZERO
+    bal.delayedRewardLatestExitTime = integer.ZERO
+    bal.createdAtBlock = event.block.number
+    bal.createdAt = event.block.timestamp
+    bal.createdAtTransaction = event.transaction.hash
+    bal.save()
+  }
+
+  return bal as IncentiveBalance
 }

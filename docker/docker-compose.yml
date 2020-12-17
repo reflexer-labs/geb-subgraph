@@ -17,8 +17,9 @@ services:
       ethereum: "${NETWORK}:${ETHEREUM_RPC}"
       RUST_LOG: error
       GRAPH_LOG: info
-      ETHEREUM_ANCESTOR_COUNT: 0
-      ETHEREUM_REORG_THRESHOLD: 0
+      ETHEREUM_POLLING_INTERVAL: 500
+      ETHEREUM_ANCESTOR_COUNT: 15
+      ETHEREUM_REORG_THRESHOLD: 15
     restart: always
   ipfs:
     image: ipfs/go-ipfs:v0.4.23

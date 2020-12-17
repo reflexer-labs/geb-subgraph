@@ -1,12 +1,12 @@
 import { Address, dataSource, log } from '@graphprotocol/graph-ts'
 import { Transfer } from '../../../../generated/UniLPToken/ERC20'
-import { ERC20Allowance, ERC20Transfer } from '../../../entities'
+import { ERC20Transfer } from '../../../../generated/schema'
 import { getOrCreateERC20Balance } from '../../../entities/erc20'
-import { addressMap } from '../../../utils/addresses'
 
 import * as decimal from '../../../utils/decimal'
 import { eventUid } from '../../../utils/ethereum'
 
+const UNISWAP_POOL_TOKEN_COIN_LABEL = 'UNISWAP_POOL_TOKEN_COIN'
 export function handleTransfer(event: Transfer): void {
   let tokenAddress = dataSource.address()
 
@@ -17,18 +17,13 @@ export function handleTransfer(event: Transfer): void {
 
   // Check if it's not a burn before updating destination
   if (!destination.equals(nullAddress)) {
-    let coinLabel: string
-
-    if (event.address.equals(addressMap.get('GEB_PROT'))) {
-      coinLabel = 'PROT'
-    } else if (event.address.equals(addressMap.get('UNISWAP_COIN_POOL'))) {
-      coinLabel = 'UNISWAP_COIN_POOL'
-    } else {
-      log.error('Unknown ERC20 contract address', [])
-      return
-    }
-
-    let destBalance = getOrCreateERC20Balance(destination, tokenAddress, event, true, coinLabel)
+    let destBalance = getOrCreateERC20Balance(
+      destination,
+      tokenAddress,
+      event,
+      true,
+      UNISWAP_POOL_TOKEN_COIN_LABEL,
+    )
     destBalance.balance = destBalance.balance.plus(amount)
     destBalance.modifiedAt = event.block.timestamp
     destBalance.modifiedAtBlock = event.block.number

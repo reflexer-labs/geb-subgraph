@@ -704,20 +704,19 @@ dataSources:
     kind: ethereum/contract
     network: {{NETWORK}}
     source:
-      abi: ERC20
+      abi: DSToken
       address: '{{GEB_PROT}}'
       startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
       language: wasm/assemblyscript
-      file: ./src/mappings/modules/token/erc20.ts
+      file: ./src/mappings/modules/token/prot-token.ts
       entities:
-        - IncentiveBalance
-        - IncentiveCampaign
+        - ERC20Balance
       abis:
-        - name: ERC20
-          file: ./abis/ERC20.json
+        - name: DSToken
+          file: ./abis/DSToken.json
       eventHandlers:
         - event: Transfer(indexed address,indexed address,uint256)
           handler: handleTransfer
@@ -735,10 +734,9 @@ dataSources:
       kind: ethereum/events
       apiVersion: 0.0.4
       language: wasm/assemblyscript
-      file: ./src/mappings/modules/token/erc20.ts
+      file: ./src/mappings/modules/token/uni-lp-token.ts
       entities:
-        - IncentiveBalance
-        - IncentiveCampaign
+        - ERC20Balance
       abis:
         - name: ERC20
           file: ./abis/ERC20.json

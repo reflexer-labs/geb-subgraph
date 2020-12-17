@@ -700,6 +700,53 @@ dataSources:
         # - event: WithdrewExtraRewardTokens(address,uint256,uint256)
         #   handler: handleWithdrewExtraRewardTokens
   
+  - name: ProtToken 
+    kind: ethereum/contract
+    network: {{NETWORK}}
+    source:
+      abi: ERC20
+      address: '{{GEB_PROT}}'
+      startBlock: {{STARTING_BLOCK_NUMBER}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/modules/token/erc20.ts
+      entities:
+        - IncentiveBalance
+        - IncentiveCampaign
+      abis:
+        - name: ERC20
+          file: ./abis/ERC20.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+        # - event: Approval(indexed address,indexed address,uint256)
+        #   handler: handleApproval
+  
+  - name: UniLPToken 
+    kind: ethereum/contract
+    network: {{NETWORK}}
+    source:
+      abi: ERC20
+      address: '{{UNISWAP_COIN_POOL}}'
+      startBlock: {{STARTING_BLOCK_NUMBER}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/modules/token/erc20.ts
+      entities:
+        - IncentiveBalance
+        - IncentiveCampaign
+      abis:
+        - name: ERC20
+          file: ./abis/ERC20.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+        # - event: Approval(indexed address,indexed address,uint256)
+        #   handler: handleApproval
 
 templates:
   - name: EnglishCollateralAuctionHouse

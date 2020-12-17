@@ -13,6 +13,7 @@ function addEntry(label: string, address: string): void {
   addressValues.push(Address.fromHexString(address) as Address)
 }
 
+addEntry('UNISWAP_COIN_POOL', '{{UNISWAP_COIN_POOL}}')
 addEntry('ETH_FROM', '{{ETH_FROM}}')
 addEntry('PROXY_DEPLOYER', '{{PROXY_DEPLOYER}}')
 addEntry('MULTICALL', '{{MULTICALL}}')

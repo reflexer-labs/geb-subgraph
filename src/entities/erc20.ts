@@ -26,7 +26,7 @@ export function getOrCreateERC20Balance(
 
     // If a proxy with that address exist, set its owner to the owner of the balance
     let proxy = UserProxy.load(address.toHexString())
-    balance.owner = proxy ? proxy.owner.toString() : null
+    balance.owner = proxy ? proxy.owner.toString() : address.toHexString()
 
     balance.modifiedAt = event.block.timestamp
     balance.modifiedAtBlock = event.block.number

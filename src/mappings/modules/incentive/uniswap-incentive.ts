@@ -33,7 +33,7 @@ export function handleCampaignAdded(event: CampaignAdded): void {
   campaign.createdAtBlock = event.block.number
   campaign.createdAt = event.block.timestamp
   campaign.createdAtTransaction = event.transaction.hash
-  campaign.totalSupply = decimal.ZERO
+  campaign.totalSupply = decimal.fromWad(contract.totalSupply())
   campaign.save()
 }
 

@@ -54,7 +54,17 @@ export function handleDelayReward(event: DelayReward): void {
 }
 
 export function handleDelayedRewardPaid(event: DelayedRewardPaid): void {
-  updateAccountStake(event.params.user, event)
+  // The generic update function does not work in this case since we can claim very old campaigns
+  // that are not synced anymore.
+  let contract = GebUniswapRollingDistributionIncentives.bind(event.address)
+  let bal = getOrCreateIncentiveBalance(event.params.user, event.params.campaignId, event)
+  let vestingVars = contract.delayedRewards(event.params.user, event.params.campaignId)
+
+  bal.delayedRewardTotalAmount = decimal.fromWad(vestingVars.value0)
+  bal.delayedRewardExitedAmount = decimal.fromWad(vestingVars.value1)
+  bal.delayedRewardLatestExitTime = vestingVars.value2
+
+  bal.save()
 }
 
 // This function replicates the updateReward reward modifier of the incentive contract

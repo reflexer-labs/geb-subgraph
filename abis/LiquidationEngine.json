@@ -257,7 +257,7 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "collateralAdded",
+        "name": "collateralAddedOrDebtRepaid",
         "type": "uint256"
       }
     ],
@@ -376,6 +376,20 @@
     "name": "disconnectSAFESaviour",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "collateralType",
+        "type": "bytes32"
+      },
+      { "internalType": "address", "name": "safe", "type": "address" }
+    ],
+    "name": "getLimitAdjustedDebtToCover",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
     "type": "function"
   },
   {

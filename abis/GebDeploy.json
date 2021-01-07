@@ -83,6 +83,32 @@
   },
   {
     "inputs": [],
+    "name": "burningSurplusAuctionHouse",
+    "outputs": [
+      {
+        "internalType": "contract BurningSurplusAuctionHouse",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "burningSurplusAuctionHouseFactory",
+    "outputs": [
+      {
+        "internalType": "contract BurningSurplusAuctionHouseFactory",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "coin",
     "outputs": [
       { "internalType": "contract Coin", "name": "", "type": "address" }
@@ -201,7 +227,17 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "prot", "type": "address" }
+      { "internalType": "address", "name": "prot", "type": "address" },
+      {
+        "internalType": "address",
+        "name": "surplusProtTokenReceiver",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "surplusAuctionHouseType",
+        "type": "bytes32"
+      }
     ],
     "name": "deployAuctions",
     "outputs": [],
@@ -233,11 +269,6 @@
       },
       { "internalType": "address", "name": "adapter", "type": "address" },
       { "internalType": "address", "name": "collateralFSM", "type": "address" },
-      {
-        "internalType": "address",
-        "name": "collateralMedian",
-        "type": "address"
-      },
       {
         "internalType": "address",
         "name": "systemCoinOracle",
@@ -499,32 +530,6 @@
   },
   {
     "inputs": [],
-    "name": "preSettlementSurplusAuctionHouse",
-    "outputs": [
-      {
-        "internalType": "contract PreSettlementSurplusAuctionHouse",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "preSettlementSurplusAuctionHouseFactory",
-    "outputs": [
-      {
-        "internalType": "contract PreSettlementSurplusAuctionHouseFactory",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "protestPause",
     "outputs": [
       {
@@ -542,6 +547,32 @@
     "outputs": [
       {
         "internalType": "contract ProtestPauseFactory",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "recyclingSurplusAuctionHouse",
+    "outputs": [
+      {
+        "internalType": "contract RecyclingSurplusAuctionHouse",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "recyclingSurplusAuctionHouseFactory",
+    "outputs": [
+      {
+        "internalType": "contract RecyclingSurplusAuctionHouseFactory",
         "name": "",
         "type": "address"
       }
@@ -660,8 +691,13 @@
   {
     "inputs": [
       {
-        "internalType": "contract PreSettlementSurplusAuctionHouseFactory",
-        "name": "preSettlementSurplusAuctionHouseFactory_",
+        "internalType": "contract RecyclingSurplusAuctionHouseFactory",
+        "name": "recyclingSurplusAuctionHouseFactory_",
+        "type": "address"
+      },
+      {
+        "internalType": "contract BurningSurplusAuctionHouseFactory",
+        "name": "burningSurplusAuctionHouseFactory_",
         "type": "address"
       },
       {

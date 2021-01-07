@@ -31,11 +31,7 @@
         "name": "scheduleCooldown_",
         "type": "uint256"
       },
-      {
-        "internalType": "uint256",
-        "name": "rewardDelay_",
-        "type": "uint256"
-      },
+      { "internalType": "uint256", "name": "rewardDelay_", "type": "uint256" },
       {
         "internalType": "uint256",
         "name": "nextScheduleTime_",
@@ -51,11 +47,7 @@
         "name": "tokenDistributor_",
         "type": "address"
       },
-      {
-        "internalType": "address",
-        "name": "subsidyPool_",
-        "type": "address"
-      }
+      { "internalType": "address", "name": "subsidyPool_", "type": "address" }
     ],
     "stateMutability": "nonpayable",
     "type": "constructor"
@@ -307,11 +299,7 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "campaignId",
-        "type": "uint256"
-      }
+      { "internalType": "uint256", "name": "campaignId", "type": "uint256" }
     ],
     "name": "cancelCampaign",
     "outputs": [],
@@ -320,11 +308,7 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "campaignId",
-        "type": "uint256"
-      }
+      { "internalType": "uint256", "name": "campaignId", "type": "uint256" }
     ],
     "name": "cancelCampaignAndGetTokensFromDistributor",
     "outputs": [],
@@ -333,16 +317,8 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "campaignId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "receiver",
-        "type": "address"
-      },
+      { "internalType": "uint256", "name": "campaignId", "type": "uint256" },
+      { "internalType": "address", "name": "receiver", "type": "address" },
       {
         "internalType": "uint256",
         "name": "protocolTokenAmount",
@@ -356,16 +332,8 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "parameter",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "uint256",
-        "name": "campaignId",
-        "type": "uint256"
-      },
+      { "internalType": "bytes32", "name": "parameter", "type": "bytes32" },
+      { "internalType": "uint256", "name": "campaignId", "type": "uint256" },
       { "internalType": "uint256", "name": "val", "type": "uint256" }
     ],
     "name": "changeCampaignParameter",
@@ -410,11 +378,7 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "receiver",
-        "type": "address"
-      },
+      { "internalType": "address", "name": "receiver", "type": "address" },
       {
         "internalType": "uint256",
         "name": "protocolTokenAmount",
@@ -442,11 +406,7 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "startTime",
-        "type": "uint256"
-      }
+      { "internalType": "uint256", "name": "startTime", "type": "uint256" }
     ],
     "name": "manualCreateCampaign",
     "outputs": [],
@@ -462,11 +422,7 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "parameter",
-        "type": "bytes32"
-      },
+      { "internalType": "bytes32", "name": "parameter", "type": "bytes32" },
       { "internalType": "address", "name": "addr", "type": "address" }
     ],
     "name": "modifyParameters",
@@ -476,11 +432,7 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "parameter",
-        "type": "bytes32"
-      },
+      { "internalType": "bytes32", "name": "parameter", "type": "bytes32" },
       { "internalType": "uint256", "name": "val", "type": "uint256" }
     ],
     "name": "modifyParameters",
@@ -499,11 +451,7 @@
     "inputs": [],
     "name": "protocolToken",
     "outputs": [
-      {
-        "internalType": "contract TokenLike",
-        "name": "",
-        "type": "address"
-      }
+      { "internalType": "contract TokenLike", "name": "", "type": "address" }
     ],
     "stateMutability": "view",
     "type": "function"
@@ -533,11 +481,7 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "receiver",
-        "type": "address"
-      },
+      { "internalType": "address", "name": "receiver", "type": "address" },
       {
         "internalType": "uint256",
         "name": "protocolTokenAmount",

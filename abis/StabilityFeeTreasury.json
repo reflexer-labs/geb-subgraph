@@ -4,7 +4,7 @@
       { "internalType": "address", "name": "safeEngine_", "type": "address" },
       {
         "internalType": "address",
-        "name": "accountingEngine_",
+        "name": "extraSurplusReceiver_",
         "type": "address"
       },
       { "internalType": "address", "name": "coinJoin_", "type": "address" }
@@ -207,7 +207,7 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "accountingEngine",
+        "name": "extraSurplusReceiver",
         "type": "address"
       },
       {
@@ -219,13 +219,6 @@
     ],
     "name": "TransferSurplusFunds",
     "type": "event"
-  },
-  {
-    "inputs": [],
-    "name": "accountingEngine",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
-    "stateMutability": "view",
-    "type": "function"
   },
   {
     "inputs": [],
@@ -284,6 +277,13 @@
     "inputs": [],
     "name": "expensesMultiplier",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "extraSurplusReceiver",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -355,6 +355,13 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "pullFundsMinThreshold",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       { "internalType": "address", "name": "", "type": "address" },
       { "internalType": "uint256", "name": "", "type": "uint256" }
@@ -402,6 +409,13 @@
       { "internalType": "uint256", "name": "rad", "type": "uint256" }
     ],
     "name": "setTotalAllowance",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "settleDebt",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

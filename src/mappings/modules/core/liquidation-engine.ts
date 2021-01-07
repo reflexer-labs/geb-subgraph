@@ -6,15 +6,11 @@ import {
   RemoveAuthorization,
 } from '../../../../generated/LiquidationEngine/LiquidationEngine'
 
-import {
-  EnglishCollateralAuctionHouse,
-  FixedDiscountCollateralAuctionHouse,
-} from '../../../../generated/templates'
-import { EnglishCollateralAuctionHouse as EnglishCollateralAuctionHouseBind } from '../../../../generated/templates/EnglishCollateralAuctionHouse/EnglishCollateralAuctionHouse'
+import { FixedDiscountCollateralAuctionHouse } from '../../../../generated/templates'
+import { FixedDiscountCollateralAuctionHouse as FixedDiscountCollateralAuctionHouseBind } from '../../../../generated/templates/FixedDiscountCollateralAuctionHouse/FixedDiscountCollateralAuctionHouse'
 import {
   getOrCreateCollateral,
   Safe,
-  EnglishAuctionConfiguration,
   FixedDiscountAuction,
   FixedDiscountAuctionConfiguration,
   EnglishAuction,
@@ -56,7 +52,7 @@ export function handleModifyParametersCollateralTypeAddress(
     collateral.collateralAuctionHouseAddress = address
 
     // Detect the type of auction
-    let auctionHouse = EnglishCollateralAuctionHouseBind.bind(address)
+    let auctionHouse = FixedDiscountCollateralAuctionHouseBind.bind(address)
     let auctionType = auctionHouse.AUCTION_TYPE().toString()
 
     if (auctionType == enums.AuctionType_ENGLISH) {
@@ -69,7 +65,7 @@ export function handleModifyParametersCollateralTypeAddress(
       collateral.englishAuctionConfiguration = auctionConfiguration.id
 
       // Start indexing an instance of english auction contract
-      EnglishCollateralAuctionHouse.create(address)
+      FixedDiscountCollateralAuctionHouse.create(address)
       log.info('Start indexing english auction house: {}', [address.toHexString()])
     } else if (auctionType == enums.AuctionType_FIXED_DISCOUNT) {
       // Default auction config

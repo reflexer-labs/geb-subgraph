@@ -191,8 +191,8 @@ dataSources:
       abis:
         - name: LiquidationEngine
           file: ./abis/LiquidationEngine.json
-        - name: EnglishCollateralAuctionHouse
-          file: ./abis/EnglishCollateralAuctionHouse.json
+        - name: FixedDiscountCollateralAuctionHouse
+          file: ./abis/FixedDiscountCollateralAuctionHouse.json
       eventHandlers:
         - event: Liquidate(indexed bytes32,indexed address,uint256,uint256,uint256,address,uint256)
           handler: handleLiquidate
@@ -241,8 +241,8 @@ dataSources:
           file: ./abis/AccountingEngine.json
         - name: DebtAuctionHouse
           file: ./abis/DebtAuctionHouse.json
-        - name: PreSettlementSurplusAuctionHouse
-          file: ./abis/PreSettlementSurplusAuctionHouse.json
+        - name: BurningSurplusAuctionHouse
+          file: ./abis/BurningSurplusAuctionHouse.json
         
       eventHandlers:
         - event: ModifyParameters(indexed bytes32,address)
@@ -278,7 +278,9 @@ dataSources:
     source:
       abi: DSProxyFactory
       address: '{{PROXY_FACTORY}}'
-      startBlock: {{STARTING_BLOCK_NUMBER}}
+      startBlock: {{PROXY_REGISTRY_STARTING_BLOCK}}
+      # Use this instead of the above for dev (faster sync but not all proxies available)
+      # startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -547,8 +549,8 @@ dataSources:
       abis:
         - name: Medianizer
           file: ./abis/UniswapConsecutiveSlotsMedianRAIUSD.json
-        - name: UniswapPair
-          file: ./abis/UniswapPair.json
+        - name: UniswapV2Pair
+          file: ./abis/UniswapV2Pair.json
       eventHandlers:
         - event:  UpdateResult(uint256,uint256)
           handler: handleUpdateResult
@@ -565,29 +567,6 @@ dataSources:
         #   handler: handleModifyParameters
         # - event:  RewardCaller(address,uint256)
         #   handler: handleRewardCaller
-
-  - name: GebPrintingPermissions
-    kind: ethereum/contract
-    network: {{NETWORK}}
-    source:
-      abi: GebPrintingPermissions
-      address: '{{PRINTING_PERMISSIONS_REGISTRY}}'
-      startBlock: {{STARTING_BLOCK_NUMBER}}
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.4
-      language: wasm/assemblyscript
-      file: ./src/mappings/modules/governance/printing-permission.ts
-      entities:
-        - GebAuthorization
-      abis:
-        - name: GebPrintingPermissions
-          file: ./abis/GebPrintingPermissions.json
-      eventHandlers:
-        - event: AddAuthorization(address)
-          handler: handleAddAuthorization
-        - event: RemoveAuthorization(address)
-          handler: handleRemoveAuthorization
 
   - name: GlobalSettlement
     kind: ethereum/contract
@@ -662,12 +641,12 @@ dataSources:
         # - event: SetRoot(indexed address)
         #   handler: handleSetRoot
   
-  - name: UniswapRollingDistributionIncentives 
+  - name: RollingDistributionIncentives 
     kind: ethereum/contract
     network: {{NETWORK}}
     source:
-      abi: GebUniswapRollingDistributionIncentives
-      address: '{{GEB_UNISWAP_INCENTIVE}}'
+      abi: RollingDistributionIncentives
+      address: '{{GEB_INCENTIVES_MINER}}'
       startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events
@@ -678,8 +657,8 @@ dataSources:
         - IncentiveBalance
         - IncentiveCampaign
       abis:
-        - name: GebUniswapRollingDistributionIncentives
-          file: ./abis/GebUniswapRollingDistributionIncentives.json
+        - name: RollingDistributionIncentives
+          file: ./abis/RollingDistributionIncentives.json
       eventHandlers:
         - event: CampaignAdded(uint256)
           handler: handleCampaignAdded
@@ -728,7 +707,7 @@ dataSources:
     network: {{NETWORK}}
     source:
       abi: ERC20
-      address: '{{UNISWAP_COIN_POOL}}'
+      address: '{{GEB_COIN_UNISWAP_POOL}}'
       startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events
@@ -747,45 +726,6 @@ dataSources:
         #   handler: handleApproval
 
 templates:
-  - name: EnglishCollateralAuctionHouse
-    kind: ethereum/contract
-    network: {{NETWORK}}
-    source:
-      abi: EnglishCollateralAuctionHouse
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.4
-      language: wasm/assemblyscript
-      file: ./src/mappings/modules/auctions/english-collateral-auction-house.ts
-      entities:
-        - CollateralType
-        - CollateralAuction
-        - EnglishAuctionConfiguration
-        - EnglishAuctionBid
-      abis:
-        - name: EnglishCollateralAuctionHouse
-          file: ./abis/EnglishCollateralAuctionHouse.json
-      eventHandlers:
-        - event: DecreaseSoldAmount(indexed uint256,address,uint256,uint256,uint256)
-          handler: handleDecreaseSoldAmount
-        - event: IncreaseBidSize(indexed uint256,address,uint256,uint256,uint256)
-          handler: handleIncreaseBidSize
-        - event: ModifyParameters(bytes32,uint256)
-          handler: handleModifyParametersUint
-        - event: SettleAuction(indexed uint256)
-          handler: handleSettleAuction
-        - event: AddAuthorization(address)
-          handler: handleAddAuthorization
-        - event: RemoveAuthorization(address)
-          handler: handleRemoveAuthorization
-
-        # Remaining events:
-        # - event: RestartAuction(uint256,uint256)
-        #   handler: handleRestartAuction
-        # - event: StartAuction(uint256,uint256,uint256,uint256,uint256,indexed address,indexed address,uint256)
-        #   handler: handleStartAuction
-        # - event: TerminateAuctionPrematurely(uint256,address,uint256,uint256)
-        #   handler: handleTerminateAuctionPrematurely
   
   - name: FixedDiscountCollateralAuctionHouse
     kind: ethereum/contract
@@ -825,11 +765,11 @@ templates:
         # - event: TerminateAuctionPrematurely(uint256,address,uint256)
         #   handler: handleTerminateAuctionPrematurely
 
-  - name: PreSettlementSurplusAuctionHouse
+  - name: BurningSurplusAuctionHouse
     kind: ethereum/contract
     network: {{NETWORK}}
     source:
-      abi: PreSettlementSurplusAuctionHouse
+      abi: BurningSurplusAuctionHouse
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -839,8 +779,8 @@ templates:
         - EnglishAuction
         - EnglishAuctionBid
       abis:
-        - name: PreSettlementSurplusAuctionHouse
-          file: ./abis/PreSettlementSurplusAuctionHouse.json
+        - name: BurningSurplusAuctionHouse
+          file: ./abis/BurningSurplusAuctionHouse.json
       eventHandlers:
         - event: ModifyParameters(bytes32,uint256)
           handler: handleModifyParametersPre
@@ -905,21 +845,21 @@ templates:
         # - event: TerminateAuctionPrematurely(uint256,address,address,uint256,uint256)  
         #   handler: handleTerminateAuctionPrematurely
 
-  - name: UniswapPair
+  - name: UniswapV2Pair
     kind: ethereum/contract
     network: {{NETWORK}}
     source:
-      abi: UniswapPair
+      abi: UniswapV2Pair
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
       language: wasm/assemblyscript
       file: ./src/mappings/modules/uniswap/uniswap.ts
       entities:
-        - UniswapPair
+        - UniswapV2Pair
       abis:
-        - name: UniswapPair
-          file: ./abis/UniswapPair.json
+        - name: UniswapV2Pair
+          file: ./abis/UniswapV2Pair.json
       eventHandlers:
         - event: Sync(uint112,uint112)
           handler: handleSync

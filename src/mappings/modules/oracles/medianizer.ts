@@ -7,8 +7,8 @@ import {
   RemoveAuthorization,
 } from '../../../../generated/EthMedianizer/Medianizer'
 import { Medianizer as UniMedianizer } from '../../../../generated/CoinMedianizer/Medianizer'
-import { UniswapPair as UniswapPairContract } from '../../../../generated/templates/UniswapPair/UniswapPair'
-import { UniswapPair as UniswapPairIndexer } from '../../../../generated/templates'
+import { UniswapV2Pair as UniswapPairContract } from '../../../../generated/templates/UniswapV2Pair/UniswapV2Pair'
+import { UniswapV2Pair as UniswapPairIndexer } from '../../../../generated/templates'
 import {
   getOrCreateCollateral,
   getSystemState,

@@ -5,8 +5,7 @@ import * as integer from '../utils/integer'
 import * as enums from '../utils/enums'
 import { EnglishAuctionConfiguration } from '.'
 import { DebtAuctionHouse } from '../../generated/templates/DebtAuctionHouse/DebtAuctionHouse'
-import { PreSettlementSurplusAuctionHouse } from '../../generated/templates/PreSettlementSurplusAuctionHouse/PreSettlementSurplusAuctionHouse'
-import { EnglishCollateralAuctionHouse } from '../../generated/templates/EnglishCollateralAuctionHouse/EnglishCollateralAuctionHouse'
+import { BurningSurplusAuctionHouse } from '../../generated/templates/BurningSurplusAuctionHouse/BurningSurplusAuctionHouse'
 
 export function getOrCreateEnglishAuctionConfiguration(
   houseAddress: Bytes,
@@ -26,15 +25,9 @@ export function getOrCreateEnglishAuctionConfiguration(
     config.totalAuctionLength = contract.totalAuctionLength()
     config.DEBT_amountSoldIncrease = decimal.fromWad(contract.amountSoldIncrease())
   } else if (configId == enums.EnglishAuctionType_SURPLUS) {
-    let contract = PreSettlementSurplusAuctionHouse.bind(houseAddress as Address)
+    let contract = BurningSurplusAuctionHouse.bind(houseAddress as Address)
     config.bidIncrease = decimal.fromWad(contract.bidIncrease())
     config.bidDuration = contract.bidDuration()
-    config.totalAuctionLength = contract.totalAuctionLength()
-  } else if (configId == enums.EnglishAuctionType_LIQUIDATION) {
-    let contract = EnglishCollateralAuctionHouse.bind(houseAddress as Address)
-    config.bidIncrease = decimal.fromWad(contract.bidIncrease())
-    config.bidDuration = contract.bidDuration()
-    config.LIQUIDATION_collateralType = contract.collateralType().toString()
     config.totalAuctionLength = contract.totalAuctionLength()
   }
 

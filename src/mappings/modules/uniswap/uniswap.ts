@@ -1,8 +1,8 @@
 import {
   Swap,
   Sync,
-  UniswapPair as UniswapPairContract,
-} from '../../../../generated/templates/UniswapPair/UniswapPair'
+  UniswapV2Pair as UniswapPairContract,
+} from '../../../../generated/templates/UniswapV2Pair/UniswapV2Pair'
 import { UniswapPair, UniswapSwap } from '../../../entities'
 import * as decimal from '../../../utils/decimal'
 import { eventUid } from '../../../utils/ethereum'

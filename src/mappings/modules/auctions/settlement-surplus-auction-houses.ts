@@ -5,7 +5,7 @@ import {
   SettleAuction as SettleAuctionPre,
   AddAuthorization,
   RemoveAuthorization,
-} from '../../../../generated/templates/PreSettlementSurplusAuctionHouse/PreSettlementSurplusAuctionHouse'
+} from '../../../../generated/templates/BurningSurplusAuctionHouse/BurningSurplusAuctionHouse'
 
 import { EnglishAuctionConfiguration, EnglishAuctionBid, EnglishAuction } from '../../../entities'
 import { BigInt, ethereum, BigDecimal, Bytes, dataSource } from '@graphprotocol/graph-ts'

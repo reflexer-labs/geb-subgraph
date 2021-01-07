@@ -11,7 +11,7 @@ import {
 import { EnglishAuction } from '../../../entities'
 import { log } from '@graphprotocol/graph-ts'
 import * as enums from '../../../utils/enums'
-import { DebtAuctionHouse, PreSettlementSurplusAuctionHouse } from '../../../../generated/templates'
+import { DebtAuctionHouse, BurningSurplusAuctionHouse } from '../../../../generated/templates'
 import { getOrCreateEnglishAuctionConfiguration } from '../../../entities/auctions'
 import { addAuthorization, removeAuthorization } from '../governance/authorizations'
 import { getOrCreateAccountingEngine } from '../../../entities/accounting-engine'
@@ -29,7 +29,7 @@ export function handleModifyParametersAddress(event: ModifyParametersAddress): v
     getOrCreateEnglishAuctionConfiguration(data, enums.EnglishAuctionType_SURPLUS)
 
     // Start indexing
-    PreSettlementSurplusAuctionHouse.create(data)
+    BurningSurplusAuctionHouse.create(data)
     log.info('Set surplus pre auction house to {}', [accounting.surplusAuctionHouse.toHexString()])
     accounting.surplusAuctionHouse = data
   } else if (what == 'debtAuctionHouse') {

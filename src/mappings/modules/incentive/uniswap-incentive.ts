@@ -3,12 +3,12 @@ import * as integer from '../../../utils/integer'
 import {
   DelayedRewardPaid,
   DelayReward,
-  GebUniswapRollingDistributionIncentives,
+  RollingDistributionIncentives,
   RewardPaid,
   CampaignAdded,
   Staked,
   Withdrawn,
-} from '../../../../generated/UniswapRollingDistributionIncentives/GebUniswapRollingDistributionIncentives'
+} from '../../../../generated/RollingDistributionIncentives/RollingDistributionIncentives'
 
 import { Address, ethereum, log, BigInt } from '@graphprotocol/graph-ts'
 import { getOrCreateERC20Balance } from '../../../entities/erc20'
@@ -16,7 +16,7 @@ import { IncentiveBalance, IncentiveCampaign, UserProxy } from '../../../../gene
 
 const INCENTIVE_STAKE_LABEL = 'INCENTIVE_STAKE'
 export function handleCampaignAdded(event: CampaignAdded): void {
-  let contract = GebUniswapRollingDistributionIncentives.bind(event.address)
+  let contract = RollingDistributionIncentives.bind(event.address)
   let campaign = new IncentiveCampaign(event.params.campaignId.toString())
 
   let campaignObj = contract.campaigns(event.params.campaignId)
@@ -56,7 +56,7 @@ export function handleDelayReward(event: DelayReward): void {
 export function handleDelayedRewardPaid(event: DelayedRewardPaid): void {
   // The generic update function does not work in this case since we can claim very old campaigns
   // that are not synced anymore.
-  let contract = GebUniswapRollingDistributionIncentives.bind(event.address)
+  let contract = RollingDistributionIncentives.bind(event.address)
   let bal = getOrCreateIncentiveBalance(event.params.user, event.params.campaignId, event)
   let vestingVars = contract.delayedRewards(event.params.user, event.params.campaignId)
 
@@ -69,7 +69,7 @@ export function handleDelayedRewardPaid(event: DelayedRewardPaid): void {
 
 // This function replicates the updateReward reward modifier of the incentive contract
 function updateAccountStake(account: Address, event: ethereum.Event): void {
-  let contract = GebUniswapRollingDistributionIncentives.bind(event.address)
+  let contract = RollingDistributionIncentives.bind(event.address)
   let firstCampaign = contract.firstCampaign().toI32()
   let lastCampaignBigInt = contract.campaignCount()
   let lastCampaign = lastCampaignBigInt.toI32()

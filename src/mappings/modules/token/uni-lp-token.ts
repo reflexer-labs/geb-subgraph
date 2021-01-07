@@ -10,9 +10,9 @@ const UNISWAP_POOL_TOKEN_COIN_LABEL = 'UNISWAP_POOL_TOKEN_COIN'
 export function handleTransfer(event: Transfer): void {
   let tokenAddress = dataSource.address()
 
-  let source = event.params.from
-  let destination = event.params.to
-  let amount = decimal.fromWad(event.params.value)
+  let source = event.params.src
+  let destination = event.params.dst
+  let amount = decimal.fromWad(event.params.wad)
   let nullAddress = Address.fromHexString('0x0000000000000000000000000000000000000000')
 
   // Check if it's not a burn before updating destination

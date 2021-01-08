@@ -20,6 +20,7 @@ import * as decimal from '../../../utils/decimal'
 import { addressMap } from '../../../utils/addresses'
 import { ETH_A } from '../../../utils/bytes'
 import { addAuthorization, removeAuthorization } from '../governance/authorizations'
+import { periodicHandler } from '../core/periodic-handler'
 
 // Called for both Chainlink and Uniswap medianizer
 export function handleUpdateResult(event: UpdateResult): void {
@@ -48,6 +49,10 @@ export function handleUpdateResult(event: UpdateResult): void {
   } else {
     log.error('Medianizer address not found', [])
   }
+
+  // Since the medianizers are called often, call the periodic handler from here
+  // to create historical data.
+  periodicHandler(event) 
 }
 
 // Only call for the Uniswap medianizer

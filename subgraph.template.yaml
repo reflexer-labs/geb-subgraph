@@ -241,7 +241,7 @@ dataSources:
           file: ./abis/AccountingEngine.json
         - name: DebtAuctionHouse
           file: ./abis/DebtAuctionHouse.json
-        - name: BurningSurplusAuctionHouse
+        - name: SurplusAuctionHouse
           file: ./abis/BurningSurplusAuctionHouse.json
         
       eventHandlers:
@@ -725,6 +725,90 @@ dataSources:
         # - event: Approval(indexed address,indexed address,uint256)
         #   handler: handleApproval
 
+  - name: SurplusAuctionHouse
+    kind: ethereum/contract
+    network: {{NETWORK}}
+    source:
+      abi: SurplusAuctionHouse
+      address: '{{GEB_SURPLUS_AUCTION_HOUSE}}'
+      startBlock: {{STARTING_BLOCK_NUMBER}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/modules/auctions/surplus-auction-houses.ts
+      entities:
+        - EnglishAuction
+        - EnglishAuctionBid
+      abis:
+        - name: SurplusAuctionHouse
+          file: ./abis/BurningSurplusAuctionHouse.json
+      eventHandlers:
+        - event: ModifyParameters(bytes32,uint256)
+          handler: handleModifyParameters
+        - event: IncreaseBidSize(uint256,address,uint256,uint256,uint256)
+          handler: handleIncreaseBidSize
+        - event: RestartAuction(uint256,uint256)
+          handler: handleRestartAuction
+        - event: SettleAuction(indexed uint256)
+          handler: handleSettleAuction
+        - event: AddAuthorization(address)
+          handler: handleAddAuthorization
+        - event: RemoveAuthorization(address)
+          handler: handleRemoveAuthorization
+
+        # Remaining events:
+        # - event: DisableContract()
+        #   handler: handleDisableContract
+        # - event: StartAuction(uint256,uint256,uint256,uint256,uint256)
+        #   handler: handleStartAuction
+        # - event: TerminateAuctionPrematurely(uint256,address,address,uint256)
+        #   handler: handleTerminateAuctionPrematurely
+
+  - name: DebtAuctionHouse
+    kind: ethereum/contract
+    network: {{NETWORK}}
+    source:
+      abi: DebtAuctionHouse
+      address: '{{GEB_DEBT_AUCTION_HOUSE}}'
+      startBlock: {{STARTING_BLOCK_NUMBER}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/modules/auctions/debt-auction-house.ts
+      entities:
+        - CollateralType
+        - FixedDiscountAuction
+        - FixedDiscountAuctionConfiguration
+        - FixedDiscountAuctionBatch
+      abis:
+        - name: DebtAuctionHouse
+          file: ./abis/DebtAuctionHouse.json
+      eventHandlers:
+        - event: ModifyParameters(bytes32,uint256)
+          handler: handleModifyParametersUint
+        - event: AddAuthorization(address)
+          handler: handleAddAuthorization
+        - event: RemoveAuthorization(address)
+          handler: handleRemoveAuthorization
+        - event: DecreaseSoldAmount(indexed uint256,address,uint256,uint256,uint256)
+          handler: handleDecreaseSoldAmount
+        - event: RestartAuction(indexed uint256,uint256)
+          handler: handleRestartAuction
+        - event: SettleAuction(indexed uint256,uint256)
+          handler: handleSettleAuction
+
+        # Remaining events:
+        # - event: ModifyParameters(bytes32,address)
+        #   handler: handleModifyParametersAddress
+        # - event: DisableContract(address)
+        #   handler: handleDisableContract
+        # - event: StartAuction(uint256,uint256,uint256,uint256,indexed address,uint256,uint256)
+        #   handler: handleStartAuction
+        # - event: TerminateAuctionPrematurely(uint256,address,address,uint256,uint256)  
+        #   handler: handleTerminateAuctionPrematurely
+
 templates:
   
   - name: FixedDiscountCollateralAuctionHouse
@@ -763,86 +847,6 @@ templates:
         # - event: StartAuction(uint256,uint256,uint256,uint256,uint256,indexed address,indexed address,uint256)
         #   handler: handleStartAuction
         # - event: TerminateAuctionPrematurely(uint256,address,uint256)
-        #   handler: handleTerminateAuctionPrematurely
-
-  - name: BurningSurplusAuctionHouse
-    kind: ethereum/contract
-    network: {{NETWORK}}
-    source:
-      abi: BurningSurplusAuctionHouse
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.4
-      language: wasm/assemblyscript
-      file: ./src/mappings/modules/auctions/settlement-surplus-auction-houses.ts
-      entities:
-        - EnglishAuction
-        - EnglishAuctionBid
-      abis:
-        - name: BurningSurplusAuctionHouse
-          file: ./abis/BurningSurplusAuctionHouse.json
-      eventHandlers:
-        - event: ModifyParameters(bytes32,uint256)
-          handler: handleModifyParametersPre
-        - event: IncreaseBidSize(uint256,address,uint256,uint256,uint256)
-          handler: handleIncreaseBidSizePre
-        - event: RestartAuction(uint256,uint256)
-          handler: handleRestartAuctionPre
-        - event: SettleAuction(indexed uint256)
-          handler: handleSettleAuctionPre
-        - event: AddAuthorization(address)
-          handler: handleAddAuthorization
-        - event: RemoveAuthorization(address)
-          handler: handleRemoveAuthorization
-
-        # Remaining events:
-        # - event: DisableContract()
-        #   handler: handleDisableContract
-        # - event: StartAuction(uint256,uint256,uint256,uint256,uint256)
-        #   handler: handleStartAuction
-        # - event: TerminateAuctionPrematurely(uint256,address,address,uint256)
-        #   handler: handleTerminateAuctionPrematurely
-
-  - name: DebtAuctionHouse
-    kind: ethereum/contract
-    network: {{NETWORK}}
-    source:
-      abi: DebtAuctionHouse
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.4
-      language: wasm/assemblyscript
-      file: ./src/mappings/modules/auctions/debt-auction-house.ts
-      entities:
-        - CollateralType
-        - FixedDiscountAuction
-        - FixedDiscountAuctionConfiguration
-        - FixedDiscountAuctionBatch
-      abis:
-        - name: DebtAuctionHouse
-          file: ./abis/DebtAuctionHouse.json
-      eventHandlers:
-        - event: ModifyParameters(bytes32,uint256)
-          handler: handleModifyParametersUint
-        - event: AddAuthorization(address)
-          handler: handleAddAuthorization
-        - event: RemoveAuthorization(address)
-          handler: handleRemoveAuthorization
-
-        # Remaining events:
-        # - event: ModifyParameters(bytes32,address)
-        #   handler: handleModifyParametersAddress
-        # - event: DecreaseSoldAmount(uint256,address,uint256,uint256,uint256)
-        #   handler: handleDecreaseSoldAmount
-        # - event: DisableContract(address)
-        #   handler: handleDisableContract
-        # - event: RestartAuction(uint256,uint256)
-        #   handler: handleRestartAuction
-        # - event: SettleAuction(uint256,uint256)
-        #   handler: handleSettleAuction
-        # - event: StartAuction(uint256,uint256,uint256,uint256,indexed address,uint256,uint256)
-        #   handler: handleStartAuction
-        # - event: TerminateAuctionPrematurely(uint256,address,address,uint256,uint256)  
         #   handler: handleTerminateAuctionPrematurely
 
   - name: UniswapV2Pair

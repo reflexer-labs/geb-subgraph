@@ -5,7 +5,7 @@ import {
   SettleAuction,
   AddAuthorization,
   RemoveAuthorization,
-} from '../../../../generated/templates/DebtAuctionHouse/DebtAuctionHouse'
+} from '../../../../generated/DebtAuctionHouse/DebtAuctionHouse'
 import { EnglishAuctionConfiguration, EnglishAuctionBid, EnglishAuction } from '../../../entities'
 import { dataSource, log, BigInt } from '@graphprotocol/graph-ts'
 
@@ -39,14 +39,13 @@ export function handleModifyParametersUint(event: ModifyParametersUint): void {
 }
 
 export function handleDecreaseSoldAmount(event: DecreaseSoldAmount): void {
-  let id = event.params.id
   let auction = EnglishAuction.load(auctionId(event.params.id))
   let bid = new EnglishAuctionBid(bidAuctionId(event.params.id, auction.auctionId))
 
   bid.bidNumber = auction.numberOfBids
   bid.type = enums.EnglishBidType_DECREASE_SOLD
   bid.auction = auction.id
-  bid.sellAmount = decimal.fromRad(event.params.amountToBuy)
+  bid.sellAmount = decimal.fromWad(event.params.amountToBuy)
   bid.buyAmount = auction.buyInitialAmount
   bid.price = bid.sellAmount.div(bid.buyAmount)
   bid.bidder = event.params.highBidder

@@ -11,7 +11,6 @@ import {
 import { EnglishAuction } from '../../../entities'
 import { log } from '@graphprotocol/graph-ts'
 import * as enums from '../../../utils/enums'
-import { DebtAuctionHouse, BurningSurplusAuctionHouse } from '../../../../generated/templates'
 import { getOrCreateEnglishAuctionConfiguration } from '../../../entities/auctions'
 import { addAuthorization, removeAuthorization } from '../governance/authorizations'
 import { getOrCreateAccountingEngine } from '../../../entities/accounting-engine'
@@ -22,31 +21,17 @@ export function handleModifyParametersAddress(event: ModifyParametersAddress): v
   let accounting = getOrCreateAccountingEngine(event)
 
   if (what == 'surplusAuctionHouse') {
-    // Assign the surplus auction house
-    accounting.surplusAuctionHouse = data
-
-    // Create or update the auction house object
-    getOrCreateEnglishAuctionConfiguration(data, enums.EnglishAuctionType_SURPLUS)
-
-    // Start indexing
-    BurningSurplusAuctionHouse.create(data)
-    log.info('Set surplus pre auction house to {}', [accounting.surplusAuctionHouse.toHexString()])
-    accounting.surplusAuctionHouse = data
+    // If this is called we need to adjust the subgraph accordingly anyway
+    log.error('Setting surplus auction house to {}', [accounting.surplusAuctionHouse.toHexString()])
   } else if (what == 'debtAuctionHouse') {
-    // Assign the debt auction house
-    accounting.debtAuctionHouse = data
-
-    // Create or update the auction house object
-    getOrCreateEnglishAuctionConfiguration(data, enums.EnglishAuctionType_DEBT)
-
-    log.info('Set debt auction house to {}', [accounting.debtAuctionHouse.toHexString()])
-
-    // Start indexing
-    DebtAuctionHouse.create(data)
+    // If this is called we need to adjust the subgraph accordingly anyway
+    log.error('Setting debt auction house to {}', [accounting.debtAuctionHouse.toHexString()])
   } else if (what == 'postSettlementSurplusDrain') {
     accounting.postSettlementSurplusDrain = data
+    log.info('Set postSettlementSurplusDrain in accounting engine', [])
   } else if (what == 'protocolTokenAuthority') {
     accounting.protocolTokenAuthority = data
+    log.info('Set protocolTokenAuthority in accounting engine', [])
   } else {
     log.warning('Unknown parameter {}', [what])
   }
@@ -74,6 +59,7 @@ export function handleModifyParametersUint(event: ModifyParametersUint): void {
   } else if (what == 'disableCooldown') {
     accounting.disableCooldown = data
   }
+  accounting.save()
 }
 
 export function handleAuctionDebt(event: AuctionDebt): void {
@@ -99,7 +85,7 @@ export function handleAuctionDebt(event: AuctionDebt): void {
   auction.numberOfBids = integer.ZERO
   auction.englishAuctionType = enums.EnglishAuctionType_DEBT
   auction.buyToken = enums.AuctionToken_COIN
-  auction.sellToken = enums.AuctionToken_COLLATERAL
+  auction.sellToken = enums.AuctionToken_PROTOCOL_TOKEN
   auction.sellInitialAmount = accounting.initialDebtAuctionMintedTokens
   auction.buyInitialAmount = accounting.debtAuctionBidSize
   auction.sellAmount = auction.sellInitialAmount

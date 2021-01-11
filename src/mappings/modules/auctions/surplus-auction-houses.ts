@@ -1,11 +1,11 @@
 import {
-  ModifyParameters as ModifyParametersPre,
-  IncreaseBidSize as IncreaseBidSizePre,
-  RestartAuction as RestartAuctionPre,
-  SettleAuction as SettleAuctionPre,
+  ModifyParameters,
+  IncreaseBidSize,
+  RestartAuction,
+  SettleAuction,
   AddAuthorization,
   RemoveAuthorization,
-} from '../../../../generated/templates/BurningSurplusAuctionHouse/BurningSurplusAuctionHouse'
+} from '../../../../generated/SurplusAuctionHouse/SurplusAuctionHouse'
 
 import { EnglishAuctionConfiguration, EnglishAuctionBid, EnglishAuction } from '../../../entities'
 import { BigInt, ethereum, BigDecimal, Bytes, dataSource } from '@graphprotocol/graph-ts'
@@ -17,7 +17,7 @@ import { getOrCreateEnglishAuctionConfiguration } from '../../../entities/auctio
 import { addAuthorization, removeAuthorization } from '../governance/authorizations'
 import { getOrCreateAccountingEngine } from '../../../entities/accounting-engine'
 
-export function handleModifyParametersPre(event: ModifyParametersPre): void {
+export function handleModifyParameters(event: ModifyParameters): void {
   let config = getOrCreateEnglishAuctionConfiguration(
     dataSource.address(),
     enums.EnglishAuctionType_SURPLUS,
@@ -38,14 +38,13 @@ function modifyParameter(config: EnglishAuctionConfiguration, what: string, val:
   config.save()
 }
 
-export function handleIncreaseBidSizePre(event: IncreaseBidSizePre): void {
+export function handleIncreaseBidSize(event: IncreaseBidSize): void {
   increaseBidSize(
     event.params.id,
-    decimal.fromRad(event.params.bid),
+    decimal.fromWad(event.params.bid),
     event.params.highBidder,
     event.params.bidExpiry,
     event,
-    true,
   )
 }
 
@@ -55,10 +54,9 @@ function increaseBidSize(
   highBidder: Bytes,
   bidExpiry: BigInt,
   event: ethereum.Event,
-  isPre: boolean,
 ): void {
-  let auction = EnglishAuction.load(auctionId(id, isPre))
-  let bid = new EnglishAuctionBid(bidAuctionId(id, auction.auctionId, isPre))
+  let auction = EnglishAuction.load(auctionId(id))
+  let bid = new EnglishAuctionBid(bidAuctionId(id, auction.auctionId))
 
   bid.bidNumber = auction.numberOfBids
   bid.type = enums.EnglishBidType_INCREASE_BUY
@@ -80,40 +78,36 @@ function increaseBidSize(
   auction.save()
 }
 
-export function handleRestartAuctionPre(event: RestartAuctionPre): void {
-  restartAuction(event.params.id, event.params.auctionDeadline, true)
+export function handleRestartAuction(event: RestartAuction): void {
+  restartAuction(event.params.id, event.params.auctionDeadline)
 }
 
-export function handleSettleAuctionPre(event: SettleAuctionPre): void {
-  settleAuction(event.params.id, true, event)
+export function handleSettleAuction(event: SettleAuction): void {
+  settleAuction(event.params.id, event)
 }
 
-function restartAuction(id: BigInt, auctionDeadline: BigInt, isPre: boolean): void {
-  let auction = EnglishAuction.load(auctionId(id, isPre))
+function restartAuction(id: BigInt, auctionDeadline: BigInt): void {
+  let auction = EnglishAuction.load(auctionId(id))
   auction.auctionDeadline = auctionDeadline
   auction.save()
 }
 
-function settleAuction(id: BigInt, isPre: boolean, event: ethereum.Event): void {
+function settleAuction(id: BigInt, event: ethereum.Event): void {
   let accounting = getOrCreateAccountingEngine(event)
   accounting.activeSurplusAuctions = accounting.activeSurplusAuctions.minus(integer.ONE)
   accounting.save()
 
-  let auction = EnglishAuction.load(auctionId(id, isPre))
+  let auction = EnglishAuction.load(auctionId(id))
   auction.isClaimed = true
   auction.save()
 }
 
-function auctionId(auctionId: BigInt, isPre: boolean): string {
-  return isPre
-    ? enums.EnglishAuctionType_SURPLUS
-    : enums.EnglishAuctionType_SURPLUS + '-' + auctionId.toString()
+function auctionId(auctionId: BigInt): string {
+  return enums.EnglishAuctionType_SURPLUS + '-' + auctionId.toString()
 }
 
-function bidAuctionId(auctionId: BigInt, bidNumber: BigInt, isPre: boolean): string {
-  return isPre
-    ? enums.EnglishAuctionType_SURPLUS
-    : enums.EnglishAuctionType_SURPLUS + '-' + auctionId.toString() + '-' + bidNumber.toString()
+function bidAuctionId(auctionId: BigInt, bidNumber: BigInt): string {
+  return enums.EnglishAuctionType_SURPLUS + '-' + auctionId.toString() + '-' + bidNumber.toString()
 }
 
 export function handleAddAuthorization(event: AddAuthorization): void {

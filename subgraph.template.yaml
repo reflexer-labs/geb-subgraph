@@ -640,45 +640,7 @@ dataSources:
         #   handler: handleSetOwner
         # - event: SetRoot(indexed address)
         #   handler: handleSetRoot
-  
-  - name: RollingDistributionIncentives 
-    kind: ethereum/contract
-    network: {{NETWORK}}
-    source:
-      abi: RollingDistributionIncentives
-      address: '{{GEB_INCENTIVES_MINER}}'
-      startBlock: {{STARTING_BLOCK_NUMBER}}
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.4
-      language: wasm/assemblyscript
-      file: ./src/mappings/modules/incentive/uniswap-incentive.ts
-      entities:
-        - IncentiveBalance
-        - IncentiveCampaign
-      abis:
-        - name: RollingDistributionIncentives
-          file: ./abis/RollingDistributionIncentives.json
-      eventHandlers:
-        - event: CampaignAdded(uint256)
-          handler: handleCampaignAdded
-        - event: Staked(indexed address,uint256)
-          handler: handleStaked
-        - event: Withdrawn(indexed address,uint256)
-          handler: handleWithdrawn
-        - event: RewardPaid(indexed address,uint256)
-          handler: handleRewardPaid
-        - event: DelayReward(address,uint256,uint256,uint256)
-          handler: handleDelayReward
-        - event: DelayedRewardPaid(indexed address,uint256,uint256)
-          handler: handleDelayedRewardPaid
-        # - event: ModifyParameters(indexed bytes32,uint256)
-        #   handler: handleModifyParameters
-        # - event: ModifyParameters(indexed bytes32,uint256,uint256)
-        #   handler: handleModifyParameters
-        # - event: WithdrewExtraRewardTokens(address,uint256,uint256)
-        #   handler: handleWithdrewExtraRewardTokens
-  
+
   - name: ProtToken 
     kind: ethereum/contract
     network: {{NETWORK}}
@@ -809,6 +771,35 @@ dataSources:
         # - event: TerminateAuctionPrematurely(uint256,address,address,uint256,uint256)  
         #   handler: handleTerminateAuctionPrematurely
 
+  - name: StakingRewardsFactory 
+    kind: ethereum/contract
+    network: {{NETWORK}}
+    source:
+      abi: StakingRewardsFactory
+      address: '{{GEB_INCENTIVES}}'
+      startBlock: {{STARTING_BLOCK_NUMBER}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/modules/incentive/incentive-factory.ts
+      entities:
+        - IncentiveBalance
+        - IncentiveCampaign
+      abis:
+        - name: StakingRewardsFactory
+          file: ./abis/StakingRewardsFactory.json
+      eventHandlers:
+        - event: Deploy(indexed address,indexed uint256,uint256,uint256)
+          handler: handleDeploy
+        - event: AddAuthorization(address)
+          handler: handleAddAuthorization
+        - event: RemoveAuthorization(address)
+          handler: handleRemoveAuthorization
+        # - event: ModifyParameters(indexed uint256,bytes32,uint256)
+        #   handler: handleModifyParameters
+        # - event: NotifyRewardAmount(indexed uint256,uint256)
+        #   handler: handleNotifyRewardAmount
 templates:
   
   - name: FixedDiscountCollateralAuctionHouse
@@ -875,3 +866,29 @@ templates:
         #   handler: handleBurn
         # - event: Transfer(indexed address,indexed address,uint256)
         #   handler: handleTransfer
+  
+  - name: StakingRewards
+    kind: ethereum/contract
+    network: {{NETWORK}}
+    source:
+      abi: StakingRewards
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/modules/incentive/incentive.ts
+      entities:
+        - IncentiveBalance
+        - IncentiveCampaign
+      abis:
+        - name: StakingRewards
+          file: ./abis/StakingRewards.json
+      eventHandlers:
+        - event: RewardAdded(uint256)
+          handler: handleRewardAdded
+        - event: RewardPaid(indexed address,uint256)
+          handler: handleRewardPaid
+        - event: Staked(indexed address,uint256)
+          handler: handleStaked
+        - event: Withdrawn(indexed address,uint256)
+          handler: handleWithdrawn

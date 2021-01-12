@@ -1316,29 +1316,32 @@ type UniswapSwap @entity {
 # --- Incentive ---
 
 type IncentiveCampaign @entity {
-  " <Campaign ID> "
+  " <Address of the campaign contract> "
   id: ID!
 
-  " Start date of the campaign "
-  startTime: BigInt!
+  " Address of the campaign contract "
+  campaignAddress: Bytes!
 
-  " Duration in second of the campaign "
-  duration: BigInt!
+  " Campaign incremental ID "
+  campaignNumber: BigInt!
 
-  " Vesting period in seconds "
-  rewardDelay: BigInt!
+  " Duration of the reward distribution "
+  rewardsDuration: BigInt!
 
-  " Share of the reward that can be exited instantly "
-  instantExitPercentage: BigDecimal!
-
-  " Total reward offered during the campaign "
-  reward: BigDecimal!
+  " End of the reward distribution "
+  periodFinish: BigInt!
 
   " Per second distributed reward "
   rewardRate: BigDecimal!
 
   " Total LP shares staked into the contract "
   totalSupply: BigDecimal!
+
+  " Token distributed "
+  rewardToken: Bytes!
+
+  " Token staked "
+  stakingToken: Bytes!
 
   " Last update date of rewardPerTokenStored "
   lastUpdatedTime: BigInt!
@@ -1366,35 +1369,29 @@ type IncentiveCampaign @entity {
 }
 
 type IncentiveBalance @entity {
-  " <address>-<Campaign ID> "
+  " <campaign address>-<staker address> "
   id: ID!
 
   " Address of the staker "
   address: Bytes!
 
   " Campaign number "
-  campaignId: BigInt!
+  campaignNumber: BigInt!
+
+  " Campaign contract address"
+  campaignAddress: Bytes!
 
   " Owner of the address (proxy owner if address is a proxy)"
   owner: User
 
-  " Amount of staked LP shares "
-  stakedBalance: BigDecimal!
+  " Individual stake token balance in the contract"
+  stakeBalance: BigDecimal!
 
   " Cumulative reward available to claim (do not include the part since last update) "
   reward: BigDecimal!
 
   " Paid out reward per token  accumulator "
   userRewardPerTokenPaid: BigDecimal!
-
-  " Total vested reward (already paid out + not yet paid out)"
-  delayedRewardTotalAmount: BigDecimal!
-
-  " Paid out vested rewards out of delayedRewardTotalAmount "
-  delayedRewardExitedAmount: BigDecimal!
-
-  " Last time vested rewards were claimed "
-  delayedRewardLatestExitTime: BigInt!
 
   " Timestamp of the block at which the campaign was made [seconds] "
   createdAt: BigInt!

@@ -739,7 +739,7 @@ dataSources:
         - ERC20Balance
       abis:
         - name: ERC20
-          file: ./abis/ERC20.json
+          file: ./abis/UniswapPair.json
       eventHandlers:
         - event: Transfer(indexed address,indexed address,uint256)
           handler: handleTransfer

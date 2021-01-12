@@ -14,6 +14,11 @@ export function periodicHandler(event: ethereum.Event): void {
   state.lastPeriodicUpdate = timestamp
   state.save()
 
+  if (!state.currentRedemptionRate || !state.currentRedemptionPrice) {
+    // We're missing data, maybe the system is starting
+    return
+  }
+
   if (daily == null) {
     // Daily record
     daily = new DailyStat(dailyId)

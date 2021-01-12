@@ -21,6 +21,8 @@ services:
       ETHEREUM_POLLING_INTERVAL: 500
       ETHEREUM_ANCESTOR_COUNT: 15
       ETHEREUM_REORG_THRESHOLD: 15
+      EXPERIMENTAL_SUBGRAPH_VERSION_SWITCHING_MODE: synced
+
     restart: always
   ipfs:
     image: ipfs/go-ipfs:v0.4.23

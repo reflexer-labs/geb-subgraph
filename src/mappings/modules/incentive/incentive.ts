@@ -7,7 +7,7 @@ import {
   Withdrawn,
 } from '../../../../generated/templates/StakingRewards/StakingRewards'
 import * as decimal from '../../../utils/decimal'
-import { Address, Bytes, log } from '@graphprotocol/graph-ts'
+import { Address, Bytes, ethereum, log } from '@graphprotocol/graph-ts'
 
 // Kick-off the campaign by adding rewards
 export function handleRewardAdded(event: RewardAdded): void {
@@ -31,7 +31,6 @@ export function handleStaked(event: Staked): void {
   let contract = StakingRewards.bind(event.address)
 
   campaign.totalSupply = campaign.totalSupply.plus(amount)
-  campaign.save()
 
   let incentiveBalId = incentiveBalanceId(event.address, event.params.user)
   let bal = IncentiveBalance.load(incentiveBalId)
@@ -55,11 +54,13 @@ export function handleStaked(event: Staked): void {
     bal.stakeBalance = bal.stakeBalance.plus(decimal.fromWad(event.params.amount))
   }
 
-  updateReward(bal as IncentiveBalance, contract)
+  updateReward(bal as IncentiveBalance, campaign as IncentiveCampaign, contract, event)
 
   bal.modifiedAt = event.block.timestamp
   bal.modifiedAtBlock = event.block.number
   bal.modifiedAtTransaction = event.transaction.hash
+
+  campaign.save()
   bal.save()
 }
 
@@ -69,7 +70,6 @@ export function handleWithdrawn(event: Withdrawn): void {
   let contract = StakingRewards.bind(event.address)
 
   campaign.totalSupply = campaign.totalSupply.minus(amount)
-  campaign.save()
 
   let incentiveBalId = incentiveBalanceId(event.address, event.params.user)
   let bal = IncentiveBalance.load(incentiveBalId)
@@ -79,9 +79,11 @@ export function handleWithdrawn(event: Withdrawn): void {
     return
   }
 
-  updateReward(bal as IncentiveBalance, contract)
+  updateReward(bal as IncentiveBalance, campaign as IncentiveCampaign, contract, event)
 
   bal.stakeBalance = bal.stakeBalance.minus(amount)
+
+  campaign.save()
   bal.save()
 }
 
@@ -90,14 +92,17 @@ export function handleRewardPaid(event: RewardPaid): void {
 
   let incentiveBalId = incentiveBalanceId(event.address, event.params.user)
   let bal = IncentiveBalance.load(incentiveBalId)
+  let campaign = IncentiveCampaign.load(event.address.toHexString())
 
   if (!bal) {
     log.error('Withdraw from non existing balance {}', [incentiveBalId])
     return
   }
 
-  updateReward(bal as IncentiveBalance, contract)
+  updateReward(bal as IncentiveBalance, campaign as IncentiveCampaign, contract, event)
   bal.reward = decimal.ZERO
+
+  campaign.save()
   bal.save()
 }
 
@@ -106,7 +111,21 @@ function incentiveBalanceId(campaignAddress: Address, userAddress: Address): str
 }
 
 // Does the job of the updateReward modifier from the staking contract
-function updateReward(incentiveBalance: IncentiveBalance, contract: StakingRewards): void {
+function updateReward(
+  incentiveBalance: IncentiveBalance,
+  incentiveCampaign: IncentiveCampaign,
+  contract: StakingRewards,
+  event: ethereum.Event,
+): void {
+  // Campaign specific vars
+  incentiveCampaign.lastUpdatedTime =
+    event.block.timestamp > incentiveCampaign.periodFinish
+      ? incentiveCampaign.periodFinish
+      : event.block.timestamp
+
+  incentiveCampaign.rewardPerTokenStored = decimal.fromWad(contract.rewardPerTokenStored())
+
+  // User specific vars
   incentiveBalance.reward = decimal.fromWad(contract.rewards(incentiveBalance.address as Address))
   incentiveBalance.userRewardPerTokenPaid = decimal.fromWad(
     contract.userRewardPerTokenPaid(incentiveBalance.address as Address),

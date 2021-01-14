@@ -14,7 +14,7 @@ services:
       postgres_pass: ${POSTGRES_PASSWORD}
       postgres_db: graph-node
       ipfs: "ipfs:5001"
-      ethereum: "${NETWORK}:${ETHEREUM_RPC}"
+      ethereum: ${ETHEREUM_RPC}
       RUST_LOG: error
       GRAPH_LOG: info
       GRAPH_ETH_CALL_BY_NUMBER: "true"

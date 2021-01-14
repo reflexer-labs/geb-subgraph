@@ -33,10 +33,6 @@ export function handleUpdateResult(event: UpdateResult): void {
     let collateral = getOrCreateCollateral(ETH_A, event)
     collateral.currentFsmUpdate = id
     collateral.save()
-  } else if (contractAddress.equals(addressMap.get('FEED_SECURITY_MODULE_RAI'))) {
-    let system = getSystemState(event)
-    system.currentCoinFsmUpdate = id
-    system.save()
   } else {
     log.error('FSM address not found', [])
   }

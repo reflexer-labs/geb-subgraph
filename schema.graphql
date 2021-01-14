@@ -312,9 +312,6 @@ type SystemState @entity {
   " Latest redemption price "
   currentRedemptionPrice: RedemptionPrice
 
-  " Latest Coin FSM update "
-  currentCoinFsmUpdate: FsmUpdate
-
   " Latest Coin medianizer update "
   currentCoinMedianizerUpdate: MedianizerUpdate
 

@@ -278,9 +278,9 @@ dataSources:
     source:
       abi: DSProxyFactory
       address: '{{PROXY_FACTORY}}'
-      startBlock: {{PROXY_REGISTRY_STARTING_BLOCK}}
+      # startBlock: {{PROXY_REGISTRY_STARTING_BLOCK}}
       # Use this instead of the above for dev (faster sync but not all proxies available)
-      # startBlock: {{STARTING_BLOCK_NUMBER}}
+      startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -462,42 +462,6 @@ dataSources:
         # - event: Stop()
         #   handler: handleStop
 
-  - name: CoinDsm
-    kind: ethereum/contract
-    network: {{NETWORK}}
-    source:
-      abi: Osm
-      address: '{{FEED_SECURITY_MODULE_RAI}}'
-      startBlock: {{STARTING_BLOCK_NUMBER}}
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.4
-      language: wasm/assemblyscript
-      file: ./src/mappings/modules/oracles/fsm.ts
-      entities:
-        - FSMUpdate
-      abis:
-        - name: Osm
-          file: ./abis/OSM.json
-      eventHandlers:
-        - event: UpdateResult(uint256,uint256)
-          handler: handleUpdateResult
-        - event: AddAuthorization(address)
-          handler: handleAddAuthorization
-        - event: RemoveAuthorization(address)
-          handler: handleRemoveAuthorization
-
-        # - event: ChangeDelay(uint16)
-        #   handler: handleChangeDelay
-        # - event: ChangePriceSource(address)
-        #   handler: handleChangePriceSource
-        # - event: RestartValue()
-        #   handler: handleRestartValue
-        # - event: Start()
-        #   handler: handleStart
-        # - event: Stop()
-        #   handler: handleStop
-  
   - name: EthMedianizer
     kind: ethereum/contract
     network: {{NETWORK}}

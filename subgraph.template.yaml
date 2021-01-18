@@ -278,9 +278,9 @@ dataSources:
     source:
       abi: DSProxyFactory
       address: '{{PROXY_FACTORY}}'
-      # startBlock: {{PROXY_REGISTRY_STARTING_BLOCK}}
+      startBlock: {{PROXY_REGISTRY_STARTING_BLOCK}}
       # Use this instead of the above for dev (faster sync but not all proxies available)
-      startBlock: {{STARTING_BLOCK_NUMBER}}
+      # startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4

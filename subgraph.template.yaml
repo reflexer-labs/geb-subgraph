@@ -374,6 +374,8 @@ dataSources:
       abis:
         - name: Coin
           file: ./abis/Coin.json
+        - name: ERC20
+          file: ./abis/ERC20.json
       eventHandlers:
         - event: Transfer(indexed address,indexed address,uint256)
           handler: handleTransfer 
@@ -622,34 +624,46 @@ dataSources:
       abis:
         - name: DSToken
           file: ./abis/DSToken.json
+        - name: ERC20
+          file: ./abis/ERC20.json
       eventHandlers:
         - event: Transfer(indexed address,indexed address,uint256)
           handler: handleTransfer
-        # - event: Approval(indexed address,indexed address,uint256)
-        #   handler: handleApproval
+        - event: Approval(indexed address,indexed address,uint256)
+          handler: handleApproval
   
-  - name: UniLPToken 
+  - name: UniCoinPool 
     kind: ethereum/contract
     network: {{NETWORK}}
     source:
-      abi: ERC20
+      abi: UniswapV2Pair
       address: '{{GEB_COIN_UNISWAP_POOL}}'
       startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
       language: wasm/assemblyscript
-      file: ./src/mappings/modules/token/uni-lp-token.ts
+      file: ./src/mappings/modules/uniswap/uniswap.ts
       entities:
-        - ERC20Balance
+        - UniswapV2Pair
       abis:
+        - name: UniswapV2Pair
+          file: ./abis/UniswapV2Pair.json
         - name: ERC20
           file: ./abis/ERC20.json
       eventHandlers:
+        - event: Sync(uint112,uint112)
+          handler: handleSync
+        - event: Swap(indexed address,uint256,uint256,uint256,uint256,indexed address)
+          handler: handleSwap
         - event: Transfer(indexed address,indexed address,uint256)
           handler: handleTransfer
-        # - event: Approval(indexed address,indexed address,uint256)
-        #   handler: handleApproval
+        - event: Approval(indexed address,indexed address,uint256)
+          handler: handleApproval
+        # - event: Mint(indexed address,uint256,uint256)
+        #   handler: handleMint
+        # - event: Burn(indexed address,uint256,uint256,indexed address)
+        #   handler: handleBurn
 
   - name: SurplusAuctionHouse
     kind: ethereum/contract
@@ -804,33 +818,6 @@ templates:
         # - event: TerminateAuctionPrematurely(uint256,address,uint256)
         #   handler: handleTerminateAuctionPrematurely
 
-  - name: UniswapV2Pair
-    kind: ethereum/contract
-    network: {{NETWORK}}
-    source:
-      abi: UniswapV2Pair
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.4
-      language: wasm/assemblyscript
-      file: ./src/mappings/modules/uniswap/uniswap.ts
-      entities:
-        - UniswapV2Pair
-      abis:
-        - name: UniswapV2Pair
-          file: ./abis/UniswapV2Pair.json
-      eventHandlers:
-        - event: Sync(uint112,uint112)
-          handler: handleSync
-        - event: Swap(indexed address,uint256,uint256,uint256,uint256,indexed address)
-          handler: handleSwap
-        # - event: Mint(indexed address,uint256,uint256)
-        #   handler: handleMint
-        # - event: Burn(indexed address,uint256,uint256,indexed address)
-        #   handler: handleBurn
-        # - event: Transfer(indexed address,indexed address,uint256)
-        #   handler: handleTransfer
-  
   - name: StakingRewards
     kind: ethereum/contract
     network: {{NETWORK}}

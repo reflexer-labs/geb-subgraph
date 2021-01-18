@@ -5,6 +5,7 @@ import { getOrCreateUser, getSystemState } from '../../../entities'
 import * as integer from '../../../utils/integer'
 import { Bytes } from '@graphprotocol/graph-ts'
 import { addressMap } from '../../../utils/addresses'
+import { allowanceId } from '../../../entities/erc20'
 
 export function handleCreated(event: Created): void {
   let user = getOrCreateUser(event.params.owner)
@@ -14,13 +15,26 @@ export function handleCreated(event: Created): void {
   proxy.address = event.params.proxy
   proxy.cache = event.params.cache
   proxy.owner = user.id
-  // We add a reference to the coin allowance, not that it might not yet exist.
-  proxy.coinAllowance =
-    addressMap.get('GEB_COIN').toHexString() +
-    '-' +
-    user.id +
-    '-' +
-    event.params.proxy.toHexString()
+
+  // We add a reference to the proxy allowances, note that these might not yet exist.
+  proxy.coinAllowance = allowanceId(
+    event.params.owner,
+    addressMap.get('GEB_COIN'),
+    event.params.proxy,
+  )
+
+  proxy.protAllowance = allowanceId(
+    event.params.owner,
+    addressMap.get('GEB_PROT'),
+    event.params.proxy,
+  )
+
+  proxy.uniCoinLpAllowance = allowanceId(
+    event.params.owner,
+    addressMap.get('GEB_COIN_UNISWAP_POOL'),
+    event.params.proxy,
+  )
+
   proxy.save()
 
   // Update system state

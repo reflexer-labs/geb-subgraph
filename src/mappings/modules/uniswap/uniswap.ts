@@ -1,15 +1,27 @@
+import { Address } from '@graphprotocol/graph-ts'
 import {
   Swap,
   Sync,
+  Transfer,
+  Approval,
   UniswapV2Pair as UniswapPairContract,
-} from '../../../../generated/templates/UniswapV2Pair/UniswapV2Pair'
-import { UniswapPair, UniswapSwap } from '../../../entities'
+} from '../../../../generated/UniCoinPool/UniswapV2Pair'
+import { ERC20Transfer, UniswapSwap } from '../../../entities'
+import {
+  getOrCreateERC20Balance,
+  getOrCreateERC20BAllowance,
+  updateAllowance,
+} from '../../../entities/erc20'
+import { getOrCreateUniPool } from '../../../entities/uniswap'
 import * as decimal from '../../../utils/decimal'
 import { eventUid } from '../../../utils/ethereum'
 
-export function handleSync(event: Sync): void {
-  let pair = UniswapPair.load(event.address.toHex())
+const UNISWAP_COIN_POOL_LABEL = 'UNISWAP_POOL_COIN'
+const UNISWAP_COIN_POOL_TOKEN_LABEL = 'UNISWAP_POOL_TOKEN_COIN'
 
+// Called during a swap, update the pair reserves
+export function handleSync(event: Sync): void {
+  let pair = getOrCreateUniPool(event.address, event, UNISWAP_COIN_POOL_LABEL)
   pair.reserve0 = decimal.fromWad(event.params.reserve0)
   pair.reserve1 = decimal.fromWad(event.params.reserve1)
 
@@ -28,6 +40,7 @@ export function handleSync(event: Sync): void {
   pair.save()
 }
 
+// Create a swap object
 export function handleSwap(event: Swap): void {
   let swap = new UniswapSwap(eventUid(event))
   swap.pair = event.address.toHexString()
@@ -40,4 +53,98 @@ export function handleSwap(event: Swap): void {
   swap.createdAtBlock = event.block.number
   swap.createdAtTransaction = event.transaction.hash
   swap.save()
+}
+
+// Create a transfer object
+export function handleTransfer(event: Transfer): void {
+  let tokenAddress = event.address
+
+  let source = event.params.from
+  let destination = event.params.to
+  let amount = decimal.fromWad(event.params.value)
+  let nullAddress = Address.fromHexString('0x0000000000000000000000000000000000000000')
+
+  // Check if it's not a burn before updating destination
+  if (!destination.equals(nullAddress)) {
+    let destBalance = getOrCreateERC20Balance(
+      destination,
+      tokenAddress,
+      UNISWAP_COIN_POOL_TOKEN_LABEL,
+      event,
+      true,
+    )
+    destBalance.balance = destBalance.balance.plus(amount)
+    destBalance.modifiedAt = event.block.timestamp
+    destBalance.modifiedAtBlock = event.block.number
+    destBalance.modifiedAtTransaction = event.transaction.hash
+    destBalance.save()
+  } else {
+    // Burn
+  }
+
+  // Check if it's not a mint before updating source
+  if (!source.equals(nullAddress)) {
+    let srcBalance = getOrCreateERC20Balance(
+      source,
+      tokenAddress,
+      UNISWAP_COIN_POOL_TOKEN_LABEL,
+      event,
+      false,
+    )
+    srcBalance.balance = srcBalance.balance.minus(amount)
+    srcBalance.modifiedAt = event.block.timestamp
+    srcBalance.modifiedAtBlock = event.block.number
+    srcBalance.modifiedAtTransaction = event.transaction.hash
+    srcBalance.save()
+  } else {
+    // Mint
+  }
+
+  // Deduct the allowance
+  // If this transfer is a transferFrom we need deduct the allowance by the amount of the transfer.
+  // Updating the allowance is highly problematic because we don't have access to msg.sender who is
+  // the allowed address. We sync the allowance assuming msg.sender is the destination (a contract pulling
+  // funds) but it might not always be the case and therefore the allowance will be wrong. But it should work
+  // in most cases.
+
+  updateAllowance(tokenAddress, destination, source, UNISWAP_COIN_POOL_TOKEN_LABEL, event)
+
+  // Sync these assuming msg.sender is the contract emitting the event or tx originator
+  updateAllowance(tokenAddress, event.address, source, UNISWAP_COIN_POOL_TOKEN_LABEL, event)
+
+  updateAllowance(
+    tokenAddress,
+    event.transaction.from,
+    source,
+    UNISWAP_COIN_POOL_TOKEN_LABEL,
+    event,
+  )
+
+  // Create a transfer object
+  let transfer = new ERC20Transfer(eventUid(event))
+  transfer.tokenAddress = tokenAddress
+  transfer.label = UNISWAP_COIN_POOL_TOKEN_LABEL
+  transfer.source = source
+  transfer.destination = destination
+  transfer.createdAt = event.block.timestamp
+  transfer.createdAtBlock = event.block.number
+  transfer.createdAtTransaction = event.transaction.hash
+  transfer.save()
+}
+
+// Create a approve object
+export function handleApproval(event: Approval): void {
+  let tokenAddress = event.address
+  let allowance = getOrCreateERC20BAllowance(
+    event.params.owner,
+    tokenAddress,
+    event.params.spender,
+    UNISWAP_COIN_POOL_TOKEN_LABEL,
+    event,
+  )
+  allowance.amount = decimal.fromWad(event.params.value)
+  allowance.modifiedAt = event.block.timestamp
+  allowance.modifiedAtBlock = event.block.number
+  allowance.modifiedAtTransaction = event.transaction.hash
+  allowance.save()
 }

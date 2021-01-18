@@ -107,6 +107,12 @@ type UserProxy @entity {
   " Allowance of the proxy to spend its owner RAIs (Useful when we need to repay debt)"
   coinAllowance: ERC20Allowance
 
+  " Allowance of the proxy to spend its owner prot tokens (Useful when we need to repay debt)"
+  protAllowance: ERC20Allowance
+
+  " Allowance of the proxy to spend its owner uni LP shares (Useful when we need to repay debt)"
+  uniCoinLpAllowance: ERC20Allowance
+
   " Owner address "
   owner: User!
 }
@@ -1094,6 +1100,9 @@ type ERC20Transfer @entity {
   " Equal to: <tx hash>-<log index> "
   id: ID!
 
+  " Static label such as COIN, GOV, COIN_UNI_POOL to identify the asset "
+  label: String
+
   " Address of the ERC20 token "
   tokenAddress: Bytes!
 
@@ -1119,6 +1128,9 @@ type ERC20Allowance @entity {
 
   " Address of the ERC20 token "
   tokenAddress: Bytes!
+
+  " Static label such as COIN, GOV, COIN_UNI_POOL to identify the asset "
+  label: String
 
   " Account that allows others to spend "
   address: Bytes!
@@ -1235,8 +1247,8 @@ type UniswapPair @entity {
   " Contract address of the pair "
   address: Bytes!
 
-  " Pair symbol "
-  medianizerSymbol: String
+  " Pair name/label "
+  label: String
 
   " Base token address "
   token0: Bytes!

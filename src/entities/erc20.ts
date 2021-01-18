@@ -1,15 +1,16 @@
 import { Address, ethereum, log } from '@graphprotocol/graph-ts'
+import { ERC20 } from '../../generated/Coin/ERC20'
 import { ERC20Balance, ERC20Allowance, UserProxy } from '../entities'
 import * as decimal from '../utils/decimal'
 
 export function getOrCreateERC20Balance(
   address: Address,
   tokenAddress: Address,
+  label: string,
   event: ethereum.Event,
   canCreate: boolean = true,
-  label: string = null,
 ): ERC20Balance {
-  let id = tokenAddress.toHexString() + '-' + address.toHexString()
+  let id = balanceId(address, tokenAddress)
   let balance = ERC20Balance.load(id)
   if (balance == null) {
     if (!canCreate) {
@@ -19,10 +20,7 @@ export function getOrCreateERC20Balance(
     balance.tokenAddress = tokenAddress
     balance.address = address
     balance.balance = decimal.ZERO
-
-    if (label) {
-      balance.label = label
-    }
+    balance.label = label
 
     // If a proxy with that address exist, set its owner to the owner of the balance
     let proxy = UserProxy.load(address.toHexString())
@@ -40,11 +38,11 @@ export function getOrCreateERC20BAllowance(
   address: Address,
   tokenAddress: Address,
   approvedAddress: Address,
+  label: string,
   event: ethereum.Event,
   canCreate: boolean = true,
 ): ERC20Allowance {
-  let id =
-    tokenAddress.toHexString() + '-' + address.toHexString() + '-' + approvedAddress.toHexString()
+  let id = allowanceId(address, tokenAddress, approvedAddress)
   let allowance = ERC20Allowance.load(id)
 
   if (allowance == null) {
@@ -56,10 +54,11 @@ export function getOrCreateERC20BAllowance(
 
     // Need to create the balance in case we approve an empty balance
     if (balance == null) {
-      balance = getOrCreateERC20Balance(address, tokenAddress, event)
+      balance = getOrCreateERC20Balance(address, tokenAddress, label, event)
     }
 
     allowance = new ERC20Allowance(id)
+    allowance.label = label
     allowance.tokenAddress = tokenAddress
     allowance.address = address
     allowance.balance = balance.id
@@ -71,4 +70,40 @@ export function getOrCreateERC20BAllowance(
   }
   allowance.save()
   return allowance as ERC20Allowance
+}
+
+export function updateAllowance(
+  tokenAddress: Address,
+  allowedAddress: Address,
+  approvedAddress: Address,
+  label: string,
+  event: ethereum.Event,
+): void {
+  let allowance = getOrCreateERC20BAllowance(
+    allowedAddress,
+    tokenAddress,
+    approvedAddress,
+    label,
+    event,
+  )
+
+  if (allowance) {
+    let tokenContract = ERC20.bind(tokenAddress)
+    allowance.amount = decimal.fromWad(tokenContract.allowance(allowedAddress, approvedAddress))
+    allowance.save()
+  }
+}
+
+export function balanceId(address: Address, tokenAddress: Address): string {
+  return tokenAddress.toHexString() + '-' + address.toHexString()
+}
+
+export function allowanceId(
+  address: Address,
+  tokenAddress: Address,
+  approvedAddress: Address,
+): string {
+  return (
+    tokenAddress.toHexString() + '-' + address.toHexString() + '-' + approvedAddress.toHexString()
+  )
 }

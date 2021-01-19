@@ -1,4 +1,4 @@
-import { Address } from '@graphprotocol/graph-ts'
+import { Address, ethereum } from '@graphprotocol/graph-ts'
 import {
   Swap,
   Sync,
@@ -12,11 +12,14 @@ import {
   getOrCreateERC20BAllowance,
   updateAllowance,
 } from '../../../entities/erc20'
+import { BigInt } from '@graphprotocol/graph-ts'
 import { getOrCreateUniPool } from '../../../entities/uniswap'
+import { addressMap } from '../../../utils/addresses'
 import * as decimal from '../../../utils/decimal'
+import * as integer from '../../../utils/integer'
 import { eventUid } from '../../../utils/ethereum'
 
-const UNISWAP_COIN_POOL_LABEL = 'UNISWAP_POOL_COIN'
+export const UNISWAP_COIN_POOL_LABEL = 'UNISWAP_POOL_COIN'
 const UNISWAP_COIN_POOL_TOKEN_LABEL = 'UNISWAP_POOL_TOKEN_COIN'
 
 // Called during a swap, update the pair reserves
@@ -147,4 +150,19 @@ export function handleApproval(event: Approval): void {
   allowance.modifiedAtBlock = event.block.number
   allowance.modifiedAtTransaction = event.transaction.hash
   allowance.save()
+}
+
+export function getRaiEthPrice(event: ethereum.Event): decimal.BigDecimal {
+  let uniPair = getOrCreateUniPool(
+    addressMap.get('GEB_COIN_UNISWAP_POOL'),
+    event,
+    UNISWAP_COIN_POOL_LABEL,
+  )
+
+  // Comparison of the addresses to determine which on of 0 or 1 is RAI
+  if (BigInt.fromUnsignedBytes(uniPair.token0) < BigInt.fromUnsignedBytes(uniPair.token1)) {
+    return uniPair.reserve1.div(uniPair.reserve0)
+  } else {
+    return uniPair.reserve0.div(uniPair.reserve1)
+  }
 }

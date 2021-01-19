@@ -176,9 +176,6 @@ export function handleModifySAFECollateralization(event: ModifySAFECollateraliza
   update.accumulatedRate = collateral.accumulatedRate
   update.createdAtTransaction = event.transaction.hash
   update.save()
-
-  // This needs tbe call at least once an hour. We call it from here since it's a popular function.
-  periodicHandler(event)
 }
 
 // Split a SAFE - binary approval or splitting/merging Vaults

@@ -1439,6 +1439,12 @@ type DailyStat @entity {
   " Redemption price "
   redemptionPrice: RedemptionPrice!
 
+  " Price of COIN in USD (uni pool price * ETH median price) "
+  marketPriceUsd: BigDecimal!
+
+  " Price of COIN in ETH (uni pool price) "
+  marketPriceEth: BigDecimal!
+
   " Global debt "
   globalDebt: BigDecimal!
 
@@ -1461,6 +1467,12 @@ type HourlyStat @entity {
 
   " Redemption price "
   redemptionPrice: RedemptionPrice!
+
+  " Price of COIN in USD (uni pool price * ETH median price) "
+  marketPriceUsd: BigDecimal!
+
+  " Price of COIN in ETH (uni pool price) "
+  marketPriceEth: BigDecimal!
 
   " Global debt "
   globalDebt: BigDecimal!

@@ -25,6 +25,8 @@ dataSources:
       abis:
         - name: SAFEEngine
           file: ./abis/SAFEEngine.json
+        - name: UniswapV2Pair
+          file: ./abis/UniswapV2Pair.json
       eventHandlers:
         - event: InitializeCollateralType(bytes32)
           handler: handleInitializeCollateralType
@@ -481,6 +483,8 @@ dataSources:
       abis:
         - name: Medianizer
           file: ./abis/ChainlinkMedianETHUSD.json
+        - name: UniswapV2Pair
+          file: ./abis/UniswapV2Pair.json
       eventHandlers:
         - event:  UpdateResult(uint256,uint256)
           handler: handleUpdateResult

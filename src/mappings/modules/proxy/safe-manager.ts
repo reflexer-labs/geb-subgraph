@@ -62,17 +62,24 @@ export function handleTransferSAFEOwnership(event: TransferSAFEOwnership): void 
 
   // Transfers balances ownership
   let coinBalance = InternalCoinBalance.load(safeHandler.toHexString())
-  if (coinBalance) coinBalance.owner = safe.owner
+  if (coinBalance) {
+    coinBalance.owner = safe.owner
+    coinBalance.save()
+  }
+
   let debtBalance = InternalDebtBalance.load(safeHandler.toHexString())
-  if (debtBalance) debtBalance.owner = safe.owner
+  if (debtBalance) {
+    debtBalance.owner = safe.owner
+    debtBalance.save()
+  }
+
   let collateralBalance = InternalCollateralBalance.load(
     safeHandler.toHexString() + '-' + collateralType.toString(),
   )
-  if (collateralBalance) collateralBalance.owner = safe.owner
-
-  coinBalance.save()
-  debtBalance.save()
-  collateralBalance.save()
+  if (collateralBalance) {
+    collateralBalance.owner = safe.owner
+    collateralBalance.save()
+  }
 }
 
 export function handleAllowSAFE(event: AllowSAFE): void {

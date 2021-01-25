@@ -10,7 +10,7 @@ git submodule update --init --recursive
 
 ## Deploy on the hosted service
 
-First, set the addresses of the smart contracts you want to index in `config/kovan.json` or `config/mainnet.json`.
+First, set the addresses of the smart-contracts you want to index in `config/kovan.json` or `config/mainnet.json`.
 
 Then, open a terminal and run:
 

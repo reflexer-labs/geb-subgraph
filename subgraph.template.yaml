@@ -210,7 +210,7 @@ dataSources:
           handler: handleConnectSAFESaviour
         - event: DisconnectSAFESaviour(address)
           handler: handleDisconnectSAFESaviour
-        - event: ProtectSAFE(bytes32,address,address)
+        - event: ProtectSAFE(indexed bytes32,indexed address,address)
           handler: handleProtectSAFE
 
         # Remaining events:

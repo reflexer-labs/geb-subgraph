@@ -185,8 +185,17 @@ export function handleTransferSAFECollateralAndDebt(event: TransferSAFECollatera
     event.params.src.toHexString() + '-' + event.params.collateralType.toString(),
   ) as Safe
   let dstSafe = Safe.load(
-    event.params.src.toHexString() + '-' + event.params.collateralType.toString(),
+    event.params.dst.toHexString() + '-' + event.params.collateralType.toString(),
   ) as Safe
+
+  if (!srcSafe) {
+    log.error('TransferSAFECollateralAndDebt, source safe non existent', [])
+    return
+  }
+
+  if (!dstSafe) {
+    dstSafe = createUnmanagedSafe(event.params.dst, event.params.collateralType, event)
+  }
 
   updateSafeCollateralization(
     srcSafe,
@@ -215,6 +224,13 @@ export function handleConfiscateSAFECollateralAndDebt(
   let deltaCollateral = decimal.fromWad(event.params.deltaCollateral)
 
   let safe = Safe.load(event.params.safe.toHexString() + '-' + collateralType.toString())
+  if (!safe) {
+    log.error('Trying to confiscate non-existing safe {}-{}', [
+      event.params.safe.toHexString(),
+      collateralType.toString(),
+    ])
+    return
+  }
   updateSafeCollateralization(
     safe as Safe,
     safe.collateral.plus(deltaCollateral),

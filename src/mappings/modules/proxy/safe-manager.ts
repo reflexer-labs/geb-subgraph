@@ -13,6 +13,7 @@ import {
   InternalCoinBalance,
   InternalDebtBalance,
   InternalCollateralBalance,
+  UserProxy,
 } from '../../../../generated/schema'
 
 import { updateLastModifySafe, createManagedSafe } from '../../../entities/safe'
@@ -58,6 +59,10 @@ export function handleTransferSAFEOwnership(event: TransferSAFEOwnership): void 
   let safe = Safe.load(safeHandler.toHexString() + '-' + collateral.id)
   safe.owner = findUltimateOwner(event.params.dst).toHexString()
   updateLastModifySafe(safe as Safe, event)
+
+  // Assign a proxy if it exists
+  safe.proxy = UserProxy.load(event.params.dst.toHexString()).id
+
   safe.save()
 
   // Transfers balances ownership

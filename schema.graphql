@@ -57,6 +57,9 @@ type Safe @entity {
 
   " List of English auctions associated with this Safe "
   liquidationEnglish: [EnglishAuction!] @derivedFrom(field: "safe")
+
+  " Saviour contract helping to prevent liquidation"
+  saviour: SafeSaviour
 }
 
 type User @entity {
@@ -157,6 +160,23 @@ type ModifySAFECollateralization @entity {
 
   " Hash of the transaction that created this Safe "
   createdAtTransaction: Bytes!
+}
+
+type SafeSaviour @entity {
+  " Contract address "
+  id: ID!
+
+  " List of safe protected by the saviour "
+  safes: [Safe!] @derivedFrom(field: "saviour")
+
+  " If the saviour is currently allowed in the liquidation engine "
+  allowed: Boolean!
+
+  " Counter of successful save "
+  successSaveCount: BigInt!
+
+  " Counter of failed save "
+  failSaveCount: BigInt!
 }
 
 # --- System state --

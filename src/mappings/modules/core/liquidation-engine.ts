@@ -4,6 +4,9 @@ import {
   Liquidate,
   AddAuthorization,
   RemoveAuthorization,
+  ConnectSAFESaviour,
+  DisconnectSAFESaviour,
+  ProtectSAFE,
 } from '../../../../generated/LiquidationEngine/LiquidationEngine'
 
 import { FixedDiscountCollateralAuctionHouse } from '../../../../generated/templates'
@@ -14,6 +17,7 @@ import {
   FixedDiscountAuction,
   FixedDiscountAuctionConfiguration,
   EnglishAuction,
+  SafeSaviour,
 } from '../../../entities'
 
 import * as decimal from '../../../utils/decimal'
@@ -179,4 +183,38 @@ export function handleAddAuthorization(event: AddAuthorization): void {
 
 export function handleRemoveAuthorization(event: RemoveAuthorization): void {
   removeAuthorization(event.params.account, event)
+}
+
+export function handleConnectSAFESaviour(event: ConnectSAFESaviour): void {
+  let saviour = SafeSaviour.load(event.params.saviour.toHexString())
+
+  if (!saviour) {
+    saviour = new SafeSaviour(event.params.saviour.toHexString())
+    saviour.successSaveCount = integer.ZERO
+    saviour.failSaveCount = integer.ZERO
+  }
+  saviour.allowed = true
+  saviour.save()
+}
+
+export function handleDisconnectSAFESaviour(event: DisconnectSAFESaviour): void {
+  let saviour = SafeSaviour.load(event.params.saviour.toHexString())
+  if (!saviour) {
+    log.error('Try to load non existing saviour', [])
+  } else {
+    saviour.allowed = false
+    saviour.save()
+  }
+}
+
+export function handleProtectSAFE(event: ProtectSAFE): void {
+  let collateral = getOrCreateCollateral(event.params.collateralType, event)
+  let safe = Safe.load(event.params.safe.toHexString() + '-' + collateral.id)
+
+  if (!safe) {
+    log.error('Try to add saviour to non existing safe', [])
+  } else {
+    safe.saviour = event.params.saviour.toHexString()
+    safe.save()
+  }
 }

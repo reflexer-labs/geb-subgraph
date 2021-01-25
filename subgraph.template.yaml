@@ -206,20 +206,20 @@ dataSources:
           handler: handleAddAuthorization
         - event: RemoveAuthorization(address)
           handler: handleRemoveAuthorization
+        - event: ConnectSAFESaviour(address)
+          handler: handleConnectSAFESaviour
+        - event: DisconnectSAFESaviour(address)
+          handler: handleDisconnectSAFESaviour
+        - event: ProtectSAFE(bytes32,address,address)
+          handler: handleProtectSAFE
 
         # Remaining events:
-        # - event: ConnectSAFESaviour(address)
-        #   handler: handleConnectSAFESaviour
         # - event: DisableContract()
         #   handler: handleDisableContract
-        # - event: DisconnectSAFESaviour(address)
-        #   handler: handleDisconnectSAFESaviour
-        # - event: FailedSAFESave(bytes)
-        #   handler: handleFailedSAFESave
-        # - event: ProtectSAFE(bytes32,address,address)
-        #   handler: handleProtectSAFE
         # - event: SaveSAFE(indexed bytes32,indexed address,uint256)
         #   handler: handleSaveSAFE
+        # - event: FailedSAFESave(bytes)
+        #   handler: handleFailedSAFESave
   
   - name: AccountingEngine
     kind: ethereum/contract
@@ -280,9 +280,9 @@ dataSources:
     source:
       abi: DSProxyFactory
       address: '{{PROXY_FACTORY}}'
-      startBlock: {{PROXY_REGISTRY_STARTING_BLOCK}}
+      # startBlock: {{PROXY_REGISTRY_STARTING_BLOCK}}
       # Use this instead of the above for dev (faster sync but not all proxies available)
-      # startBlock: {{STARTING_BLOCK_NUMBER}}
+      startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4

@@ -56,7 +56,7 @@ function increaseBidSize(
   event: ethereum.Event,
 ): void {
   let auction = EnglishAuction.load(auctionId(id))
-  let bid = new EnglishAuctionBid(bidAuctionId(id, auction.auctionId))
+  let bid = new EnglishAuctionBid(bidAuctionId(id, auction.numberOfBids))
 
   bid.bidNumber = auction.numberOfBids
   bid.type = enums.EnglishBidType_INCREASE_BUY

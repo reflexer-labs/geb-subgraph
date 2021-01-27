@@ -40,7 +40,7 @@ export function handleModifyParametersUint(event: ModifyParametersUint): void {
 
 export function handleDecreaseSoldAmount(event: DecreaseSoldAmount): void {
   let auction = EnglishAuction.load(auctionId(event.params.id))
-  let bid = new EnglishAuctionBid(bidAuctionId(event.params.id, auction.auctionId))
+  let bid = new EnglishAuctionBid(bidAuctionId(event.params.id, auction.numberOfBids))
 
   bid.bidNumber = auction.numberOfBids
   bid.type = enums.EnglishBidType_DECREASE_SOLD

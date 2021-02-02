@@ -358,6 +358,22 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "systemCoinRedemptionPrice",
+        "type": "uint256"
+      }
+    ],
+    "name": "getCollateralFSMAndFinalSystemCoinPrices",
+    "outputs": [
+      { "internalType": "uint256", "name": "", "type": "uint256" },
+      { "internalType": "uint256", "name": "", "type": "uint256" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "getCollateralMedianPrice",
     "outputs": [
@@ -405,22 +421,6 @@
     ],
     "name": "getFinalBaseCollateralPrice",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "systemCoinRedemptionPrice",
-        "type": "uint256"
-      }
-    ],
-    "name": "getFinalTokenPrices",
-    "outputs": [
-      { "internalType": "uint256", "name": "", "type": "uint256" },
-      { "internalType": "uint256", "name": "", "type": "uint256" }
-    ],
     "stateMutability": "view",
     "type": "function"
   },

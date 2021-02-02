@@ -203,6 +203,13 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "SURPLUS_AUCTION_TYPE",
+    "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       { "internalType": "address", "name": "account", "type": "address" }
     ],

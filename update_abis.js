@@ -7,9 +7,9 @@ const prettier = require('prettier')
 // Update ABI the folder by fetching the new ABIs from changelog repo
 // Use: node update_abis.js <path to abi folder> <version ig: kovan/0.6.0>
 const path = resolve(process.argv[2])
-const gebVersion = process.argv[3] || 'kovan/1.3.0'
+const gebVersion = process.argv[3] || 'kovan/1.4.0'
 
-function resolve(...args) {
+function resolve(...args) { 
     args = args.slice()
     args.unshift('..')
     args.unshift(__dirname)

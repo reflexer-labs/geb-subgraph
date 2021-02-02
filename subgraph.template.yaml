@@ -758,7 +758,7 @@ dataSources:
     network: {{NETWORK}}
     source:
       abi: StakingRewardsFactory
-      address: '{{GEB_INCENTIVES}}'
+      address: '{{GEB_INCENTIVES_MINER}}'
       startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events

@@ -160,9 +160,9 @@ export function getRaiEthPrice(event: ethereum.Event): decimal.BigDecimal {
   )
 
   // Comparison of the addresses to determine which on of 0 or 1 is RAI
-  if (BigInt.fromUnsignedBytes(uniPair.token0) < BigInt.fromUnsignedBytes(uniPair.token1)) {
-    return uniPair.reserve1.div(uniPair.reserve0)
-  } else {
+  if (BigInt.fromUnsignedBytes(uniPair.token0).lt(BigInt.fromUnsignedBytes(uniPair.token1))) {
     return uniPair.reserve0.div(uniPair.reserve1)
+  } else {
+    return uniPair.reserve1.div(uniPair.reserve0)
   }
 }

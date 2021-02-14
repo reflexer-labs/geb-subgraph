@@ -1,6 +1,6 @@
 # GEB subgraph
 
-A Graph protocol subgraph for GEB.
+A Graph protocol subgraph for GEB
 
 ```
 git clone https://github.com/reflexer-labs/geb-subgraph

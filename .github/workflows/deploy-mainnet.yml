@@ -3,7 +3,7 @@ on:
     branches:
       - mainnet
 
-name: Deploy mainnet to VM
+name: Deploy mainnet
 
 jobs:
   deploy:

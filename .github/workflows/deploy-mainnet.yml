@@ -1,0 +1,48 @@
+on:
+  push:
+    branches:
+      - mainnet
+
+name: Deploy mainnet
+
+jobs:
+  deploy:
+    name: Deploy Mainnet
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: executing remote ssh commands using ssh key
+      uses: appleboy/ssh-action@master
+      env:
+       ETHEREUM_RPC: ${{secrets.ETHEREUM_RPC_MAINNET}}
+       POSTGRES_PASSWORD: ${{secrets.POSTGRES_PASSWORD}}
+       NETWORK: 'mainnet'
+      with:
+        host: ${{secrets.DEPLOY_MAINNET_URL}}
+        username: ubuntu
+        key: ${{secrets.SSH_PRIVATE_KEY}}
+        port: 22
+        envs: ETHEREUM_RPC,POSTGRES_PASSWORD,NETWORK
+        script: |
+          if docker container ls | grep -q graph-node
+          then 
+          echo "Redeploy subgraph only..."
+          cd geb-subgraph/docker
+          git fetch
+          git checkout origin/mainnet
+          sudo chmod -R +rwx data/
+          docker-compose up --build graph-deployer
+          else
+          echo "Redeploy all..."
+          docker stop $(docker ps -aq)
+          docker rm $(docker ps -aq)
+          sudo rm -rf geb-subgraph
+          git clone https://github.com/reflexer-labs/geb-subgraph
+          cd geb-subgraph/docker
+          git checkout mainnet
+          echo ETHEREUM_RPC=$ETHEREUM_RPC >> .env
+          echo NETWORK=$NETWORK >> .env
+          echo POSTGRES_PASSWORD=$POSTGRES_PASSWORD >> .env
+          docker-compose up --build -d
+          fi
+   

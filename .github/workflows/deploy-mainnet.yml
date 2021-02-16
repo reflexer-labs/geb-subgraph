@@ -26,6 +26,8 @@ jobs:
         port: 22
         envs: ETHEREUM_RPC,POSTGRES_PASSWORD,NETWORK,GRAPH_HOSTED_SERVICE_AUTH_TOKEN
         script: |
+          source ~/.bashrc
+          cat ~/.bashrc
           nvm ls
           if docker container ls | grep -q graph-node
           then 

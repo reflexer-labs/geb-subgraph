@@ -24,7 +24,7 @@ jobs:
         username: ubuntu
         key: ${{secrets.SSH_PRIVATE_KEY}}
         port: 22
-        envs: ETHEREUM_RPC,POSTGRES_PASSWORD,NETWORK
+        envs: ETHEREUM_RPC,POSTGRES_PASSWORD,NETWORK,GRAPH_HOSTED_SERVICE_AUTH_TOKEN
         script: |
           if docker container ls | grep -q graph-node
           then 
@@ -47,7 +47,6 @@ jobs:
           echo POSTGRES_PASSWORD=$POSTGRES_PASSWORD >> .env
           docker-compose up --build -d
           fi
-          
           # Deploy on the hosted service
           npm run auth $GRAPH_HOSTED_SERVICE_AUTH_TOKEN
           npm run deploy-hosted-kovan

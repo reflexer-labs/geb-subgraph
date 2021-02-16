@@ -26,6 +26,8 @@ jobs:
         port: 22
         envs: ETHEREUM_RPC,POSTGRES_PASSWORD,NETWORK,GRAPH_HOSTED_SERVICE_AUTH_TOKEN
         script: |
+          export NVM_DIR=~/.nvm
+          source ~/.nvm/nvm.sh
           if docker container ls | grep -q graph-node
           then 
           echo "Redeploy subgraph only..."

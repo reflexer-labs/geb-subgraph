@@ -154,7 +154,7 @@ export function handleLiquidate(event: Liquidate): void {
     liquidation.collateralType = collateral.id
     liquidation.safeHandler = event.params.safe
     liquidation.sellInitialAmount = decimal.fromWad(event.params.collateralAmount)
-    liquidation.amountToRaise = decimal.fromRad(event.params.amountToRaise)
+    liquidation.amountToRaise = decimal.fromRad(event.params.amountToRaise).times(collateral.liquidationPenalty)
     liquidation.buyAmount = decimal.ZERO
     liquidation.sellAmount = liquidation.sellInitialAmount
     let safe = Safe.load(event.params.safe.toHexString() + '-' + collateral.id)

@@ -18,6 +18,7 @@ jobs:
        ETHEREUM_RPC: ${{secrets.ETHEREUM_RPC_MAINNET}}
        POSTGRES_PASSWORD: ${{secrets.POSTGRES_PASSWORD}}
        NETWORK: 'mainnet'
+       GRAPH_HOSTED_SERVICE_AUTH_TOKEN: ${{secrets.GRAPH_HOSTED_SERVICE_AUTH_TOKEN}}
       with:
         host: ${{secrets.DEPLOY_MAINNET_URL}}
         username: ubuntu
@@ -46,4 +47,7 @@ jobs:
           echo POSTGRES_PASSWORD=$POSTGRES_PASSWORD >> .env
           docker-compose up --build -d
           fi
-   
+
+          # Deploy on the hosted service
+          npm run auth $GRAPH_HOSTED_SERVICE_AUTH_TOKEN
+          npm run deploy-hosted-mainnet

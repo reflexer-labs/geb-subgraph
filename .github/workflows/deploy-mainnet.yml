@@ -28,7 +28,6 @@ jobs:
         script: |
           export NVM_DIR=~/.nvm
           source ~/.nvm/nvm.sh
-          nvm ls
           if docker container ls | grep -q graph-node
           then 
           echo "Redeploy subgraph only..."
@@ -52,7 +51,4 @@ jobs:
           fi
 
           # Deploy on the hosted service
-          ls
-          pwd
-          npm run auth $GRAPH_HOSTED_SERVICE_AUTH_TOKEN
-          npm run deploy-hosted-mainnet
+          npm run deploy-hosted-mainnet -- --access-token $GRAPH_HOSTED_SERVICE_AUTH_TOKEN

@@ -152,13 +152,13 @@ type ModifySAFECollateralization @entity {
   " Accumulated rate at the time of the transaction "
   accumulatedRate: BigDecimal!
 
-  " Timestamp of the block at which this Safe was created [seconds] "
+  " Timestamp of the modification [seconds] "
   createdAt: BigInt!
 
-  " Block number at which this Safe was created "
+  " Block number at which the modification happened "
   createdAtBlock: BigInt!
 
-  " Hash of the transaction that created this Safe "
+  " Hash of the transaction that made the modification "
   createdAtTransaction: Bytes!
 }
 

@@ -1132,6 +1132,9 @@ type ERC20Transfer @entity {
   " Destination address "
   destination: Bytes!
 
+  " Amount of the transfer "
+  amount: BigDecimal!
+
   " Timestamp of the block at which this transfer was created [seconds] "
   createdAt: BigInt!
 

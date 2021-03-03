@@ -65,6 +65,7 @@ export function handleTransfer(event: Transfer): void {
   transfer.label = PROT_TOKEN_LABEL
   transfer.source = source
   transfer.destination = destination
+  transfer.amount = amount
   transfer.createdAt = event.block.timestamp
   transfer.createdAtBlock = event.block.number
   transfer.createdAtTransaction = event.transaction.hash

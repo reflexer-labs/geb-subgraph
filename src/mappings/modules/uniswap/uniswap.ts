@@ -6,7 +6,7 @@ import {
   Approval,
   UniswapV2Pair as UniswapPairContract,
 } from '../../../../generated/UniCoinPool/UniswapV2Pair'
-import { ERC20Transfer, UniswapSwap } from '../../../entities'
+import { ERC20Transfer, UniswapSwap, UniswapSync } from '../../../entities'
 import {
   getOrCreateERC20Balance,
   getOrCreateERC20BAllowance,
@@ -41,6 +41,15 @@ export function handleSync(event: Sync): void {
   pair.modifiedAtTransaction = event.transaction.hash
 
   pair.save()
+
+  // Create sync event
+  let sync = new UniswapSync(eventUid(event))
+  sync.reserve0 = decimal.fromWad(event.params.reserve0)
+  sync.reserve1 = decimal.fromWad(event.params.reserve1)
+  sync.createdAt = event.block.timestamp
+  sync.createdAtBlock = event.block.number
+  sync.createdAtTransaction = event.transaction.hash
+  sync.save()
 }
 
 // Create a swap object

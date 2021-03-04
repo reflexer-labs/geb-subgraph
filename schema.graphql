@@ -1345,6 +1345,26 @@ type UniswapSwap @entity {
   createdAtTransaction: Bytes!
 }
 
+type UniswapSync @entity {
+  "<TX hash>-<Log index>"
+  id: ID!
+
+  " Uniswap reserve of asset 0 "
+  reserve0: BigDecimal!
+
+  " Uniswap reserve of asset 1 "
+  reserve1: BigDecimal!
+
+  " Timestamp of the block at which the sync was made [seconds] "
+  createdAt: BigInt!
+
+  " Block number at which the sync was made "
+  createdAtBlock: BigInt!
+
+  " Hash of the transaction that created the sync "
+  createdAtTransaction: Bytes!
+}
+
 # --- Incentive ---
 
 type IncentiveCampaign @entity {

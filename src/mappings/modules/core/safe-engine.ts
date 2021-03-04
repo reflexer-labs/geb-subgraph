@@ -4,6 +4,7 @@ import {
   CollateralType,
   Safe,
   ModifySAFECollateralization as ModifySAFECollateralizationEntity,
+  UpdateAccumulatedRate as UpdateAccumulatedRateEntity
 } from '../../../../generated/schema'
 
 import { getSystemState } from '../../../entities'
@@ -296,10 +297,10 @@ export function handleCreateUnbackedDebt(event: CreateUnbackedDebt): void {
 export function handleUpdateAccumulatedRate(event: UpdateAccumulatedRate): void {
   let rate = decimal.fromRay(event.params.rateMultiplier)
   let collateral = getOrCreateCollateral(event.params.collateralType, event)
-  let rad = collateral.debtAmount.times(rate)
 
   // Set the new rate
-  collateral.accumulatedRate = collateral.accumulatedRate.plus(rate)
+  let accumulatedRate =  collateral.accumulatedRate.plus(rate)
+  collateral.accumulatedRate = accumulatedRate
   collateral.save()
 
   // Update debt counter
@@ -312,6 +313,17 @@ export function handleUpdateAccumulatedRate(event: UpdateAccumulatedRate): void 
 
   // This needs tbe call at least once an hour. We call it from here since it's a popular function.
   periodicHandler(event)
+
+  let rateEvent = new UpdateAccumulatedRateEntity(eventUid(event))
+  rateEvent.collateralType = collateral.id
+  rateEvent.rateMultiplier = rate
+  rateEvent.accumulatedRate = accumulatedRate
+  rateEvent.globalDebt = decimal.fromRad(event.params.globalDebt)
+  rateEvent.createdAt = event.block.timestamp
+  rateEvent.createdAtBlock = event.block.number
+  rateEvent.createdAtTransaction = event.transaction.hash
+  rateEvent.save()
+
 }
 
 export function handleAddAuthorization(event: AddAuthorization): void {

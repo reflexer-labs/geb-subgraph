@@ -162,6 +162,79 @@ type ModifySAFECollateralization @entity {
   createdAtTransaction: Bytes!
 }
 
+type ConfiscateSAFECollateralAndDebt @entity {
+  " Equal to: <TX hash>-<Log index> "
+  id: ID!
+
+  " Safe modified "
+  safe: Safe!
+
+  " safeHandler address (ownership at the SAFEEngine level) "
+  safeHandler: Bytes!
+
+  " Collateral type of the confisaction "
+  collateralType: CollateralType!
+
+  " Change in collateral "
+  deltaCollateral: BigDecimal!
+
+  " Change in debt "
+  deltaDebt: BigDecimal!
+
+  " Who to give/take the debt to "
+  debtCounterparty: Bytes!
+
+  " Who to give/take the collateral to "
+  collateralCounterparty: Bytes!
+
+  " Total amount of unbacked debt "
+  globalUnbackedDebt: BigDecimal!
+
+  " Timestamp of the confiscation [seconds] "
+  createdAt: BigInt!
+
+  " Block number at which the confiscation happened "
+  createdAtBlock: BigInt!
+
+  " Hash of the transaction that made the confiscation "
+  createdAtTransaction: Bytes!
+}
+
+type TransferSAFECollateralAndDebt @entity {
+  " Equal to: <TX hash>-<Log index> "
+  id: ID!
+
+  " Collateral type of the transfer "
+  collateralType: CollateralType!
+
+  " Destination safe "
+  dstSafe: Safe!
+
+  " Source safe "
+  srcSafe: Safe!
+
+  " Change in collateral "
+  deltaCollateral: BigDecimal!
+
+  " Change in debt "
+  deltaDebt: BigDecimal!
+
+  " Source safe handler "
+  srcHandler: Bytes!
+
+  " Destionation safe handler "
+  dstHandler: Bytes!
+
+  " Timestamp of the transfer [seconds] "
+  createdAt: BigInt!
+
+  " Block number at which the transfer happened "
+  createdAtBlock: BigInt!
+
+  " Hash of the transaction that made the transfer "
+  createdAtTransaction: Bytes!
+}
+
 type SafeSaviour @entity {
   " Contract address "
   id: ID!

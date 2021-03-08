@@ -4,7 +4,9 @@ import {
   CollateralType,
   Safe,
   ModifySAFECollateralization as ModifySAFECollateralizationEntity,
-  UpdateAccumulatedRate as UpdateAccumulatedRateEntity
+  ConfiscateSAFECollateralAndDebt as ConfiscateSAFECollateralAndDebtEntity,
+  TransferSAFECollateralAndDebt as TransferSAFECollateralAndDebtEntity,
+  UpdateAccumulatedRate as UpdateAccumulatedRateEntity,
 } from '../../../../generated/schema'
 
 import { getSystemState } from '../../../entities'
@@ -214,6 +216,23 @@ export function handleTransferSAFECollateralAndDebt(event: TransferSAFECollatera
 
   srcSafe.save()
   dstSafe.save()
+
+  let collateral = getOrCreateCollateral(event.params.collateralType, event)
+  let deltaCollateral = decimal.fromWad(event.params.deltaCollateral)
+  let deltaDebt = decimal.fromWad(event.params.deltaDebt)
+
+  let evt = new TransferSAFECollateralAndDebtEntity(eventUid(event))
+  evt.collateralType = collateral.id
+  evt.dstSafe = event.params.dst.toHexString() + '-' + collateral.id
+  evt.srcSafe = event.params.src.toHexString() + '-' + collateral.id
+  evt.deltaCollateral = deltaCollateral
+  evt.deltaDebt = deltaDebt
+  evt.srcHandler = event.params.src
+  evt.dstHandler = event.params.dst
+  evt.createdAt = event.block.timestamp
+  evt.createdAtBlock = event.block.number
+  evt.createdAtTransaction = event.transaction.hash
+  evt.save()
 }
 
 // Liquidate a SAFE
@@ -259,6 +278,20 @@ export function handleConfiscateSAFECollateralAndDebt(
   let deltaTotalIssuedDebt = deltaDebt.times(collateral.accumulatedRate)
   system.globalUnbackedDebt = system.globalUnbackedDebt.minus(deltaTotalIssuedDebt)
   system.save()
+
+  let evt = new ConfiscateSAFECollateralAndDebtEntity(eventUid(event))
+  evt.safe = safe.id
+  evt.safeHandler = event.params.safe
+  evt.collateralType = collateral.id
+  evt.deltaDebt = deltaDebt
+  evt.deltaCollateral = deltaCollateral
+  evt.debtCounterparty = event.params.debtCounterparty
+  evt.collateralCounterparty = event.params.collateralCounterparty
+  evt.globalUnbackedDebt = decimal.fromRad(event.params.globalUnbackedDebt)
+  evt.createdAt = event.block.timestamp
+  evt.createdAtBlock = event.block.number
+  evt.createdAtTransaction = event.transaction.hash
+  evt.save()
 }
 
 // Create/destroy equal quantities of reflexer coin and system debt
@@ -299,7 +332,7 @@ export function handleUpdateAccumulatedRate(event: UpdateAccumulatedRate): void 
   let collateral = getOrCreateCollateral(event.params.collateralType, event)
 
   // Set the new rate
-  let accumulatedRate =  collateral.accumulatedRate.plus(rate)
+  let accumulatedRate = collateral.accumulatedRate.plus(rate)
   collateral.accumulatedRate = accumulatedRate
   collateral.save()
 
@@ -323,7 +356,6 @@ export function handleUpdateAccumulatedRate(event: UpdateAccumulatedRate): void 
   rateEvent.createdAtBlock = event.block.number
   rateEvent.createdAtTransaction = event.transaction.hash
   rateEvent.save()
-
 }
 
 export function handleAddAuthorization(event: AddAuthorization): void {

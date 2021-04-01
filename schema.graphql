@@ -1,7 +1,7 @@
 # --- Safes & Users ---
 
 type Safe @entity {
-  " Equal to: <safeHandler>-<CollateralType> "
+  " Equal to: <SafeHandler>-<CollateralType> "
   id: ID!
 
   " Safe ID if this Safe was created through the Safe Manager (GebSafeManager) "
@@ -1202,10 +1202,10 @@ type ERC20Balance @entity {
   " Balance amount "
   balance: BigDecimal!
 
-  " List of account spending allowance (addresses that can spend the balance) "
+  " List of spend allowances (addresses that can spend the balance) "
   approvals: [ERC20Allowance!] @derivedFrom(field: "balance")
 
-  " Timestamp of the block at which this balance was last modified [seconds] "
+  " Timestamp of the block at which this balance was last modified [unix time] "
   modifiedAt: BigInt!
 
   " Block number at which this balance was last modified "
@@ -1231,7 +1231,7 @@ type ERC20Transfer @entity {
   " Destination address "
   destination: Bytes!
 
-  " Amount of the transfer "
+  " Amount transferred "
   amount: BigDecimal!
 
   " Timestamp of the block at which this transfer was created [seconds] "
@@ -1257,16 +1257,16 @@ type ERC20Allowance @entity {
   " Account that allows others to spend "
   address: Bytes!
 
-  " Balance that can be spent from "
+  " Balance that can be spent "
   balance: ERC20Balance!
 
-  " Address being aproved to spend the balance "
+  " Address being approved to spend the balance "
   approvedAddress: Bytes!
 
   " Current token allowance "
   amount: BigDecimal!
 
-  " Timestamp of the block at which this balance was last modified [seconds] "
+  " Timestamp of the block at which this balance was last modified [unix time] "
   modifiedAt: BigInt!
 
   " Block number at which this balance was last modified "
@@ -1285,13 +1285,13 @@ type DsPauseScheduledTransaction @entity {
   " Address of the smart contract sending the proposal (e.g: multisig, vote quorum) "
   proposalSender: Bytes!
 
-  " Recipient of the transaction "
+  " Transaction target "
   proposalTarget: Bytes!
 
-  " Whether the transaction was executed "
+  " Whether or not the transaction was executed "
   executed: Boolean!
 
-  " Whether the transaction was abandoned "
+  " Whether or not the transaction was abandoned "
   abandoned: Boolean!
 
   " Proposal transaction data "
@@ -1309,10 +1309,10 @@ type DsPauseScheduledTransaction @entity {
   " The proposal's partial hash identifier "
   partialTransactionHash: Bytes!
 
-  " Optional description of the proposal "
+  " Optional description for the proposal "
   transactionDescription: String
 
-  " Timestamp of the block at which this transaction was created [seconds] "
+  " Timestamp of the block at which this transaction was created [unix time] "
   createdAt: BigInt!
 
   " Block number at which this transaction was created "
@@ -1326,22 +1326,22 @@ type GebAuthorization @entity {
   "<Contract address>-<Authorized account>"
   id: ID!
 
-  " Contract address of the authorization "
+  " Contract address for the authorization "
   contract: Bytes!
 
-  " Label of the smart-contract "
+  " Smart contract label "
   contractLabel: String
 
   " Authorized account address "
   account: Bytes!
 
-  " Authorized account label"
+  " Authorized account label "
   accountLabel: String
 
-  " Whether the account is currently authorized or not (An authorization can be revoked)"
+  " Whether the account is currently authorized or not (an authorization can be revoked) "
   isAuthorized: Boolean!
 
-  " Timestamp of the block at which the authorization was created [seconds] "
+  " Timestamp of the block at which the authorization was created [unix time] "
   createdAt: BigInt!
 
   " Block number at which the authorization was created "
@@ -1350,7 +1350,7 @@ type GebAuthorization @entity {
   " Hash of the transaction that created the authorization "
   createdAtTransaction: Bytes!
 
-  " Timestamp of the block at which the authorization was last modified [seconds] "
+  " Timestamp of the block at which the authorization was last modified [unix time] "
   modifiedAt: BigInt
 
   " Block number at which the authorization was last modified "
@@ -1363,7 +1363,7 @@ type GebAuthorization @entity {
 # --- Uniswap ---
 
 type UniswapPair @entity {
-  " pair address "
+  " Pair address "
   id: ID!
 
   " Contract address of the pair "
@@ -1393,7 +1393,7 @@ type UniswapPair @entity {
   " Supply of pool token shares "
   totalSupply: BigDecimal!
 
-  " Timestamp of the block at which the pair was created [seconds] "
+  " Timestamp of the block at which the pair was created [unix time] "
   createdAt: BigInt!
 
   " Block number at which the pair was created "
@@ -1402,21 +1402,21 @@ type UniswapPair @entity {
   " Hash of the transaction that started to create the pair "
   createdAtTransaction: Bytes!
 
-  " Timestamp of the block at which the pair was last modified [seconds] "
+  " Timestamp of the block at which the pair was last modified [unix time] "
   modifiedAt: BigInt
 
   " Block number at which the pair was last modified "
   modifiedAtBlock: BigInt
 
-  " Transaction hash at which the pair was last modified "
+  " Hash of the tx that last modified the pair "
   modifiedAtTransaction: Bytes
 }
 
 type UniswapSwap @entity {
-  "<TX hash>-<Log index>"
+  "<Tx hash>-<Log index>"
   id: ID!
 
-  "Pair of the swap"
+  " Uniswap pair "
   pair: UniswapPair!
 
   " Address that made the swap "
@@ -1445,7 +1445,7 @@ type UniswapSwap @entity {
 }
 
 type UniswapSync @entity {
-  "<TX hash>-<Log index>"
+  " <Tx hash>-<Log index> "
   id: ID!
 
   " Uniswap reserve of asset 0 "
@@ -1454,13 +1454,13 @@ type UniswapSync @entity {
   " Uniswap reserve of asset 1 "
   reserve1: BigDecimal!
 
-  " Timestamp of the block at which the sync was made [seconds] "
+  " Timestamp of the block at which the sync was made [unix time] "
   createdAt: BigInt!
 
   " Block number at which the sync was made "
   createdAtBlock: BigInt!
 
-  " Hash of the transaction that created the sync "
+  " Hash of the transaction that executed the sync "
   createdAtTransaction: Bytes!
 }
 
@@ -1488,10 +1488,10 @@ type IncentiveCampaign @entity {
   " Total LP shares staked into the contract "
   totalSupply: BigDecimal!
 
-  " Token distributed "
+  " Token being distributed "
   rewardToken: Bytes!
 
-  " Token staked "
+  " Token being staked "
   stakingToken: Bytes!
 
   " Last update date of rewardPerTokenStored "
@@ -1500,7 +1500,7 @@ type IncentiveCampaign @entity {
   " Cumulative per token reward distributed so far "
   rewardPerTokenStored: BigDecimal!
 
-  " Timestamp of the block at which the campaign was made [seconds] "
+  " Timestamp of the block at which the campaign was made [unix time] "
   createdAt: BigInt!
 
   " Block number at which the campaign was made "
@@ -1509,51 +1509,51 @@ type IncentiveCampaign @entity {
   " Hash of the transaction that created the campaign "
   createdAtTransaction: Bytes!
 
-  " Timestamp of the block at which the campaign was last modified [seconds] "
+  " Timestamp of the block at which the campaign was last modified [unix time] "
   modifiedAt: BigInt
 
   " Block number at which the campaign was last modified "
   modifiedAtBlock: BigInt
 
-  " Transaction hash at which the campaign was last modified "
+  " Hash of the transaction that was last to modify the campaign "
   modifiedAtTransaction: Bytes
 }
 
 type IncentiveBalance @entity {
-  " <campaign address>-<staker address> "
+  " <Campaign address>-<Staker address> "
   id: ID!
 
-  " Address of the staker "
+  " Staker address "
   address: Bytes!
 
   " Campaign number "
   campaignNumber: BigInt!
 
-  " Campaign contract address"
+  " Campaign contract address "
   campaignAddress: Bytes!
 
-  " Owner of the address (proxy owner if address is a proxy)"
+  " Owner of the address (proxy owner if address is a proxy) "
   owner: User
 
-  " Individual stake token balance in the contract"
+  " Individual staker token balance in the contract "
   stakeBalance: BigDecimal!
 
-  " Cumulative reward available to claim (do not include the part since last update) "
+  " Cumulative reward available to claim (does not include the reward since the last update) "
   reward: BigDecimal!
 
-  " Paid out reward per token  accumulator "
+  " Paid out reward per token accumulated "
   userRewardPerTokenPaid: BigDecimal!
 
-  " Timestamp of the block at which the campaign was made [seconds] "
+  " Timestamp of the block at which the campaign was made [unix time] "
   createdAt: BigInt!
 
-  " Block number at which the staking balance was made "
+  " Block number at which the staking balance was created "
   createdAtBlock: BigInt!
 
   " Hash of the transaction that created the staking balance "
   createdAtTransaction: Bytes!
 
-  " Timestamp of the block at which the staking balance was last modified [seconds] "
+  " Timestamp of the block at which the staking balance was last modified [unix time] "
   modifiedAt: BigInt
 
   " Block number at which the staking balance was last modified "
@@ -1566,13 +1566,13 @@ type IncentiveBalance @entity {
 # --- Periodic updates ---
 
 type DailyStat @entity {
-  " block timestamp / 86400 "
+  " Block timestamp / 86400 "
   id: ID!
 
   " Time of the snapshot "
   timestamp: BigInt!
 
-  " Block Number"
+  " Block Number "
   blockNumber: BigInt!
 
   " Redemption rate "
@@ -1581,27 +1581,27 @@ type DailyStat @entity {
   " Redemption price "
   redemptionPrice: RedemptionPrice!
 
-  " Price of COIN in USD (uni pool price * ETH median price) "
+  " Price of COIN in USD (Uniswap pool price * ETH median price) "
   marketPriceUsd: BigDecimal!
 
-  " Price of COIN in ETH (uni pool price) "
+  " Price of COIN in ETH (Uniswap v2 pool price) "
   marketPriceEth: BigDecimal!
 
   " Global debt "
   globalDebt: BigDecimal!
 
-  " ERC20 Supply "
+  " ERC20 COIN Supply "
   erc20CoinTotalSupply: BigDecimal!
 }
 
 type HourlyStat @entity {
-  " block timestamp / 86400 "
+  " Block timestamp / 86400 "
   id: ID!
 
   " Time of the snapshot "
   timestamp: BigInt!
 
-  " Block Number"
+  " Block Number "
   blockNumber: BigInt!
 
   " Redemption rate "
@@ -1610,15 +1610,15 @@ type HourlyStat @entity {
   " Redemption price "
   redemptionPrice: RedemptionPrice!
 
-  " Price of COIN in USD (uni pool price * ETH median price) "
+  " Price of COIN in USD (Uniswap v2 pool price * ETH median price) "
   marketPriceUsd: BigDecimal!
 
-  " Price of COIN in ETH (uni pool price) "
+  " Price of COIN in ETH (taken from the Uniswap v2 pool) "
   marketPriceEth: BigDecimal!
 
   " Global debt "
   globalDebt: BigDecimal!
 
-  " ERC20 Supply "
+  " ERC20 COIN Supply "
   erc20CoinTotalSupply: BigDecimal!
 }

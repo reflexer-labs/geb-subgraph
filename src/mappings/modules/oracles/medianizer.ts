@@ -1,25 +1,19 @@
-import { dataSource, log } from '@graphprotocol/graph-ts'
+import { dataSource } from '@graphprotocol/graph-ts'
 import {
   UpdateResult,
-  Medianizer as ChainlinkMedianizer,
+  Medianizer as CoinMedianizer,
   ModifyParameters,
   AddAuthorization,
   RemoveAuthorization,
-} from '../../../../generated/EthMedianizer/Medianizer'
+} from '../../../../generated/CoinMedianizer/Medianizer'
 import { Medianizer as UniMedianizer } from '../../../../generated/CoinMedianizer/Medianizer'
-import {
-  getOrCreateCollateral,
-  getSystemState,
-  MedianizerUpdate,
-} from '../../../entities'
+import { getSystemState, MedianizerUpdate } from '../../../entities'
 import { eventUid } from '../../../utils/ethereum'
 import * as decimal from '../../../utils/decimal'
-import { addressMap } from '../../../utils/addresses'
-import { ETH_A } from '../../../utils/bytes'
 import { addAuthorization, removeAuthorization } from '../governance/authorizations'
 import { periodicHandler } from '../core/periodic-handler'
 
-// Called for both Chainlink and Uniswap medianizer
+// Uniswap Coin medianizer
 export function handleUpdateResult(event: UpdateResult): void {
   let id = eventUid(event)
   let update = new MedianizerUpdate(id)
@@ -27,7 +21,7 @@ export function handleUpdateResult(event: UpdateResult): void {
 
   update.medianizerAddress = contractAddress
   update.value = decimal.fromWad(event.params.medianPrice)
-  update.symbol = ChainlinkMedianizer.bind(contractAddress)
+  update.symbol = CoinMedianizer.bind(contractAddress)
     .symbol()
     .toString()
   update.createdAt = event.block.timestamp
@@ -35,21 +29,13 @@ export function handleUpdateResult(event: UpdateResult): void {
   update.createdAtTransaction = event.transaction.hash
   update.save()
 
-  if (contractAddress.equals(addressMap.get('MEDIANIZER_ETH'))) {
-    let collateral = getOrCreateCollateral(ETH_A, event)
-    collateral.currentMedianizerUpdate = id
-    collateral.save()
-  } else if (contractAddress.equals(addressMap.get('MEDIANIZER_RAI'))) {
-    let system = getSystemState(event)
-    system.currentCoinMedianizerUpdate = id
-    system.save()
-  } else {
-    log.error('Medianizer address not found', [])
-  }
+  let system = getSystemState(event)
+  system.currentCoinMedianizerUpdate = id
+  system.save()
 
   // Since the medianizers are called often, call the periodic handler from here
   // to create historical data.
-  periodicHandler(event) 
+  periodicHandler(event)
 }
 
 // Only call for the Uniswap medianizer

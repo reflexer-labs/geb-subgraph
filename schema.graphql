@@ -312,9 +312,6 @@ type CollateralType @entity {
   " Latest Coin FSM update "
   currentFsmUpdate: FsmUpdate
 
-  " Latest Coin medianizer update "
-  currentMedianizerUpdate: MedianizerUpdate
-
   # == Constants ==
 
   " Address of the FSM contract used for this collateral type "

@@ -25,8 +25,11 @@ dataSources:
       abis:
         - name: SAFEEngine
           file: ./abis/SAFEEngine.json
+        # These 2 contract are needed by the periodic handler
         - name: UniswapV2Pair
           file: ./abis/UniswapV2Pair.json
+        - name: EACAggregatorProxy
+          file: ./abis/EACAggregatorProxy.json
       eventHandlers:
         - event: InitializeCollateralType(bytes32)
           handler: handleInitializeCollateralType
@@ -465,42 +468,6 @@ dataSources:
         #   handler: handleStart
         # - event: Stop()
         #   handler: handleStop
-
-  - name: EthMedianizer
-    kind: ethereum/contract
-    network: {{NETWORK}}
-    source:
-      abi: Medianizer
-      address: '{{MEDIANIZER_ETH}}'
-      startBlock: {{STARTING_BLOCK_NUMBER}}
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.4
-      language: wasm/assemblyscript
-      file: ./src/mappings/modules/oracles/medianizer.ts
-      entities:
-        - MedianizerUpdate
-      abis:
-        - name: Medianizer
-          file: ./abis/ChainlinkMedianETHUSD.json
-        - name: UniswapV2Pair
-          file: ./abis/UniswapV2Pair.json
-      eventHandlers:
-        - event:  UpdateResult(uint256,uint256)
-          handler: handleUpdateResult
-        - event: AddAuthorization(address)
-          handler: handleAddAuthorization
-        - event: RemoveAuthorization(address)
-          handler: handleRemoveAuthorization
-
-        # - event:  FailRewardCaller(bytes,address,uint256)
-        #   handler: handleFailRewardCaller
-        # - event:  ModifyParameters(bytes32,address)
-        #   handler: handleModifyParameters
-        # - event:  ModifyParameters(bytes32,uint256)
-        #   handler: handleModifyParameters
-        # - event:  RewardCaller(address,uint256)
-        #   handler: handleRewardCaller
   
   - name: CoinMedianizer
     kind: ethereum/contract
@@ -521,6 +488,8 @@ dataSources:
           file: ./abis/UniswapConsecutiveSlotsMedianRAIUSD.json
         - name: UniswapV2Pair
           file: ./abis/UniswapV2Pair.json
+        - name: EACAggregatorProxy
+          file: ./abis/EACAggregatorProxy.json
       eventHandlers:
         - event:  UpdateResult(uint256,uint256)
           handler: handleUpdateResult

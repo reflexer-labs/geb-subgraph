@@ -1,14 +1,12 @@
-import { ethereum, log } from '@graphprotocol/graph-ts'
-import {
-  DailyStat,
-  getOrCreateCollateral,
-  getSystemState,
-  HourlyStat,
-  MedianizerUpdate,
-} from '../../../entities'
+import { ethereum } from '@graphprotocol/graph-ts'
+import { DailyStat, getSystemState, HourlyStat } from '../../../entities'
+import { EACAggregatorProxy } from '../../../../generated/SAFEEngine/EACAggregatorProxy'
 import * as integer from '../../../utils/integer'
+import * as decimal from '../../../utils/decimal'
 import { getRaiEthPrice } from '../uniswap/uniswap'
-import { ETH_A } from '../../../utils/bytes'
+import { addressMap } from '../../../utils/addresses'
+
+const CHAINLINK_ETHUSD_PRECISION = 1e8
 
 // !! When using this function you need to add the Uniswap pair ABI
 // in the subgraph template of the indexing contract
@@ -33,12 +31,10 @@ export function periodicHandler(event: ethereum.Event): void {
     return
   }
 
-  let ethCollateral = getOrCreateCollateral(ETH_A, event)
-  let currentEthMedianUpdate = MedianizerUpdate.load(ethCollateral.currentMedianizerUpdate)
-
-  if (currentEthMedianUpdate == null) {
-    return
-  }
+  let ethPrice = EACAggregatorProxy.bind(addressMap.get('CHAINLINK_AGGREGATOR'))
+    .latestAnswer()
+    .toBigDecimal()
+    .div(decimal.fromNumber(CHAINLINK_ETHUSD_PRECISION))
 
   if (daily == null) {
     // Daily record
@@ -49,7 +45,7 @@ export function periodicHandler(event: ethereum.Event): void {
     daily.redemptionPrice = state.currentRedemptionPrice
     let raiEthPrice = getRaiEthPrice(event)
     daily.marketPriceEth = raiEthPrice
-    daily.marketPriceUsd = currentEthMedianUpdate.value.times(raiEthPrice)
+    daily.marketPriceUsd = ethPrice.times(raiEthPrice)
     daily.globalDebt = state.globalDebt
     daily.erc20CoinTotalSupply = state.erc20CoinTotalSupply
     daily.save()
@@ -62,7 +58,7 @@ export function periodicHandler(event: ethereum.Event): void {
     hourly.redemptionPrice = state.currentRedemptionPrice
     let raiEthPrice = getRaiEthPrice(event)
     hourly.marketPriceEth = raiEthPrice
-    hourly.marketPriceUsd = currentEthMedianUpdate.value.times(raiEthPrice)
+    hourly.marketPriceUsd = ethPrice.times(raiEthPrice)
     hourly.globalDebt = state.globalDebt
     hourly.erc20CoinTotalSupply = state.erc20CoinTotalSupply
     hourly.save()

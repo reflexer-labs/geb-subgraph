@@ -73,6 +73,7 @@ function increaseBidSize(
   auction.numberOfBids = auction.numberOfBids.plus(integer.ONE)
   auction.auctionDeadline = bidExpiry
   auction.sellAmount = bid.sellAmount
+  auction.buyAmount = bid.buyAmount
   auction.price = bid.price
   auction.winner = bid.bidder
   auction.save()

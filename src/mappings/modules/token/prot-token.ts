@@ -1,5 +1,5 @@
-import { Address, dataSource, log } from '@graphprotocol/graph-ts'
-import { Approval, Transfer } from '../../../../generated/ProtToken/DSToken'
+import { Address, Bytes, dataSource, log } from '@graphprotocol/graph-ts'
+import { Approval, Burn, Mint, Transfer } from '../../../../generated/ProtToken/DSToken'
 import { ERC20Transfer } from '../../../../generated/schema'
 import {
   getOrCreateERC20Balance,
@@ -8,7 +8,7 @@ import {
 } from '../../../entities/erc20'
 
 import * as decimal from '../../../utils/decimal'
-import { eventUid } from '../../../utils/ethereum'
+import { eventUid, NULL_ADDRESS } from '../../../utils/ethereum'
 
 const PROT_TOKEN_LABEL = 'PROT_TOKEN'
 export function handleTransfer(event: Transfer): void {
@@ -65,6 +65,55 @@ export function handleTransfer(event: Transfer): void {
   transfer.label = PROT_TOKEN_LABEL
   transfer.source = source
   transfer.destination = destination
+  transfer.createdAt = event.block.timestamp
+  transfer.createdAtBlock = event.block.number
+  transfer.createdAtTransaction = event.transaction.hash
+  transfer.save()
+}
+
+export function handleMint(event: Mint): void {
+  let bal = getOrCreateERC20Balance(
+    event.params.guy,
+    dataSource.address(),
+    PROT_TOKEN_LABEL,
+    event,
+    true,
+  )
+  let amount = decimal.fromWad(event.params.wad)
+  bal.balance = bal.balance.plus(amount)
+  bal.save()
+
+  // Create a transfer object from the NULL address
+  let transfer = new ERC20Transfer(eventUid(event))
+  transfer.tokenAddress = dataSource.address()
+  transfer.label = PROT_TOKEN_LABEL
+  transfer.source = NULL_ADDRESS as Bytes
+  transfer.destination = event.params.guy
+  transfer.amount = amount
+  transfer.createdAt = event.block.timestamp
+  transfer.createdAtBlock = event.block.number
+  transfer.createdAtTransaction = event.transaction.hash
+  transfer.save()
+}
+
+export function handleBurn(event: Burn): void {
+  let tokenAddress = dataSource.address()
+  let bal = getOrCreateERC20Balance(event.params.guy, tokenAddress, PROT_TOKEN_LABEL, event, true)
+
+  // Sync these assuming msg.sender is the contract emitting the event or tx originator
+  updateAllowance(tokenAddress, event.transaction.from, event.params.guy, PROT_TOKEN_LABEL, event)
+
+  let amount = decimal.fromWad(event.params.wad)
+  bal.balance = bal.balance.minus(amount)
+  bal.save()
+
+  // Create a transfer object to the NULL address
+  let transfer = new ERC20Transfer(eventUid(event))
+  transfer.tokenAddress = tokenAddress
+  transfer.label = PROT_TOKEN_LABEL
+  transfer.source = event.params.guy
+  transfer.destination = NULL_ADDRESS as Bytes
+  transfer.amount = amount
   transfer.createdAt = event.block.timestamp
   transfer.createdAtBlock = event.block.number
   transfer.createdAtTransaction = event.transaction.hash

@@ -89,7 +89,7 @@ export function handleMint(event: Mint): void {
   transfer.label = PROT_TOKEN_LABEL
   transfer.source = NULL_ADDRESS as Bytes
   transfer.destination = event.params.guy
-  transfer.amount = amount
+  // transfer.amount = amount
   transfer.createdAt = event.block.timestamp
   transfer.createdAtBlock = event.block.number
   transfer.createdAtTransaction = event.transaction.hash
@@ -113,7 +113,7 @@ export function handleBurn(event: Burn): void {
   transfer.label = PROT_TOKEN_LABEL
   transfer.source = event.params.guy
   transfer.destination = NULL_ADDRESS as Bytes
-  transfer.amount = amount
+  // transfer.amount = amount
   transfer.createdAt = event.block.timestamp
   transfer.createdAtBlock = event.block.number
   transfer.createdAtTransaction = event.transaction.hash

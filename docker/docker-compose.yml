@@ -1,10 +1,10 @@
-version: "3"
+version: '3'
 services:
   graph-node:
     image: graphprotocol/graph-node:latest
     ports:
-      - "80:8000"
-      - "8030:8030"
+      - '80:8000'
+      - '8030:8030'
     depends_on:
       - ipfs
       - postgres
@@ -13,29 +13,36 @@ services:
       postgres_user: graph-node
       postgres_pass: ${POSTGRES_PASSWORD}
       postgres_db: graph-node
-      ipfs: "ipfs:5001"
+      ipfs: 'ipfs:5001'
       ethereum: ${ETHEREUM_RPC}
       RUST_LOG: error
       GRAPH_LOG: info
-      GRAPH_ETH_CALL_BY_NUMBER: "true"
+      GRAPH_ETH_CALL_BY_NUMBER: 'true'
       ETHEREUM_POLLING_INTERVAL: 500
       ETHEREUM_ANCESTOR_COUNT: 15
       ETHEREUM_REORG_THRESHOLD: 15
       EXPERIMENTAL_SUBGRAPH_VERSION_SWITCHING_MODE: synced
+    logging:
+      options:
+        max-size: 100m
 
     restart: always
   ipfs:
     image: ipfs/go-ipfs:v0.4.23
     ports:
-      - "5001:5001"
+      - '5001:5001'
     volumes:
       - ./data/ipfs:/data/ipfs
+    logging:
+        options:
+          max-size: 100m
     restart: always
+  
   postgres:
     image: postgres
     ports:
-      - "5432:5432"
-    command: ["postgres", "-cshared_preload_libraries=pg_stat_statements"]
+      - '5432:5432'
+    command: ['postgres', '-cshared_preload_libraries=pg_stat_statements']
     environment:
       POSTGRES_USER: graph-node
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -43,6 +50,10 @@ services:
     volumes:
       - ./data/postgres:/var/lib/postgresql/data
     restart: always
+    logging:
+      options:
+        max-size: 100m
+
   graph-deployer:
     build: ../
     depends_on:
@@ -54,3 +65,6 @@ services:
       - SUBGRAPH_NAME=reflexer-labs/rai
       - NETWORK
     command: './docker/wait-for-it.sh\ graph-node:8000\ --timeout=40\ &&\ npm\ run\ deploy-local'
+    logging:
+      options:
+        max-size: 100m

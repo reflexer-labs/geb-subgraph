@@ -113,10 +113,8 @@ export function handleModifyParametersUint(event: ModifyParametersUint): void {
     // Calculate solidity annualized rate by calling the contract
 
     const rpowerRate = (rate: BigInt, nSeconds: i32): decimal.BigDecimal => {
-      let rateSetterContract = RateSetter.bind(addressMap.get('GEB_RRFM_SETTER') as Address)
-      return decimal.fromRay(
-        rateSetterContract.rpower(rate, BigInt.fromI32(nSeconds), decimal.rayBigInt),
-      )
+      // Exponentiate in web assembly, it's not exactly like Solidity but more than accurate enough
+      return decimal.fromNumber(parseFloat(decimal.fromRay(rate).toString()) ** nSeconds)
     }
 
     rate.annualizedRate = rpowerRate(perSecondRateRay, 31536000)

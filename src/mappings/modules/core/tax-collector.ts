@@ -1,5 +1,4 @@
-import { Address, log } from '@graphprotocol/graph-ts'
-import { RateSetter } from '../../../../generated/TaxCollector/RateSetter'
+import { log } from '@graphprotocol/graph-ts'
 import {
   AddAuthorization,
   ModifyParameters as ModifyParametersCollateralTypeUint,
@@ -7,9 +6,7 @@ import {
   RemoveAuthorization,
 } from '../../../../generated/TaxCollector/TaxCollector'
 import { getSystemState, getOrCreateCollateral } from '../../../entities'
-import { addressMap } from '../../../utils/addresses'
 import * as decimal from '../../../utils/decimal'
-import { SECOND_PER_YEAR } from '../../../utils/integer'
 import { addAuthorization, removeAuthorization } from '../governance/authorizations'
 
 // TODO: Authorizations
@@ -27,13 +24,11 @@ export function handleModifyParametersCollateralTypeUint(
 
     // Calculate the annualized
     let system = getSystemState(event)
-    let rateSetterContract = RateSetter.bind(addressMap.get('GEB_RRFM_SETTER') as Address)
     let totalPerSecondRate = decimal.toRay(system.globalStabilityFee).plus(event.params.data)
 
-    collateral.totalAnnualizedStabilityFee = decimal.fromRay(
-      rateSetterContract.rpower(totalPerSecondRate, SECOND_PER_YEAR, decimal.rayBigInt),
+    collateral.totalAnnualizedStabilityFee = decimal.fromNumber(
+      parseFloat(decimal.fromRay(totalPerSecondRate).toString()) ** 31536000,
     )
-
     collateral.save()
   }
 }

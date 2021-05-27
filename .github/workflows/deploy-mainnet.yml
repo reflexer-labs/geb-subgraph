@@ -51,4 +51,5 @@ jobs:
           fi
 
           # Deploy on the hosted service
+          npm install
           npm run deploy-hosted-mainnet -- --access-token $GRAPH_HOSTED_SERVICE_AUTH_TOKEN

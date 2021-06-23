@@ -1042,7 +1042,7 @@ type EnglishAuction @entity {
 # --- Discount Auction ---
 
 type DiscountAuction @entity {
-  " Equal to: <collateral type>-<auction ID> "
+  " Equal to: <Auction house address>-<auction ID> "
   id: ID!
 
   " Auction incremental id "
@@ -1095,7 +1095,7 @@ type DiscountAuction @entity {
 }
 
 type DiscountAuctionBatch @entity {
-  " Equal to: <collateral type>-<auction id>-<batch number> "
+  " Equal to: <Auction house address>-<auction id>-<batch number> "
   id: ID!
 
   " Incremental batch id "

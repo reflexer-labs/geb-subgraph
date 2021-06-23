@@ -10,18 +10,14 @@ import {
   RemoveAuthorization,
 } from '../../../../generated/templates/FixedDiscountCollateralAuctionHouse/FixedDiscountCollateralAuctionHouse'
 import { dataSource, log } from '@graphprotocol/graph-ts'
-import {
-  getOrCreateCollateral,
-  DiscountAuction,
-  DiscountAuctionBatch,
-} from '../../../entities'
+import { getOrCreateCollateral, DiscountAuction, DiscountAuctionBatch } from '../../../entities'
 import { addAuthorization, removeAuthorization } from '../governance/authorizations'
 
 export function handleBuyCollateral(event: BuyCollateral): void {
   let id = event.params.id
   let collateral = FixedDiscountCollateralAuctionHouse.bind(dataSource.address()).collateralType()
 
-  let auctionId = collateral.toString() + '-' + id.toString()
+  let auctionId = event.address.toHexString() + '-' + id.toString()
   let auction = DiscountAuction.load(auctionId)
 
   if (auction == null) {
@@ -29,7 +25,7 @@ export function handleBuyCollateral(event: BuyCollateral): void {
   }
 
   let batch = new DiscountAuctionBatch(
-    collateral.toString() + '-' + id.toString() + '-' + auction.numberOfBatches.toString(),
+    event.address.toHexString() + '-' + id.toString() + '-' + auction.numberOfBatches.toString(),
   )
 
   batch.batchNumber = auction.numberOfBatches
@@ -60,7 +56,7 @@ export function handleSettleAuction(event: SettleAuction): void {
   let collateral = getOrCreateCollateral(collateralName, event)
   collateral.activeLiquidations = collateral.activeLiquidations.minus(integer.ONE)
 
-  let auctionId = collateralName.toString() + '-' + id.toString()
+  let auctionId = event.address.toHexString() + '-' + id.toString()
   let auction = DiscountAuction.load(auctionId)
 
   auction.isSettled = true

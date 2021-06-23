@@ -108,7 +108,7 @@ export function handleLiquidate(event: Liquidate): void {
       log.error('handleLiquidate - auction configuration {} not found', [collateral.id])
     }
 
-    let liquidation = new EnglishAuction(collateral.id.toString() + '-' + id.toString())
+    let liquidation = new EnglishAuction(event.params.collateralAuctioneer.toHexString() + '-' + id.toString())
 
     liquidation.auctionId = id
     liquidation.numberOfBids = integer.ZERO
@@ -133,7 +133,7 @@ export function handleLiquidate(event: Liquidate): void {
 
     liquidation.save()
   } else if (collateral.auctionType == enums.AuctionType_FIXED_DISCOUNT || collateral.auctionType == enums.AuctionType_INCREASING_DISCOUNT) {
-    let liquidation = new DiscountAuction(collateral.id.toString() + '-' + id.toString())
+    let liquidation = new DiscountAuction(event.params.collateralAuctioneer.toHexString() + '-' + id.toString())
 
     liquidation.auctionId = id
     liquidation.collateralType = collateral.id

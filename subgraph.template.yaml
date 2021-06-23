@@ -696,9 +696,9 @@ dataSources:
       file: ./src/mappings/modules/auctions/debt-auction-house.ts
       entities:
         - CollateralType
-        - FixedDiscountAuction
+        - DiscountAuctionBatch
         - FixedDiscountAuctionConfiguration
-        - FixedDiscountAuctionBatch
+        - DiscountAuctionBatch
       abis:
         - name: DebtAuctionHouse
           file: ./abis/DebtAuctionHouse.json
@@ -769,17 +769,13 @@ templates:
       file: ./src/mappings/modules/auctions/discount-collateral-auction-house.ts
       entities:
         - CollateralType
-        - FixedDiscountAuction
+        - DiscountAuctionBatch
         - FixedDiscountAuctionConfiguration
-        - FixedDiscountAuctionBatch
+        - DiscountAuctionBatch
       abis:
         - name: FixedDiscountCollateralAuctionHouse
           file: ./abis/FixedDiscountCollateralAuctionHouse.json
       eventHandlers:
-        - event: ModifyParameters(bytes32,address)
-          handler: handleModifyParametersAddress
-        - event: ModifyParameters(bytes32,uint256)
-          handler: handleModifyParametersUint
         - event: BuyCollateral(indexed uint256,uint256,uint256)
           handler: handleBuyCollateral
         - event: SettleAuction(indexed uint256,uint256)

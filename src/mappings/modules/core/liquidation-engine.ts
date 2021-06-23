@@ -9,13 +9,14 @@ import {
   ProtectSAFE,
 } from '../../../../generated/LiquidationEngine/LiquidationEngine'
 
-import { FixedDiscountCollateralAuctionHouse } from '../../../../generated/templates'
+import {
+  FixedDiscountCollateralAuctionHouse,
+} from '../../../../generated/templates'
 import { FixedDiscountCollateralAuctionHouse as FixedDiscountCollateralAuctionHouseBind } from '../../../../generated/templates/FixedDiscountCollateralAuctionHouse/FixedDiscountCollateralAuctionHouse'
 import {
   getOrCreateCollateral,
   Safe,
-  FixedDiscountAuction,
-  FixedDiscountAuctionConfiguration,
+  DiscountAuction,
   EnglishAuction,
   SafeSaviour,
 } from '../../../entities'
@@ -72,28 +73,18 @@ export function handleModifyParametersCollateralTypeAddress(
       FixedDiscountCollateralAuctionHouse.create(address)
       log.info('Start indexing english auction house: {}', [address.toHexString()])
     } else if (auctionType == enums.AuctionType_FIXED_DISCOUNT) {
-      // Default auction config
-      let auctionConfiguration = FixedDiscountAuctionConfiguration.load(collateral.id)
-      if (auctionConfiguration == null) {
-        auctionConfiguration = new FixedDiscountAuctionConfiguration(collateral.id)
-      }
-      auctionConfiguration.collateralType = collateral.id
-      auctionConfiguration.minimumBid = decimal.fromNumber(5)
-      auctionConfiguration.totalAuctionLength = integer.DAY.times(integer.fromNumber(7))
-      auctionConfiguration.discount = decimal.fromNumber(0.95)
-      auctionConfiguration.lowerCollateralMedianDeviation = decimal.fromNumber(0.9)
-      auctionConfiguration.upperCollateralMedianDeviation = decimal.fromNumber(0.95)
-      auctionConfiguration.lowerSystemCoinMedianDeviation = decimal.ONE
-      auctionConfiguration.upperSystemCoinMedianDeviation = decimal.ONE
-      auctionConfiguration.minSystemCoinMedianDeviation = decimal.fromNumber(0.999)
-      auctionConfiguration.save()
-
       collateral.auctionType = enums.AuctionType_FIXED_DISCOUNT
-      collateral.fixedDiscountAuctionConfiguration = auctionConfiguration.id
 
       // Start indexing an instance of fixed discount auction contract
       FixedDiscountCollateralAuctionHouse.create(address)
       log.info('Start indexing fixed discount auction house: {}', [address.toHexString()])
+    } else if (auctionType == enums.AuctionType_INCREASING_DISCOUNT) {
+      collateral.auctionType = enums.AuctionType_INCREASING_DISCOUNT
+
+      // Start indexing an instance of fixed discount auction contract
+      FixedDiscountCollateralAuctionHouse.create(address)
+
+      log.info('Start indexing increasing discount auction house: {}', [address.toHexString()])
     } else {
       log.error('Unknown auction type: {} ', [auctionType as string])
     }
@@ -141,28 +132,22 @@ export function handleLiquidate(event: Liquidate): void {
     liquidation.safe = safe.id
 
     liquidation.save()
-  } else if (collateral.auctionType == enums.AuctionType_FIXED_DISCOUNT) {
-    let config = FixedDiscountAuctionConfiguration.load(collateral.id)
-
-    if (config == null) {
-      log.error('handleLiquidate - auction configuration {} not found', [collateral.id])
-    }
-
-    let liquidation = new FixedDiscountAuction(collateral.id.toString() + '-' + id.toString())
+  } else if (collateral.auctionType == enums.AuctionType_FIXED_DISCOUNT || collateral.auctionType == enums.AuctionType_INCREASING_DISCOUNT) {
+    let liquidation = new DiscountAuction(collateral.id.toString() + '-' + id.toString())
 
     liquidation.auctionId = id
     liquidation.collateralType = collateral.id
     liquidation.safeHandler = event.params.safe
     liquidation.sellInitialAmount = decimal.fromWad(event.params.collateralAmount)
-    liquidation.amountToRaise = decimal.fromRad(event.params.amountToRaise).times(collateral.liquidationPenalty)
+    liquidation.amountToRaise = decimal
+      .fromRad(event.params.amountToRaise)
+      .times(collateral.liquidationPenalty)
     liquidation.buyAmount = decimal.ZERO
     liquidation.sellAmount = liquidation.sellInitialAmount
     let safe = Safe.load(event.params.safe.toHexString() + '-' + collateral.id)
     liquidation.safe = safe.id
-    liquidation.auctionDeadline = config.totalAuctionLength.plus(event.block.timestamp)
     liquidation.startedBy = event.address
     liquidation.numberOfBatches = integer.ZERO
-    liquidation.fixedDiscountAuctionConfiguration = collateral.id
     liquidation.isTerminated = false
     liquidation.isSettled = false
     liquidation.createdAt = event.block.timestamp

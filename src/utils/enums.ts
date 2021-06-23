@@ -13,3 +13,4 @@ export let EnglishBidType_DECREASE_SOLD = 'DECREASE_SOLD'
 
 export let AuctionType_ENGLISH = 'ENGLISH'
 export let AuctionType_FIXED_DISCOUNT = 'FIXED_DISCOUNT'
+export let AuctionType_INCREASING_DISCOUNT = 'INCREASING_DISCOUNT'

@@ -52,8 +52,8 @@ type Safe @entity {
   " List of CRatio changes "
   modifySAFECollateralization: [ModifySAFECollateralization!] @derivedFrom(field: "safe")
 
-  " List of fixed discount auctions associated with this Safe "
-  liquidationFixedDiscount: [FixedDiscountAuction!] @derivedFrom(field: "safe")
+  " List of discount auctions associated with this Safe "
+  liquidationDiscount: [DiscountAuction!] @derivedFrom(field: "safe")
 
   " List of English auctions associated with this Safe "
   liquidationEnglish: [EnglishAuction!] @derivedFrom(field: "safe")
@@ -357,9 +357,6 @@ type CollateralType @entity {
 
   " Auction configuration (English only) "
   englishAuctionConfiguration: EnglishAuctionConfiguration
-
-  " Auction configuration (fixed discount only) "
-  fixedDiscountAuctionConfiguration: FixedDiscountAuctionConfiguration
 
   # == Time ==
 
@@ -897,6 +894,7 @@ type MedianizerUpdate @entity {
 enum AuctionType {
   ENGLISH
   FIXED_DISCOUNT
+  INCREASING_DISCOUNT
 }
 
 type EnglishAuctionConfiguration @entity {
@@ -1041,53 +1039,9 @@ type EnglishAuction @entity {
   createdAtTransaction: Bytes!
 }
 
-# --- Fixed Discount Auction ---
+# --- Discount Auction ---
 
-type FixedDiscountAuctionConfiguration @entity {
-  " Collateral type name "
-  id: ID!
-
-  " Collateral type "
-  collateralType: CollateralType!
-
-  " Minimum acceptable bid "
-  minimumBid: BigDecimal!
-
-  " Total length of the auction [seconds] "
-  totalAuctionLength: BigInt!
-
-  " Discount (compared to the collateral's current price introduced in the system) at which collateral is being sold "
-  discount: BigDecimal!
-
-  " Max lower bound deviation that the collateral median can have compared to the FSM price "
-  lowerCollateralMedianDeviation: BigDecimal!
-
-  " Max upper bound deviation that the collateral median can have compared to the FSM price "
-  upperCollateralMedianDeviation: BigDecimal!
-
-  " Max lower bound deviation that the system coin oracle price feed can have compared to the system coin oracle "
-  lowerSystemCoinMedianDeviation: BigDecimal!
-
-  " Max upper bound deviation that the collateral median can have compared to the system coin oracle "
-  upperSystemCoinMedianDeviation: BigDecimal!
-
-  " Min deviation for the system coin median result compared to the redemption price in order to take the median into account "
-  minSystemCoinMedianDeviation: BigDecimal!
-
-  " Oracle relayer contract "
-  oracleRelayer: Bytes
-
-  " Collateral FSM contract address "
-  collateralFSM: Bytes
-
-  " Collateral medianizer contract "
-  collateralMedian: Bytes
-
-  " System coin price feed contract "
-  systemCoinOracle: Bytes
-}
-
-type FixedDiscountAuction @entity {
+type DiscountAuction @entity {
   " Equal to: <collateral type>-<auction ID> "
   id: ID!
 
@@ -1115,9 +1069,6 @@ type FixedDiscountAuction @entity {
   " Liquidated Safe "
   safe: Safe!
 
-  " Hard deadline for the auction after which no more bids can be placed  "
-  auctionDeadline: BigInt!
-
   " Address that started the auction "
   startedBy: Bytes!
 
@@ -1125,10 +1076,7 @@ type FixedDiscountAuction @entity {
   numberOfBatches: BigInt!
 
   # " List of individual collateral batches that were sold "
-  batchSold: [FixedDiscountAuctionBatch!] @derivedFrom(field: "auction")
-
-  " Auction configuration "
-  fixedDiscountAuctionConfiguration: FixedDiscountAuctionConfiguration!
+  batchSold: [DiscountAuctionBatch!] @derivedFrom(field: "auction")
 
   " Whether there's still any collateral left to be bought "
   isTerminated: Boolean!
@@ -1146,7 +1094,7 @@ type FixedDiscountAuction @entity {
   createdAtTransaction: Bytes!
 }
 
-type FixedDiscountAuctionBatch @entity {
+type DiscountAuctionBatch @entity {
   " Equal to: <collateral type>-<auction id>-<batch number> "
   id: ID!
 
@@ -1154,7 +1102,7 @@ type FixedDiscountAuctionBatch @entity {
   batchNumber: BigInt!
 
   " Auction in which the batch was sold "
-  auction: FixedDiscountAuction!
+  auction: DiscountAuction!
 
   " Amount of tokens bought in the batch "
   buyAmount: BigDecimal!

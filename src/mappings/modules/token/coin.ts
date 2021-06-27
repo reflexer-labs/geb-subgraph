@@ -42,7 +42,7 @@ export function handleTransfer(event: Transfer): void {
 
   // Check if it's not a mint before updating source
   if (!source.equals(nullAddress)) {
-    let srcBalance = getOrCreateERC20Balance(source, tokenAddress, COIN_LABEL, event, false)
+    let srcBalance = getOrCreateERC20Balance(source, tokenAddress, COIN_LABEL, event, true)
     srcBalance.balance = srcBalance.balance.minus(amount)
     srcBalance.modifiedAt = event.block.timestamp
     srcBalance.modifiedAtBlock = event.block.number

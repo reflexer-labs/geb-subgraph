@@ -101,7 +101,7 @@ export function handleTransfer(event: Transfer): void {
       tokenAddress,
       UNISWAP_COIN_POOL_TOKEN_LABEL,
       event,
-      false,
+      true,
     )
     srcBalance.balance = srcBalance.balance.minus(amount)
     srcBalance.modifiedAt = event.block.timestamp

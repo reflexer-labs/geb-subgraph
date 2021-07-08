@@ -6,6 +6,7 @@ import * as enums from '../utils/enums'
 import { EnglishAuctionConfiguration } from '.'
 import { DebtAuctionHouse } from '../../generated/DebtAuctionHouse/DebtAuctionHouse'
 import { SurplusAuctionHouse } from '../../generated/SurplusAuctionHouse/SurplusAuctionHouse'
+import { StakedTokenAuctionHouse } from '../../generated/StakedTokenAuctionHouse/StakedTokenAuctionHouse'
 
 export function getOrCreateEnglishAuctionConfiguration(
   houseAddress: Bytes,
@@ -26,6 +27,11 @@ export function getOrCreateEnglishAuctionConfiguration(
     config.DEBT_amountSoldIncrease = decimal.fromWad(contract.amountSoldIncrease())
   } else if (configId == enums.EnglishAuctionType_SURPLUS) {
     let contract = SurplusAuctionHouse.bind(houseAddress as Address)
+    config.bidIncrease = decimal.fromWad(contract.bidIncrease())
+    config.bidDuration = contract.bidDuration()
+    config.totalAuctionLength = contract.totalAuctionLength()
+  } else if (configId == enums.EnglishAuctionType_STAKED_TOKEN) {
+    let contract = StakedTokenAuctionHouse.bind(houseAddress as Address)
     config.bidIncrease = decimal.fromWad(contract.bidIncrease())
     config.bidDuration = contract.bidDuration()
     config.totalAuctionLength = contract.totalAuctionLength()

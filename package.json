@@ -12,6 +12,7 @@
     "deploy-hosted-kovan": "npm run prepare-kovan && npm run codegen && graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ reflexer-labs/rai-kovan",
     "deploy-hosted-mainnet": "npm run prepare-mainnet && npm run codegen && graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ reflexer-labs/rai-mainnet",
     "deploy-hosted-dev": "npm run prepare-mainnet && npm run codegen && graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ guifel/geb",
+    "deploy-hosted-dev-kovan": "npm run prepare-kovan && npm run codegen && graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ guifel/gebkovan",
     "prepare-mainnet": "mustache config/mainnet.json subgraph.template.yaml > subgraph.yaml && mustache config/mainnet.json src/utils/addresses.template.ts > src/utils/addresses.ts",
     "prepare-kovan": "mustache config/kovan.json subgraph.template.yaml > subgraph.yaml && mustache config/kovan.json src/utils/addresses.template.ts > src/utils/addresses.ts",
     "update-abis": "node update_abis.js geb-subgraph/abis kovan/0.6.0",

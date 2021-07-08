@@ -283,9 +283,9 @@ dataSources:
     source:
       abi: DSProxyFactory
       address: '{{PROXY_FACTORY}}'
-      startBlock: {{PROXY_REGISTRY_STARTING_BLOCK}}
+      # startBlock: {{PROXY_REGISTRY_STARTING_BLOCK}}
       # Use this instead of the above for dev (faster sync but not all proxies available)
-      # startBlock: {{STARTING_BLOCK_NUMBER}}
+      startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -725,6 +725,41 @@ dataSources:
         #   handler: handleStartAuction
         # - event: TerminateAuctionPrematurely(uint256,address,address,uint256,uint256)  
         #   handler: handleTerminateAuctionPrematurely
+ 
+  - name: StakedTokenAuctionHouse
+    kind: ethereum/contract
+    network: {{NETWORK}}
+    source:
+      abi: StakedTokenAuctionHouse
+      address: '{{GEB_SURPLUS_AUCTION_HOUSE}}'
+      startBlock: {{STARTING_BLOCK_NUMBER}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/modules/auctions/staked-tokens-auction-houses.ts
+      entities:
+        - EnglishAuction
+        - EnglishAuctionBid
+      abis:
+        - name: StakedTokenAuctionHouse
+          file: ./abis/StakedTokenAuctionHouse.json
+      eventHandlers:
+        - event: ModifyParameters(bytes32,uint256)
+          handler: handleModifyParameters
+        - event: StartAuction(indexed uint256,uint256,uint256,uint256,indexed address,indexed uint256,uint256)
+          handler: handleStartAuction
+        - event: IncreaseBidSize(uint256,address,uint256,uint256,uint256)
+          handler: handleIncreaseBidSize
+        - event: RestartAuction(indexed uint256,uint256,uint256)
+          handler: handleRestartAuction
+        - event: SettleAuction(indexed uint256,uint256)
+          handler: handleSettleAuction
+        - event: AddAuthorization(address)
+          handler: handleAddAuthorization
+        - event: RemoveAuthorization(address)
+          handler: handleRemoveAuthorization
+
 
   - name: StakingRewardsFactory 
     kind: ethereum/contract

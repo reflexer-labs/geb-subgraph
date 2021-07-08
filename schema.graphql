@@ -958,6 +958,7 @@ enum EnglishAuctionType {
   LIQUIDATION
   DEBT
   SURPLUS
+  STAKED_TOKEN
 }
 
 enum AuctionToken {

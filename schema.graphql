@@ -965,6 +965,7 @@ enum AuctionToken {
   COIN
   COLLATERAL
   PROTOCOL_TOKEN
+  PROTOCOL_TOKEN_LP
 }
 
 enum EnglishBidType {

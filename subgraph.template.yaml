@@ -731,7 +731,7 @@ dataSources:
     network: {{NETWORK}}
     source:
       abi: StakedTokenAuctionHouse
-      address: '{{GEB_SURPLUS_AUCTION_HOUSE}}'
+      address: '{{GEB_STAKING_AUCTION_HOUSE}}'
       startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events

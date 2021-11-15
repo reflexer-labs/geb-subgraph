@@ -493,8 +493,6 @@ dataSources:
       eventHandlers:
         - event:  UpdateResult(uint256,uint256)
           handler: handleUpdateResult
-        - event:  ModifyParameters(bytes32,address)
-          handler: handleModifyParameters
         - event: AddAuthorization(address)
           handler: handleAddAuthorization
         - event: RemoveAuthorization(address)

@@ -38,17 +38,6 @@ export function handleUpdateResult(event: UpdateResult): void {
   periodicHandler(event)
 }
 
-// Only call for the Uniswap medianizer
-export function handleModifyParameters(event: ModifyParameters): void {
-  let uniswapMedian = UniMedianizer.bind(dataSource.address())
-  let pairAddress = uniswapMedian.uniswapPair()
-
-  // Set system reference to Coin medianizer
-  let system = getSystemState(event)
-  system.coinUniswapPair = pairAddress.toHexString()
-  system.save()
-}
-
 export function handleAddAuthorization(event: AddAuthorization): void {
   addAuthorization(event.params.account, event)
 }

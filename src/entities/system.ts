@@ -36,6 +36,7 @@ export function getSystemState(event: ethereum.Event): SystemState {
     state.lastPeriodicUpdate = integer.ZERO
     state.coinAddress = addressMap.get('GEB_COIN')
     state.wethAddress = addressMap.get('ETH')
+    state.coinUniswapPair = addressMap.get('GEB_COIN_UNISWAP_POOL').toHexString()
 
     // Created at
     state.createdAtBlock = event.block.number

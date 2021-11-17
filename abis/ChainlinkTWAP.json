@@ -1,38 +1,14 @@
 [
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "uniswapFactory_",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "defaultAmountIn_",
-        "type": "uint256"
-      },
+      { "internalType": "address", "name": "aggregator", "type": "address" },
       { "internalType": "uint256", "name": "windowSize_", "type": "uint256" },
       {
         "internalType": "uint256",
-        "name": "converterFeedScalingFactor_",
+        "name": "maxWindowSize_",
         "type": "uint256"
       },
-      {
-        "internalType": "uint256",
-        "name": "baseUpdateCallerReward_",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "maxUpdateCallerReward_",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "perSecondCallerRewardIncrease_",
-        "type": "uint256"
-      },
-      { "internalType": "uint256", "name": "maxWindow_", "type": "uint256" },
+      { "internalType": "uint256", "name": "multiplier_", "type": "uint256" },
       { "internalType": "uint8", "name": "granularity_", "type": "uint8" }
     ],
     "stateMutability": "nonpayable",
@@ -49,57 +25,6 @@
       }
     ],
     "name": "AddAuthorization",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "bytes",
-        "name": "revertReason",
-        "type": "bytes"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "feeReceiver",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "FailRewardCaller",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "bytes",
-        "name": "reason",
-        "type": "bytes"
-      }
-    ],
-    "name": "FailedConverterFeedUpdate",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "bytes",
-        "name": "reason",
-        "type": "bytes"
-      }
-    ],
-    "name": "FailedUniswapPairSync",
     "type": "event"
   },
   {
@@ -159,13 +84,7 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "medianPrice",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "lastUpdateTime",
+        "name": "result",
         "type": "uint256"
       }
     ],
@@ -214,29 +133,10 @@
   },
   {
     "inputs": [],
-    "name": "baseUpdateCallerReward",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "uint256", "name": "timeElapsed", "type": "uint256" },
-      { "internalType": "uint256", "name": "amountIn", "type": "uint256" }
-    ],
-    "name": "converterComputeAmountOut",
-    "outputs": [
-      { "internalType": "uint256", "name": "amountOut", "type": "uint256" }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "converterFeed",
+    "name": "chainlinkAggregator",
     "outputs": [
       {
-        "internalType": "contract ConverterFeedLike",
+        "internalType": "contract AggregatorInterface",
         "name": "",
         "type": "address"
       }
@@ -246,12 +146,12 @@
   },
   {
     "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "name": "converterFeedObservations",
+    "name": "chainlinkObservations",
     "outputs": [
       { "internalType": "uint256", "name": "timestamp", "type": "uint256" },
       {
         "internalType": "uint256",
-        "name": "timeAdjustedPrice",
+        "name": "timeAdjustedResult",
         "type": "uint256"
       }
     ],
@@ -260,29 +160,8 @@
   },
   {
     "inputs": [],
-    "name": "converterFeedScalingFactor",
+    "name": "converterResultCumulative",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "converterPriceCumulative",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "defaultAmountIn",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "denominationToken",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -294,30 +173,9 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "timeOfLastUpdate",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "defaultDelayBetweenCalls",
-        "type": "uint256"
-      }
-    ],
-    "name": "getCallerReward",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [],
     "name": "getObservationListLength",
-    "outputs": [
-      { "internalType": "uint256", "name": "", "type": "uint256" },
-      { "internalType": "uint256", "name": "", "type": "uint256" }
-    ],
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -347,14 +205,7 @@
   },
   {
     "inputs": [],
-    "name": "maxRewardIncreaseDelay",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "maxUpdateCallerReward",
+    "name": "linkAggregatorTimestamp",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
@@ -379,7 +230,7 @@
   {
     "inputs": [
       { "internalType": "bytes32", "name": "parameter", "type": "bytes32" },
-      { "internalType": "address", "name": "data", "type": "address" }
+      { "internalType": "address", "name": "addr", "type": "address" }
     ],
     "name": "modifyParameters",
     "outputs": [],
@@ -397,6 +248,13 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "multiplier",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       { "internalType": "uint256", "name": "x", "type": "uint256" },
       { "internalType": "uint256", "name": "y", "type": "uint256" }
@@ -404,13 +262,6 @@
     "name": "multiply",
     "outputs": [{ "internalType": "uint256", "name": "z", "type": "uint256" }],
     "stateMutability": "pure",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "perSecondCallerRewardIncrease",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -461,6 +312,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "rewardRelayer",
+    "outputs": [
+      {
+        "internalType": "contract IncreasingRewardRelayerLike",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       { "internalType": "uint256", "name": "x", "type": "uint256" },
       { "internalType": "uint256", "name": "y", "type": "uint256" }
@@ -482,6 +346,13 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "staleThreshold",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       { "internalType": "uint256", "name": "x", "type": "uint256" },
       { "internalType": "uint256", "name": "y", "type": "uint256" }
@@ -500,96 +371,8 @@
   },
   {
     "inputs": [],
-    "name": "targetToken",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "timeElapsedSinceFirstObservation",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "treasury",
-    "outputs": [
-      {
-        "internalType": "contract StabilityFeeTreasuryLike",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "treasuryAllowance",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "priceCumulativeStart",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "priceCumulativeEnd",
-        "type": "uint256"
-      },
-      { "internalType": "uint256", "name": "timeElapsed", "type": "uint256" },
-      { "internalType": "uint256", "name": "amountIn", "type": "uint256" }
-    ],
-    "name": "uniswapComputeAmountOut",
-    "outputs": [
-      { "internalType": "uint256", "name": "amountOut", "type": "uint256" }
-    ],
-    "stateMutability": "pure",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "uniswapFactory",
-    "outputs": [
-      {
-        "internalType": "contract IUniswapV2Factory",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "name": "uniswapObservations",
-    "outputs": [
-      { "internalType": "uint256", "name": "timestamp", "type": "uint256" },
-      {
-        "internalType": "uint256",
-        "name": "price0Cumulative",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "price1Cumulative",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "uniswapPair",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -605,13 +388,6 @@
   {
     "inputs": [],
     "name": "updates",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "validityFlag",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"

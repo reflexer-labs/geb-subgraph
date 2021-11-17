@@ -469,29 +469,29 @@ dataSources:
         # - event: Stop()
         #   handler: handleStop
   
-  - name: CoinMedianizer
+  - name: CoinTwap
     kind: ethereum/contract
     network: {{NETWORK}}
     source:
-      abi: Medianizer
+      abi: CoinTwap
       address: '{{MEDIANIZER_RAI}}'
       startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
       language: wasm/assemblyscript
-      file: ./src/mappings/modules/oracles/medianizer.ts
+      file: ./src/mappings/modules/oracles/coinTwap.ts
       entities:
         - MedianizerUpdate
       abis:
-        - name: Medianizer
-          file: ./abis/UniswapConsecutiveSlotsMedianRAIUSD.json
+        - name: CoinTwap
+          file: ./abis/ChainlinkTWAP.json
         - name: UniswapV2Pair
           file: ./abis/UniswapV2Pair.json
         - name: EACAggregatorProxy
           file: ./abis/EACAggregatorProxy.json
       eventHandlers:
-        - event:  UpdateResult(uint256,uint256)
+        - event:  UpdateResult(uint256)
           handler: handleUpdateResult
         - event: AddAuthorization(address)
           handler: handleAddAuthorization

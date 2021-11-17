@@ -1,12 +1,10 @@
 import { dataSource } from '@graphprotocol/graph-ts'
 import {
   UpdateResult,
-  Medianizer as CoinMedianizer,
-  ModifyParameters,
+  CoinTwap,
   AddAuthorization,
   RemoveAuthorization,
-} from '../../../../generated/CoinMedianizer/Medianizer'
-import { Medianizer as UniMedianizer } from '../../../../generated/CoinMedianizer/Medianizer'
+} from '../../../../generated/CoinTwap/CoinTwap'
 import { getSystemState, MedianizerUpdate } from '../../../entities'
 import { eventUid } from '../../../utils/ethereum'
 import * as decimal from '../../../utils/decimal'
@@ -20,8 +18,8 @@ export function handleUpdateResult(event: UpdateResult): void {
   let contractAddress = dataSource.address()
 
   update.medianizerAddress = contractAddress
-  update.value = decimal.fromWad(event.params.medianPrice)
-  update.symbol = CoinMedianizer.bind(contractAddress)
+  update.value = decimal.fromWad(event.params.result)
+  update.symbol = CoinTwap.bind(contractAddress)
     .symbol()
     .toString()
   update.createdAt = event.block.timestamp

@@ -1,4 +1,4 @@
-import { dataSource } from '@graphprotocol/graph-ts'
+import { dataSource, BigInt } from '@graphprotocol/graph-ts'
 import {
   UpdateResult,
   CoinTwap,
@@ -18,7 +18,14 @@ export function handleUpdateResult(event: UpdateResult): void {
   let contractAddress = dataSource.address()
 
   update.medianizerAddress = contractAddress
-  update.value = decimal.fromWad(event.params.result)
+
+  // Convert from a 10th decimal place number
+  update.value = event.params.result.divDecimal(
+    BigInt.fromI32(10)
+      .pow(10)
+      .toBigDecimal(),
+  )
+  
   update.symbol = CoinTwap.bind(contractAddress)
     .symbol()
     .toString()

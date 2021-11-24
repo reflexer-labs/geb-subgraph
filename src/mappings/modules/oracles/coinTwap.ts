@@ -21,8 +21,8 @@ export function handleUpdateResult(event: UpdateResult): void {
 
   // Convert from a 8th decimal place number
   update.value = event.params.result.divDecimal(
-    BigInt.fromI32(8)
-      .pow(10)
+    BigInt.fromI32(10)
+      .pow(8)
       .toBigDecimal(),
   )
   

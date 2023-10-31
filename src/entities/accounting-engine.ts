@@ -23,7 +23,6 @@ export function getOrCreateAccountingEngine(event: ethereum.Event): AccountingEn
     engine.safeEngine = engineContract.safeEngine()
     engine.surplusAuctionHouse = engineContract.surplusAuctionHouse()
     engine.debtAuctionHouse = engineContract.debtAuctionHouse()
-    engine.protocolTokenAuthority = engineContract.protocolTokenAuthority()
     engine.postSettlementSurplusDrain = engineContract.postSettlementSurplusDrain()
     engine.debtAuctionCount = integer.ZERO
     engine.surplusAuctionCount = integer.ZERO

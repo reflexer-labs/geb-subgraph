@@ -22,8 +22,11 @@ import { findUltimateOwner } from '../../../entities/user'
 export function handleOpenSAFE(event: OpenSAFE): void {
   let manager = GebSafeManager.bind(dataSource.address())
 
-  let collateralType = manager.collateralTypes(event.params.safe)
-  let safeAddress = manager.safes(event.params.safe)
+  let safeData = manager.safeData(event.params._safe)
+
+  let owner = safeData.owner
+  let safeAddress = safeData.safeHandler
+  let collateralType = safeData.collateralType
 
   let collateral = CollateralType.load(collateralType.toString())
 
@@ -31,9 +34,9 @@ export function handleOpenSAFE(event: OpenSAFE): void {
     // Register new vault
     let safe = createManagedSafe(
       safeAddress,
-      event.params.own,
+      event.params._own,
       collateralType,
-      event.params.safe,
+      event.params._safe,
       event,
     )
     log.info('New Manged SAFE, id: #{}, owner {}, address: {}', [
@@ -45,7 +48,7 @@ export function handleOpenSAFE(event: OpenSAFE): void {
   } else {
     log.warning('Wrong collateral type: {}, safe_id: {}, tx_hash: {}', [
       collateralType.toString(),
-      event.params.safe.toString(),
+      event.params._safe.toString(),
       event.transaction.hash.toHexString(),
     ])
   }
@@ -53,15 +56,19 @@ export function handleOpenSAFE(event: OpenSAFE): void {
 
 export function handleTransferSAFEOwnership(event: TransferSAFEOwnership): void {
   let manager = GebSafeManager.bind(dataSource.address())
-  let collateralType = manager.collateralTypes(event.params.safe)
+  let safeData = manager.safeData(event.params._safe)
+
+  let owner = safeData.owner
+  let safeHandler = safeData.safeHandler
+  let collateralType = safeData.collateralType
+
   let collateral = CollateralType.load(collateralType.toString())
-  let safeHandler = manager.safes(event.params.safe)
   let safe = Safe.load(safeHandler.toHexString() + '-' + collateral.id)
-  safe.owner = findUltimateOwner(event.params.dst).toHexString()
+  safe.owner = findUltimateOwner(event.params._dst).toHexString()
   updateLastModifySafe(safe as Safe, event)
 
   // Assign a proxy if it exists
-  safe.proxy = UserProxy.load(event.params.dst.toHexString()).id
+  safe.proxy = UserProxy.load(event.params._dst.toHexString()).id
 
   safe.save()
 

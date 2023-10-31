@@ -38,7 +38,7 @@ import {
 } from '../../../entities/balances'
 import { createUnmanagedSafe, updateSafeCollateralization } from '../../../entities/safe'
 import { eventUid } from '../../../utils/ethereum'
-import { periodicHandler } from './periodic-handler'
+// import { periodicHandler } from './periodic-handler'
 import { addressMap } from '../../../utils/addresses'
 import { addAuthorization, removeAuthorization } from '../governance/authorizations'
 
@@ -345,7 +345,7 @@ export function handleUpdateAccumulatedRate(event: UpdateAccumulatedRate): void 
   updateCoinBalance(event.params.surplusDst, event)
 
   // This needs tbe call at least once an hour. We call it from here since it's a popular function.
-  periodicHandler(event)
+  // periodicHandler(event)
 
   let rateEvent = new UpdateAccumulatedRateEntity(eventUid(event))
   rateEvent.collateralType = collateral.id

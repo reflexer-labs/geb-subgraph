@@ -26,10 +26,10 @@ dataSources:
         - name: SAFEEngine
           file: ./abis/SAFEEngine.json
         # These 2 contract are needed by the periodic handler
-        - name: UniswapV2Pair
-          file: ./abis/UniswapV2Pair.json
-        - name: EACAggregatorProxy
-          file: ./abis/EACAggregatorProxy.json
+        # - name: UniswapV2Pair
+        #   file: ./abis/UniswapV2Pair.json
+        # - name: EACAggregatorProxy
+        #   file: ./abis/EACAggregatorProxy.json
       eventHandlers:
         - event: InitializeCollateralType(bytes32)
           handler: handleInitializeCollateralType
@@ -283,7 +283,7 @@ dataSources:
     source:
       abi: DSProxyFactory
       address: '{{PROXY_FACTORY}}'
-      startBlock: {{PROXY_REGISTRY_STARTING_BLOCK}}
+      startBlock: {{STARTING_BLOCK_NUMBER}}
       # Use this instead of the above for dev (faster sync but not all proxies available)
       # startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
@@ -330,32 +330,32 @@ dataSources:
         # - event: DisableContract()
         #   handler: handleDisableContract
   
-  - name: EthAJoin
-    kind: ethereum/contract
-    network: {{NETWORK}}
-    source:
-      abi: BasicCollateralJoin
-      address: '{{GEB_JOIN_ETH_A}}'
-      startBlock: {{STARTING_BLOCK_NUMBER}}
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.4
-      language: wasm/assemblyscript
-      file: ./src/mappings/modules/token/collateral-join.ts
-      entities:
-        - CollateralJoin
-      abis:
-        - name: BasicCollateralJoin
-          file: ./abis/BasicCollateralJoin.json
-      eventHandlers:
-        - event: Exit(address,address,uint256)
-          handler: handleExit
-        - event: Join(address,address,uint256)
-          handler: handleJoin
-        - event: AddAuthorization(address)
-          handler: handleAddAuthorization
-        - event: RemoveAuthorization(address)
-          handler: handleRemoveAuthorization
+  # - name: EthAJoin
+  #   kind: ethereum/contract
+  #   network: {{NETWORK}}
+  #   source:
+  #     abi: BasicCollateralJoin
+  #     address: '{{GEB_JOIN_ETH_A}}'
+  #     startBlock: {{STARTING_BLOCK_NUMBER}}
+  #   mapping:
+  #     kind: ethereum/events
+  #     apiVersion: 0.0.4
+  #     language: wasm/assemblyscript
+  #     file: ./src/mappings/modules/token/collateral-join.ts
+  #     entities:
+  #       - CollateralJoin
+  #     abis:
+  #       - name: BasicCollateralJoin
+  #         file: ./abis/BasicCollateralJoin.json
+  #     eventHandlers:
+  #       - event: Exit(address,address,uint256)
+  #         handler: handleExit
+  #       - event: Join(address,address,uint256)
+  #         handler: handleJoin
+  #       - event: AddAuthorization(address)
+  #         handler: handleAddAuthorization
+  #       - event: RemoveAuthorization(address)
+  #         handler: handleRemoveAuthorization
 
         # - event: DisableContract()
         #   handler: handleDisableContract
@@ -391,33 +391,33 @@ dataSources:
         - event: RemoveAuthorization(address)
           handler: handleRemoveAuthorization
   
-  - name: ProtestPause
-    kind: ethereum/contract
-    network: {{NETWORK}}
-    source:
-      abi: DSProtestPause
-      address: '{{GEB_PAUSE}}'
-      startBlock: {{STARTING_BLOCK_NUMBER}}
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.4
-      language: wasm/assemblyscript
-      file: ./src/mappings/modules/governance/ds-protest-pause.ts
-      entities:
-        - DsPauseScheduledTransaction
+  # - name: ProtestPause
+  #   kind: ethereum/contract
+  #   network: {{NETWORK}}
+  #   source:
+  #     abi: DSProtestPause
+  #     address: '{{GEB_PAUSE}}'
+  #     startBlock: {{STARTING_BLOCK_NUMBER}}
+  #   mapping:
+  #     kind: ethereum/events
+  #     apiVersion: 0.0.4
+  #     language: wasm/assemblyscript
+  #     file: ./src/mappings/modules/governance/ds-protest-pause.ts
+  #     entities:
+  #       - DsPauseScheduledTransaction
 
-      abis:
-        - name: DSProtestPause
-          file: ./abis/DSProtestPause.json
-      eventHandlers:
-        - event: ScheduleTransaction(address,address,bytes32,bytes,uint256)
-          handler: handleScheduleTransaction
-        - event: AttachTransactionDescription(address,address,bytes32,bytes,uint256,string)
-          handler: handleAttachTransactionDescription
-        - event: ExecuteTransaction(address,address,bytes32,bytes,uint256)
-          handler: handleExecuteTransaction
-        - event: AbandonTransaction(address,address,bytes32,bytes,uint256)
-          handler: handleAbandonTransaction
+  #     abis:
+  #       - name: DSProtestPause
+  #         file: ./abis/DSProtestPause.json
+  #     eventHandlers:
+  #       - event: ScheduleTransaction(address,address,bytes32,bytes,uint256)
+  #         handler: handleScheduleTransaction
+  #       - event: AttachTransactionDescription(address,address,bytes32,bytes,uint256,string)
+  #         handler: handleAttachTransactionDescription
+  #       - event: ExecuteTransaction(address,address,bytes32,bytes,uint256)
+  #         handler: handleExecuteTransaction
+  #       - event: AbandonTransaction(address,address,bytes32,bytes,uint256)
+  #         handler: handleAbandonTransaction
         # - event: ChangeDelayMultiplier(uint256)
         #   handler: handleChangeDelayMultiplier
         # - event: LogNote(indexed bytes4,indexed address,indexed bytes32,indexed bytes32,uint256,bytes)
@@ -433,30 +433,30 @@ dataSources:
         # - event: SetProtester(address)
         #   handler: handleSetProtester
 
-  - name: EthOsm
-    kind: ethereum/contract
-    network: {{NETWORK}}
-    source:
-      abi: Osm
-      address: '{{FEED_SECURITY_MODULE_ETH}}'
-      startBlock: {{STARTING_BLOCK_NUMBER}}
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.4
-      language: wasm/assemblyscript
-      file: ./src/mappings/modules/oracles/fsm.ts
-      entities:
-        - FSMUpdate
-      abis:
-        - name: Osm
-          file: ./abis/OSM.json
-      eventHandlers:
-        - event: UpdateResult(uint256,uint256)
-          handler: handleUpdateResult
-        - event: AddAuthorization(address)
-          handler: handleAddAuthorization
-        - event: RemoveAuthorization(address)
-          handler: handleRemoveAuthorization
+  # - name: EthOsm
+  #   kind: ethereum/contract
+  #   network: {{NETWORK}}
+  #   source:
+  #     abi: Osm
+  #     address: '{{FEED_SECURITY_MODULE_ETH}}'
+  #     startBlock: {{STARTING_BLOCK_NUMBER}}
+  #   mapping:
+  #     kind: ethereum/events
+  #     apiVersion: 0.0.4
+  #     language: wasm/assemblyscript
+  #     file: ./src/mappings/modules/oracles/fsm.ts
+  #     entities:
+  #       - FSMUpdate
+  #     abis:
+  #       - name: Osm
+  #         file: ./abis/OSM.json
+  #     eventHandlers:
+  #       - event: UpdateResult(uint256,uint256)
+  #         handler: handleUpdateResult
+  #       - event: AddAuthorization(address)
+  #         handler: handleAddAuthorization
+  #       - event: RemoveAuthorization(address)
+  #         handler: handleRemoveAuthorization
 
         # - event: ChangeDelay(uint16)
         #   handler: handleChangeDelay
@@ -469,34 +469,34 @@ dataSources:
         # - event: Stop()
         #   handler: handleStop
   
-  - name: CoinTwap
-    kind: ethereum/contract
-    network: {{NETWORK}}
-    source:
-      abi: CoinTwap
-      address: '{{MEDIANIZER_RAI}}'
-      startBlock: {{STARTING_BLOCK_NUMBER}}
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.4
-      language: wasm/assemblyscript
-      file: ./src/mappings/modules/oracles/coinTwap.ts
-      entities:
-        - MedianizerUpdate
-      abis:
-        - name: CoinTwap
-          file: ./abis/ChainlinkTWAP.json
-        - name: UniswapV2Pair
-          file: ./abis/UniswapV2Pair.json
-        - name: EACAggregatorProxy
-          file: ./abis/EACAggregatorProxy.json
-      eventHandlers:
-        - event:  UpdateResult(uint256)
-          handler: handleUpdateResult
-        - event: AddAuthorization(address)
-          handler: handleAddAuthorization
-        - event: RemoveAuthorization(address)
-          handler: handleRemoveAuthorization
+  # - name: CoinTwap
+  #   kind: ethereum/contract
+  #   network: {{NETWORK}}
+  #   source:
+  #     abi: CoinTwap
+  #     address: '{{MEDIANIZER_RAI}}'
+  #     startBlock: {{STARTING_BLOCK_NUMBER}}
+  #   mapping:
+  #     kind: ethereum/events
+  #     apiVersion: 0.0.4
+  #     language: wasm/assemblyscript
+  #     file: ./src/mappings/modules/oracles/coinTwap.ts
+  #     entities:
+  #       - MedianizerUpdate
+  #     abis:
+  #       - name: CoinTwap
+  #         file: ./abis/ChainlinkTWAP.json
+  #       - name: UniswapV2Pair
+  #         file: ./abis/UniswapV2Pair.json
+  #       - name: EACAggregatorProxy
+  #         file: ./abis/EACAggregatorProxy.json
+  #     eventHandlers:
+  #       - event:  UpdateResult(uint256)
+  #         handler: handleUpdateResult
+  #       - event: AddAuthorization(address)
+  #         handler: handleAddAuthorization
+  #       - event: RemoveAuthorization(address)
+  #         handler: handleRemoveAuthorization
 
         # - event:  FailRewardCaller(bytes,address,uint256)
         #   handler: handleFailRewardCaller
@@ -551,90 +551,90 @@ dataSources:
         - event: RemoveAuthorization(address)
           handler: handleRemoveAuthorization
 
-  - name: ProtocolTokenAuthority
-    kind: ethereum/contract
-    network: {{NETWORK}}
-    source:
-      abi: ProtocolTokenAuthority
-      address: '{{PROTOCOL_TOKEN_AUTHORITY}}'
-      startBlock: {{STARTING_BLOCK_NUMBER}}
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.4
-      language: wasm/assemblyscript
-      file: ./src/mappings/modules/governance/protocol-token-authority.ts
-      entities:
-        - GebAuthorization
-      abis:
-        - name: ProtocolTokenAuthority
-          file: ./abis/ProtocolTokenAuthority.json
-      eventHandlers:
-        - event: AddAuthorization(indexed address)
-          handler: handleAddAuthorization
-        - event: RemoveAuthorization(indexed address)
-          handler: handleRemoveAuthorization
+  # - name: ProtocolTokenAuthority
+  #   kind: ethereum/contract
+  #   network: {{NETWORK}}
+  #   source:
+  #     abi: ProtocolTokenAuthority
+  #     address: '{{PROTOCOL_TOKEN_AUTHORITY}}'
+  #     startBlock: {{STARTING_BLOCK_NUMBER}}
+  #   mapping:
+  #     kind: ethereum/events
+  #     apiVersion: 0.0.4
+  #     language: wasm/assemblyscript
+  #     file: ./src/mappings/modules/governance/protocol-token-authority.ts
+  #     entities:
+  #       - GebAuthorization
+  #     abis:
+  #       - name: ProtocolTokenAuthority
+  #         file: ./abis/ProtocolTokenAuthority.json
+  #     eventHandlers:
+  #       - event: AddAuthorization(indexed address)
+  #         handler: handleAddAuthorization
+  #       - event: RemoveAuthorization(indexed address)
+  #         handler: handleRemoveAuthorization
         # - event: SetOwner(indexed address)
         #   handler: handleSetOwner
         # - event: SetRoot(indexed address)
         #   handler: handleSetRoot
 
-  - name: ProtToken 
-    kind: ethereum/contract
-    network: {{NETWORK}}
-    source:
-      abi: DSToken
-      address: '{{GEB_PROT}}'
-      startBlock: {{STARTING_BLOCK_NUMBER}}
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.4
-      language: wasm/assemblyscript
-      file: ./src/mappings/modules/token/prot-token.ts
-      entities:
-        - ERC20Balance
-      abis:
-        - name: DSToken
-          file: ./abis/DSToken.json
-        - name: ERC20
-          file: ./abis/ERC20.json
-      eventHandlers:
-        - event: Transfer(indexed address,indexed address,uint256)
-          handler: handleTransfer
-        - event: Approval(indexed address,indexed address,uint256)
-          handler: handleApproval
-        - event: Mint(indexed address,uint256)
-          handler: handleMint
-        - event: Burn(indexed address,uint256)
-          handler: handleBurn
+  # - name: ProtToken 
+  #   kind: ethereum/contract
+  #   network: {{NETWORK}}
+  #   source:
+  #     abi: DSToken
+  #     address: '{{GEB_PROT}}'
+  #     startBlock: {{STARTING_BLOCK_NUMBER}}
+  #   mapping:
+  #     kind: ethereum/events
+  #     apiVersion: 0.0.4
+  #     language: wasm/assemblyscript
+  #     file: ./src/mappings/modules/token/prot-token.ts
+  #     entities:
+  #       - ERC20Balance
+  #     abis:
+  #       - name: DSToken
+  #         file: ./abis/DSToken.json
+  #       - name: ERC20
+  #         file: ./abis/ERC20.json
+  #     eventHandlers:
+  #       - event: Transfer(indexed address,indexed address,uint256)
+  #         handler: handleTransfer
+  #       - event: Approval(indexed address,indexed address,uint256)
+  #         handler: handleApproval
+  #       - event: Mint(indexed address,uint256)
+  #         handler: handleMint
+  #       - event: Burn(indexed address,uint256)
+  #         handler: handleBurn
   
-  - name: UniCoinPool 
-    kind: ethereum/contract
-    network: {{NETWORK}}
-    source:
-      abi: UniswapV2Pair
-      address: '{{GEB_COIN_UNISWAP_POOL}}'
-      startBlock: {{STARTING_BLOCK_NUMBER}}
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.4
-      language: wasm/assemblyscript
-      file: ./src/mappings/modules/uniswap/uniswap.ts
-      entities:
-        - UniswapV2Pair
-      abis:
-        - name: UniswapV2Pair
-          file: ./abis/UniswapV2Pair.json
-        - name: ERC20
-          file: ./abis/ERC20.json
-      eventHandlers:
-        - event: Sync(uint112,uint112)
-          handler: handleSync
-        - event: Swap(indexed address,uint256,uint256,uint256,uint256,indexed address)
-          handler: handleSwap
-        - event: Transfer(indexed address,indexed address,uint256)
-          handler: handleTransfer
-        - event: Approval(indexed address,indexed address,uint256)
-          handler: handleApproval
+  # - name: UniCoinPool 
+  #   kind: ethereum/contract
+  #   network: {{NETWORK}}
+  #   source:
+  #     abi: UniswapV2Pair
+  #     address: '{{GEB_COIN_UNISWAP_POOL}}'
+  #     startBlock: {{STARTING_BLOCK_NUMBER}}
+  #   mapping:
+  #     kind: ethereum/events
+  #     apiVersion: 0.0.4
+  #     language: wasm/assemblyscript
+  #     file: ./src/mappings/modules/uniswap/uniswap.ts
+  #     entities:
+  #       - UniswapV2Pair
+  #     abis:
+  #       - name: UniswapV2Pair
+  #         file: ./abis/UniswapV2Pair.json
+  #       - name: ERC20
+  #         file: ./abis/ERC20.json
+  #     eventHandlers:
+  #       - event: Sync(uint112,uint112)
+  #         handler: handleSync
+  #       - event: Swap(indexed address,uint256,uint256,uint256,uint256,indexed address)
+  #         handler: handleSwap
+  #       - event: Transfer(indexed address,indexed address,uint256)
+  #         handler: handleTransfer
+  #       - event: Approval(indexed address,indexed address,uint256)
+  #         handler: handleApproval
         # - event: Mint(indexed address,uint256,uint256)
         #   handler: handleMint
         # - event: Burn(indexed address,uint256,uint256,indexed address)
@@ -659,13 +659,13 @@ dataSources:
         - name: SurplusAuctionHouse
           file: ./abis/BurningSurplusAuctionHouse.json
       eventHandlers:
-        - event: ModifyParameters(bytes32,uint256)
+        - event: ModifyParameters(indexed bytes32,indexed bytes32,bytes)
           handler: handleModifyParameters
-        - event: IncreaseBidSize(uint256,address,uint256,uint256,uint256)
+        - event: IncreaseBidSize(indexed uint256,address,uint256,uint256,uint256,uint256)
           handler: handleIncreaseBidSize
-        - event: RestartAuction(uint256,uint256)
+        - event: RestartAuction(indexed uint256,uint256,uint256)
           handler: handleRestartAuction
-        - event: SettleAuction(indexed uint256)
+        - event: SettleAuction(indexed uint256,uint256,address,uint256)
           handler: handleSettleAuction
         - event: AddAuthorization(address)
           handler: handleAddAuthorization
@@ -701,17 +701,17 @@ dataSources:
         - name: DebtAuctionHouse
           file: ./abis/DebtAuctionHouse.json
       eventHandlers:
-        - event: ModifyParameters(bytes32,uint256)
+        - event: ModifyParameters(indexed bytes32,indexed bytes32,bytes)
           handler: handleModifyParametersUint
         - event: AddAuthorization(address)
           handler: handleAddAuthorization
         - event: RemoveAuthorization(address)
           handler: handleRemoveAuthorization
-        - event: DecreaseSoldAmount(indexed uint256,address,uint256,uint256,uint256)
+        - event: DecreaseSoldAmount(indexed uint256,address,uint256,uint256,uint256,uint256)
           handler: handleDecreaseSoldAmount
-        - event: RestartAuction(indexed uint256,uint256)
+        - event: RestartAuction(indexed uint256,uint256,uint256)
           handler: handleRestartAuction
-        - event: SettleAuction(indexed uint256,uint256)
+        - event: SettleAuction(indexed uint256,uint256,address,uint256)
           handler: handleSettleAuction
 
         # Remaining events:
@@ -724,66 +724,66 @@ dataSources:
         # - event: TerminateAuctionPrematurely(uint256,address,address,uint256,uint256)  
         #   handler: handleTerminateAuctionPrematurely
  
-  - name: StakedTokenAuctionHouse
-    kind: ethereum/contract
-    network: {{NETWORK}}
-    source:
-      abi: StakedTokenAuctionHouse
-      address: '{{GEB_STAKING_AUCTION_HOUSE}}'
-      startBlock: {{STARTING_BLOCK_NUMBER}}
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.4
-      language: wasm/assemblyscript
-      file: ./src/mappings/modules/auctions/staked-tokens-auction-houses.ts
-      entities:
-        - EnglishAuction
-        - EnglishAuctionBid
-      abis:
-        - name: StakedTokenAuctionHouse
-          file: ./abis/StakedTokenAuctionHouse.json
-      eventHandlers:
-        - event: ModifyParameters(bytes32,uint256)
-          handler: handleModifyParameters
-        - event: StartAuction(indexed uint256,uint256,uint256,uint256,indexed address,indexed uint256,uint256)
-          handler: handleStartAuction
-        - event: IncreaseBidSize(uint256,address,uint256,uint256,uint256)
-          handler: handleIncreaseBidSize
-        - event: RestartAuction(indexed uint256,uint256,uint256)
-          handler: handleRestartAuction
-        - event: SettleAuction(indexed uint256,uint256)
-          handler: handleSettleAuction
-        - event: AddAuthorization(address)
-          handler: handleAddAuthorization
-        - event: RemoveAuthorization(address)
-          handler: handleRemoveAuthorization
+  # - name: StakedTokenAuctionHouse
+  #   kind: ethereum/contract
+  #   network: {{NETWORK}}
+  #   source:
+  #     abi: StakedTokenAuctionHouse
+  #     address: '{{GEB_STAKING_AUCTION_HOUSE}}'
+  #     startBlock: {{STARTING_BLOCK_NUMBER}}
+  #   mapping:
+  #     kind: ethereum/events
+  #     apiVersion: 0.0.4
+  #     language: wasm/assemblyscript
+  #     file: ./src/mappings/modules/auctions/staked-tokens-auction-houses.ts
+  #     entities:
+  #       - EnglishAuction
+  #       - EnglishAuctionBid
+  #     abis:
+  #       - name: StakedTokenAuctionHouse
+  #         file: ./abis/StakedTokenAuctionHouse.json
+  #     eventHandlers:
+  #       - event: ModifyParameters(bytes32,uint256)
+  #         handler: handleModifyParameters
+  #       - event: StartAuction(indexed uint256,uint256,uint256,uint256,indexed address,indexed uint256,uint256)
+  #         handler: handleStartAuction
+  #       - event: IncreaseBidSize(uint256,address,uint256,uint256,uint256)
+  #         handler: handleIncreaseBidSize
+  #       - event: RestartAuction(indexed uint256,uint256,uint256)
+  #         handler: handleRestartAuction
+  #       - event: SettleAuction(indexed uint256,uint256)
+  #         handler: handleSettleAuction
+  #       - event: AddAuthorization(address)
+  #         handler: handleAddAuthorization
+  #       - event: RemoveAuthorization(address)
+  #         handler: handleRemoveAuthorization
 
 
-  - name: StakingRewardsFactory 
-    kind: ethereum/contract
-    network: {{NETWORK}}
-    source:
-      abi: StakingRewardsFactory
-      address: '{{GEB_INCENTIVES_MINER}}'
-      startBlock: {{STARTING_BLOCK_NUMBER}}
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.4
-      language: wasm/assemblyscript
-      file: ./src/mappings/modules/incentive/incentive-factory.ts
-      entities:
-        - IncentiveBalance
-        - IncentiveCampaign
-      abis:
-        - name: StakingRewardsFactory
-          file: ./abis/StakingRewardsFactory.json
-      eventHandlers:
-        - event: Deploy(indexed address,indexed uint256,uint256,uint256)
-          handler: handleDeploy
-        - event: AddAuthorization(address)
-          handler: handleAddAuthorization
-        - event: RemoveAuthorization(address)
-          handler: handleRemoveAuthorization
+  # - name: StakingRewardsFactory 
+  #   kind: ethereum/contract
+  #   network: {{NETWORK}}
+  #   source:
+  #     abi: StakingRewardsFactory
+  #     address: '{{GEB_INCENTIVES_MINER}}'
+  #     startBlock: {{STARTING_BLOCK_NUMBER}}
+  #   mapping:
+  #     kind: ethereum/events
+  #     apiVersion: 0.0.4
+  #     language: wasm/assemblyscript
+  #     file: ./src/mappings/modules/incentive/incentive-factory.ts
+  #     entities:
+  #       - IncentiveBalance
+  #       - IncentiveCampaign
+  #     abis:
+  #       - name: StakingRewardsFactory
+  #         file: ./abis/StakingRewardsFactory.json
+  #     eventHandlers:
+  #       - event: Deploy(indexed address,indexed uint256,uint256,uint256)
+  #         handler: handleDeploy
+  #       - event: AddAuthorization(address)
+  #         handler: handleAddAuthorization
+  #       - event: RemoveAuthorization(address)
+  #         handler: handleRemoveAuthorization
         # - event: ModifyParameters(indexed uint256,bytes32,uint256)
         #   handler: handleModifyParameters
         # - event: NotifyRewardAmount(indexed uint256,uint256)
@@ -824,28 +824,28 @@ templates:
         # - event: TerminateAuctionPrematurely(uint256,address,uint256)
         #   handler: handleTerminateAuctionPrematurely
 
-  - name: StakingRewards
-    kind: ethereum/contract
-    network: {{NETWORK}}
-    source:
-      abi: StakingRewards
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.4
-      language: wasm/assemblyscript
-      file: ./src/mappings/modules/incentive/incentive.ts
-      entities:
-        - IncentiveBalance
-        - IncentiveCampaign
-      abis:
-        - name: StakingRewards
-          file: ./abis/StakingRewards.json
-      eventHandlers:
-        - event: RewardAdded(uint256)
-          handler: handleRewardAdded
-        - event: RewardPaid(indexed address,uint256)
-          handler: handleRewardPaid
-        - event: Staked(indexed address,uint256)
-          handler: handleStaked
-        - event: Withdrawn(indexed address,uint256)
-          handler: handleWithdrawn
+  # - name: StakingRewards
+  #   kind: ethereum/contract
+  #   network: {{NETWORK}}
+  #   source:
+  #     abi: StakingRewards
+  #   mapping:
+  #     kind: ethereum/events
+  #     apiVersion: 0.0.4
+  #     language: wasm/assemblyscript
+  #     file: ./src/mappings/modules/incentive/incentive.ts
+  #     entities:
+  #       - IncentiveBalance
+  #       - IncentiveCampaign
+  #     abis:
+  #       - name: StakingRewards
+  #         file: ./abis/StakingRewards.json
+  #     eventHandlers:
+  #       - event: RewardAdded(uint256)
+  #         handler: handleRewardAdded
+  #       - event: RewardPaid(indexed address,uint256)
+  #         handler: handleRewardPaid
+  #       - event: Staked(indexed address,uint256)
+  #         handler: handleStaked
+  #       - event: Withdrawn(indexed address,uint256)
+  #         handler: handleWithdrawn

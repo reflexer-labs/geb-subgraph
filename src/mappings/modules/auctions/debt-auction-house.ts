@@ -9,6 +9,7 @@ import {
 import { EnglishAuctionConfiguration, EnglishAuctionBid, EnglishAuction } from '../../../entities'
 import { dataSource, log, BigInt } from '@graphprotocol/graph-ts'
 
+import { toUnsignedInt } from '../../../utils/bytes'
 import * as decimal from '../../../utils/decimal'
 import * as integer from '../../../utils/integer'
 import * as enums from '../../../utils/enums'
@@ -17,13 +18,13 @@ import { addAuthorization, removeAuthorization } from '../governance/authorizati
 import { getOrCreateAccountingEngine } from '../../../entities/accounting-engine'
 
 export function handleModifyParametersUint(event: ModifyParametersUint): void {
-  let what = event.params.parameter.toString()
+  let what = event.params._param.toString()
 
   let config = getOrCreateEnglishAuctionConfiguration(
     dataSource.address(),
     enums.EnglishAuctionType_DEBT,
   )
-  let val = event.params.data
+  let val = toUnsignedInt(event.params._data)
 
   if (what == 'bidIncrease') {
     config.bidIncrease = decimal.fromWad(val)
@@ -39,23 +40,23 @@ export function handleModifyParametersUint(event: ModifyParametersUint): void {
 }
 
 export function handleDecreaseSoldAmount(event: DecreaseSoldAmount): void {
-  let auction = EnglishAuction.load(auctionId(event.params.id))
-  let bid = new EnglishAuctionBid(bidAuctionId(event.params.id, auction.numberOfBids))
+  let auction = EnglishAuction.load(auctionId(event.params._id))
+  let bid = new EnglishAuctionBid(bidAuctionId(event.params._id, auction.numberOfBids))
 
   bid.bidNumber = auction.numberOfBids
   bid.type = enums.EnglishBidType_DECREASE_SOLD
   bid.auction = auction.id
-  bid.sellAmount = decimal.fromWad(event.params.amountToBuy)
+  bid.sellAmount = decimal.fromWad(event.params._soldAmount)
   bid.buyAmount = auction.buyInitialAmount
   bid.price = bid.sellAmount.div(bid.buyAmount)
-  bid.bidder = event.params.highBidder
+  bid.bidder = event.params._bidder
   bid.createdAt = event.block.timestamp
   bid.createdAtBlock = event.block.number
   bid.createdAtTransaction = event.transaction.hash
   bid.save()
 
   auction.numberOfBids = auction.numberOfBids.plus(integer.ONE)
-  auction.auctionDeadline = event.params.bidExpiry
+  auction.auctionDeadline = event.params._bidExpiry
   auction.sellAmount = bid.sellAmount
   auction.price = bid.price
   auction.winner = bid.bidder
@@ -63,8 +64,8 @@ export function handleDecreaseSoldAmount(event: DecreaseSoldAmount): void {
 }
 
 export function handleRestartAuction(event: RestartAuction): void {
-  let auction = EnglishAuction.load(auctionId(event.params.id))
-  auction.auctionDeadline = event.params.auctionDeadline
+  let auction = EnglishAuction.load(auctionId(event.params._id))
+  auction.auctionDeadline = event.params._auctionDeadline
   auction.save()
 }
 
@@ -72,7 +73,7 @@ export function handleSettleAuction(event: SettleAuction): void {
   let accounting = getOrCreateAccountingEngine(event)
   accounting.activeDebtAuctions = accounting.activeDebtAuctions.minus(integer.ONE)
   accounting.save()
-  let auction = EnglishAuction.load(auctionId(event.params.id))
+  let auction = EnglishAuction.load(auctionId(event.params._id))
   auction.isClaimed = true
   auction.save()
 }
@@ -86,9 +87,9 @@ function bidAuctionId(auctionId: BigInt, bidNumber: BigInt): string {
 }
 
 export function handleAddAuthorization(event: AddAuthorization): void {
-  addAuthorization(event.params.account, event)
+  addAuthorization(event.params._account, event)
 }
 
 export function handleRemoveAuthorization(event: RemoveAuthorization): void {
-  removeAuthorization(event.params.account, event)
+  removeAuthorization(event.params._account, event)
 }

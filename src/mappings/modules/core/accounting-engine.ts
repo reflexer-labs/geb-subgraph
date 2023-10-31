@@ -29,10 +29,7 @@ export function handleModifyParametersAddress(event: ModifyParametersAddress): v
   } else if (what == 'postSettlementSurplusDrain') {
     accounting.postSettlementSurplusDrain = data
     log.info('Set postSettlementSurplusDrain in accounting engine', [])
-  } else if (what == 'protocolTokenAuthority') {
-    accounting.protocolTokenAuthority = data
-    log.info('Set protocolTokenAuthority in accounting engine', [])
-  } else {
+  }else {
     log.warning('Unknown parameter {}', [what])
   }
 

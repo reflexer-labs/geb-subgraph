@@ -535,9 +535,6 @@ type AccountingEngine @entity {
   " Contract that handles auctions for debt that couldn't be covered by collateral auctions "
   debtAuctionHouse: Bytes!
 
-  " Permissions registry dictating who can burn and mint protocol tokens "
-  protocolTokenAuthority: Bytes!
-
   " Addredd of the contract that auctions extra surplus after settlement is triggered "
   postSettlementSurplusDrain: Bytes!
 

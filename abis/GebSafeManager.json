@@ -1,10 +1,49 @@
 [
   {
     "inputs": [
-      { "internalType": "address", "name": "safeEngine_", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "_safeEngine",
+        "type": "address"
+      }
     ],
     "stateMutability": "nonpayable",
     "type": "constructor"
+  },
+  {
+    "inputs": [],
+    "name": "AlreadySafeOwner",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "CollateralTypesMismatch",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "HandlerNotAllowed",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "IntOverflow",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NullAddress",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "SafeNotAllowed",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "ZeroAddress",
+    "type": "error"
   },
   {
     "anonymous": false,
@@ -12,19 +51,19 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "sender",
+        "name": "_sender",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "address",
-        "name": "usr",
+        "name": "_usr",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "ok",
+        "name": "_ok",
         "type": "uint256"
       }
     ],
@@ -37,25 +76,25 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "sender",
+        "name": "_sender",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "safe",
+        "name": "_safe",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "address",
-        "name": "usr",
+        "name": "_usr",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "ok",
+        "name": "_ok",
         "type": "uint256"
       }
     ],
@@ -68,19 +107,19 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "sender",
+        "name": "_sender",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "address",
-        "name": "src",
+        "name": "_src",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "safe",
+        "name": "_safe",
         "type": "uint256"
       }
     ],
@@ -93,25 +132,25 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "sender",
+        "name": "_sender",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "safe",
+        "name": "_safe",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "int256",
-        "name": "deltaCollateral",
+        "name": "_deltaCollateral",
         "type": "int256"
       },
       {
         "indexed": false,
         "internalType": "int256",
-        "name": "deltaDebt",
+        "name": "_deltaDebt",
         "type": "int256"
       }
     ],
@@ -124,19 +163,19 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "sender",
+        "name": "_sender",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "safeSrc",
+        "name": "_safeSrc",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "safeDst",
+        "name": "_safeDst",
         "type": "uint256"
       }
     ],
@@ -149,19 +188,19 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "sender",
+        "name": "_sender",
         "type": "address"
       },
       {
         "indexed": true,
         "internalType": "address",
-        "name": "own",
+        "name": "_own",
         "type": "address"
       },
       {
         "indexed": true,
         "internalType": "uint256",
-        "name": "safe",
+        "name": "_safe",
         "type": "uint256"
       }
     ],
@@ -174,25 +213,25 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "sender",
+        "name": "_sender",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "safe",
+        "name": "_safe",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "address",
-        "name": "liquidationEngine",
+        "name": "_liquidationEngine",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "address",
-        "name": "saviour",
+        "name": "_saviour",
         "type": "address"
       }
     ],
@@ -205,19 +244,19 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "sender",
+        "name": "_sender",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "safe",
+        "name": "_safe",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "address",
-        "name": "dst",
+        "name": "_dst",
         "type": "address"
       }
     ],
@@ -230,25 +269,25 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "sender",
+        "name": "_sender",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "safe",
+        "name": "_safe",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "address",
-        "name": "dst",
+        "name": "_dst",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "wad",
+        "name": "_wad",
         "type": "uint256"
       }
     ],
@@ -261,31 +300,31 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "sender",
+        "name": "_sender",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "bytes32",
-        "name": "collateralType",
+        "name": "_cType",
         "type": "bytes32"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "safe",
+        "name": "_safe",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "address",
-        "name": "dst",
+        "name": "_dst",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "wad",
+        "name": "_wad",
         "type": "uint256"
       }
     ],
@@ -298,25 +337,25 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "sender",
+        "name": "_sender",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "safe",
+        "name": "_safe",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "address",
-        "name": "dst",
+        "name": "_dst",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "rad",
+        "name": "_rad",
         "type": "uint256"
       }
     ],
@@ -329,19 +368,19 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "sender",
+        "name": "_sender",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "safe",
+        "name": "_safe",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "address",
-        "name": "dst",
+        "name": "_dst",
         "type": "address"
       }
     ],
@@ -350,8 +389,29 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "usr", "type": "address" },
-      { "internalType": "uint256", "name": "ok", "type": "uint256" }
+      {
+        "internalType": "uint256",
+        "name": "_safe",
+        "type": "uint256"
+      }
+    ],
+    "name": "addSAFE",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_usr",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_ok",
+        "type": "uint256"
+      }
     ],
     "name": "allowHandler",
     "outputs": [],
@@ -360,9 +420,21 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "safe", "type": "uint256" },
-      { "internalType": "address", "name": "usr", "type": "address" },
-      { "internalType": "uint256", "name": "ok", "type": "uint256" }
+      {
+        "internalType": "uint256",
+        "name": "_safe",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "_usr",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_ok",
+        "type": "uint256"
+      }
     ],
     "name": "allowSAFE",
     "outputs": [],
@@ -370,16 +442,17 @@
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "name": "collateralTypes",
-    "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
-      { "internalType": "address", "name": "src", "type": "address" },
-      { "internalType": "uint256", "name": "safe", "type": "uint256" }
+      {
+        "internalType": "address",
+        "name": "_src",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_safe",
+        "type": "uint256"
+      }
     ],
     "name": "enterSystem",
     "outputs": [],
@@ -387,34 +460,118 @@
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "address", "name": "", "type": "address" }],
-    "name": "firstSAFEID",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_usr",
+        "type": "address"
+      }
+    ],
+    "name": "getSafes",
+    "outputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "_safes",
+        "type": "uint256[]"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "", "type": "address" },
-      { "internalType": "address", "name": "", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "_usr",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "_cType",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getSafes",
+    "outputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "_safes",
+        "type": "uint256[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_usr",
+        "type": "address"
+      }
+    ],
+    "name": "getSafesData",
+    "outputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "_safes",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "address[]",
+        "name": "_safeHandlers",
+        "type": "address[]"
+      },
+      {
+        "internalType": "bytes32[]",
+        "name": "_cTypes",
+        "type": "bytes32[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_safeHandler",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_caller",
+        "type": "address"
+      }
     ],
     "name": "handlerCan",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [{ "internalType": "address", "name": "", "type": "address" }],
-    "name": "lastSAFEID",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "_ok",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "safe", "type": "uint256" },
-      { "internalType": "int256", "name": "deltaCollateral", "type": "int256" },
-      { "internalType": "int256", "name": "deltaDebt", "type": "int256" }
+      {
+        "internalType": "uint256",
+        "name": "_safe",
+        "type": "uint256"
+      },
+      {
+        "internalType": "int256",
+        "name": "_deltaCollateral",
+        "type": "int256"
+      },
+      {
+        "internalType": "int256",
+        "name": "_deltaDebt",
+        "type": "int256"
+      }
     ],
     "name": "modifySAFECollateralization",
     "outputs": [],
@@ -423,8 +580,16 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "safeSrc", "type": "uint256" },
-      { "internalType": "uint256", "name": "safeDst", "type": "uint256" }
+      {
+        "internalType": "uint256",
+        "name": "_safeSrc",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_safeDst",
+        "type": "uint256"
+      }
     ],
     "name": "moveSAFE",
     "outputs": [],
@@ -435,32 +600,43 @@
     "inputs": [
       {
         "internalType": "bytes32",
-        "name": "collateralType",
+        "name": "_cType",
         "type": "bytes32"
       },
-      { "internalType": "address", "name": "usr", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "_usr",
+        "type": "address"
+      }
     ],
     "name": "openSAFE",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "_id",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "name": "ownsSAFE",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
-      { "internalType": "uint256", "name": "safe", "type": "uint256" },
+      {
+        "internalType": "uint256",
+        "name": "_safe",
+        "type": "uint256"
+      },
       {
         "internalType": "address",
-        "name": "liquidationEngine",
+        "name": "_liquidationEngine",
         "type": "address"
       },
-      { "internalType": "address", "name": "saviour", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "_saviour",
+        "type": "address"
+      }
     ],
     "name": "protectSAFE",
     "outputs": [],
@@ -469,8 +645,16 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "safe", "type": "uint256" },
-      { "internalType": "address", "name": "dst", "type": "address" }
+      {
+        "internalType": "uint256",
+        "name": "_safe",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "_dst",
+        "type": "address"
+      }
     ],
     "name": "quitSystem",
     "outputs": [],
@@ -479,58 +663,112 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "", "type": "address" },
-      { "internalType": "uint256", "name": "", "type": "uint256" },
-      { "internalType": "address", "name": "", "type": "address" }
+      {
+        "internalType": "uint256",
+        "name": "_safe",
+        "type": "uint256"
+      }
+    ],
+    "name": "removeSAFE",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_owner",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_safeId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "_caller",
+        "type": "address"
+      }
     ],
     "name": "safeCan",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "_ok",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "address", "name": "", "type": "address" }],
-    "name": "safeCount",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_safe",
+        "type": "uint256"
+      }
+    ],
+    "name": "safeData",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "owner",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "safeHandler",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "collateralType",
+            "type": "bytes32"
+          }
+        ],
+        "internalType": "struct HaiSafeManager.SAFEData",
+        "name": "_sData",
+        "type": "tuple"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "safeEngine",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "name": "safeList",
     "outputs": [
-      { "internalType": "uint256", "name": "prev", "type": "uint256" },
-      { "internalType": "uint256", "name": "next", "type": "uint256" }
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
     ],
     "stateMutability": "view",
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "safei",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "name": "safes",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
-      { "internalType": "uint256", "name": "safe", "type": "uint256" },
-      { "internalType": "address", "name": "dst", "type": "address" },
-      { "internalType": "uint256", "name": "wad", "type": "uint256" }
+      {
+        "internalType": "uint256",
+        "name": "_safe",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "_dst",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_wad",
+        "type": "uint256"
+      }
     ],
     "name": "transferCollateral",
     "outputs": [],
@@ -541,12 +779,24 @@
     "inputs": [
       {
         "internalType": "bytes32",
-        "name": "collateralType",
+        "name": "_cType",
         "type": "bytes32"
       },
-      { "internalType": "uint256", "name": "safe", "type": "uint256" },
-      { "internalType": "address", "name": "dst", "type": "address" },
-      { "internalType": "uint256", "name": "wad", "type": "uint256" }
+      {
+        "internalType": "uint256",
+        "name": "_safe",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "_dst",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_wad",
+        "type": "uint256"
+      }
     ],
     "name": "transferCollateral",
     "outputs": [],
@@ -555,9 +805,21 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "safe", "type": "uint256" },
-      { "internalType": "address", "name": "dst", "type": "address" },
-      { "internalType": "uint256", "name": "rad", "type": "uint256" }
+      {
+        "internalType": "uint256",
+        "name": "_safe",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "_dst",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_rad",
+        "type": "uint256"
+      }
     ],
     "name": "transferInternalCoins",
     "outputs": [],
@@ -566,8 +828,16 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "safe", "type": "uint256" },
-      { "internalType": "address", "name": "dst", "type": "address" }
+      {
+        "internalType": "uint256",
+        "name": "_safe",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "_dst",
+        "type": "address"
+      }
     ],
     "name": "transferSAFEOwnership",
     "outputs": [],

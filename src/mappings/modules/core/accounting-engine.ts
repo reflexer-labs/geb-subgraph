@@ -1,8 +1,8 @@
 import * as decimal from '../../../utils/decimal'
 import * as integer from '../../../utils/integer'
+import * as bytes from '../../../utils/bytes'
 import {
-  ModifyParameters as ModifyParametersUint,
-  ModifyParameters1 as ModifyParametersAddress,
+  ModifyParameters,
   AuctionDebt,
   AuctionSurplus,
   AddAuthorization,
@@ -15,9 +15,9 @@ import { getOrCreateEnglishAuctionConfiguration } from '../../../entities/auctio
 import { addAuthorization, removeAuthorization } from '../governance/authorizations'
 import { getOrCreateAccountingEngine } from '../../../entities/accounting-engine'
 
-export function handleModifyParametersAddress(event: ModifyParametersAddress): void {
-  let what = event.params.parameter.toString()
-  let data = event.params.data
+export function handleModifyParameters(event: ModifyParameters): void {
+  let what = event.params._param.toString()
+  let data = event.params._data
   let accounting = getOrCreateAccountingEngine(event)
 
   if (what == 'surplusAuctionHouse') {
@@ -27,35 +27,24 @@ export function handleModifyParametersAddress(event: ModifyParametersAddress): v
     // If this is called we need to adjust the subgraph accordingly anyway
     log.error('Setting debt auction house to {}', [accounting.debtAuctionHouse.toHexString()])
   } else if (what == 'postSettlementSurplusDrain') {
-    accounting.postSettlementSurplusDrain = data
+    accounting.postSettlementSurplusDrain = bytes.toAddress(data)
     log.info('Set postSettlementSurplusDrain in accounting engine', [])
-  }else {
-    log.warning('Unknown parameter {}', [what])
-  }
-
-  accounting.save()
-}
-
-export function handleModifyParametersUint(event: ModifyParametersUint): void {
-  let what = event.params.parameter.toString()
-  let data = event.params.data
-  let accounting = getOrCreateAccountingEngine(event)
-
-  if (what == 'surplusAuctionDelay') {
-    accounting.surplusAuctionDelay = data
+  } else if (what == 'surplusAuctionDelay') {
+    accounting.surplusAuctionDelay = bytes.toUnsignedInt(data)
   } else if (what == 'popDebtDelay') {
-    accounting.popDebtDelay = data
+    accounting.popDebtDelay = bytes.toUnsignedInt(data)
   } else if (what == 'surplusAuctionAmountToSell') {
-    accounting.surplusAuctionAmountToSell = decimal.fromRad(data)
+    accounting.surplusAuctionAmountToSell = decimal.fromRad(bytes.toUnsignedInt(data))
   } else if (what == 'debtAuctionBidSize') {
-    accounting.debtAuctionBidSize = decimal.fromRad(data)
+    accounting.debtAuctionBidSize = decimal.fromRad(bytes.toUnsignedInt(data))
   } else if (what == 'initialDebtAuctionMintedTokens') {
-    accounting.initialDebtAuctionMintedTokens = decimal.fromWad(data)
+    accounting.initialDebtAuctionMintedTokens = decimal.fromWad(bytes.toUnsignedInt(data))
   } else if (what == 'surplusBuffer') {
-    accounting.surplusBuffer = decimal.fromRad(data)
+    accounting.surplusBuffer = decimal.fromRad(bytes.toUnsignedInt(data))
   } else if (what == 'disableCooldown') {
-    accounting.disableCooldown = data
+    accounting.disableCooldown = bytes.toUnsignedInt(data)
   }
+
   accounting.save()
 }
 
@@ -76,7 +65,7 @@ export function handleAuctionDebt(event: AuctionDebt): void {
   accounting.debtAuctionCount = accounting.debtAuctionCount.plus(integer.ONE)
   accounting.activeDebtAuctions = accounting.activeDebtAuctions.plus(integer.ONE)
 
-  let id = event.params.id
+  let id = event.params._id
   let auction = new EnglishAuction(enums.EnglishAuctionType_DEBT + '-' + id.toString())
   auction.auctionId = id
   auction.numberOfBids = integer.ZERO
@@ -115,7 +104,7 @@ export function handleAuctionSurplus(event: AuctionSurplus): void {
   accounting.surplusAuctionCount = accounting.surplusAuctionCount.plus(integer.ONE)
   accounting.activeSurplusAuctions = accounting.activeSurplusAuctions.plus(integer.ONE)
 
-  let id = event.params.id
+  let id = event.params._id
   let auction = new EnglishAuction(enums.EnglishAuctionType_SURPLUS + '-' + id.toString())
   auction.auctionId = id
   auction.numberOfBids = integer.ZERO
@@ -139,9 +128,9 @@ export function handleAuctionSurplus(event: AuctionSurplus): void {
 }
 
 export function handleAddAuthorization(event: AddAuthorization): void {
-  addAuthorization(event.params.account, event)
+  addAuthorization(event.params._account, event)
 }
 
 export function handleRemoveAuthorization(event: RemoveAuthorization): void {
-  removeAuthorization(event.params.account, event)
+  removeAuthorization(event.params._account, event)
 }

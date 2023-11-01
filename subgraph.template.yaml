@@ -250,10 +250,8 @@ dataSources:
           file: ./abis/BurningSurplusAuctionHouse.json
         
       eventHandlers:
-        - event: ModifyParameters(indexed bytes32,address)
-          handler: handleModifyParametersAddress
-        - event: ModifyParameters(indexed bytes32,uint256)
-          handler: handleModifyParametersUint
+        - event: ModifyParameters(indexed bytes32,indexed bytes32,bytes)
+          handler: handleModifyParameters
         - event: AuctionDebt(indexed uint256,uint256,uint256)
           handler: handleAuctionDebt
         - event: AuctionSurplus(indexed uint256,uint256,uint256)

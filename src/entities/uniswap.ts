@@ -1,5 +1,5 @@
 import { UniswapPair as UniswapPairEntity } from './'
-import { UniswapV2Pair as UniswapPairContract } from '../../generated/UniCoinPool/UniswapV2Pair'
+import { UniswapV3Pool as UniswapPairContract } from '../../generated/UniCoinPool/UniswapV3Pool'
 import * as decimal from '../utils/decimal'
 import { Address, ethereum } from '@graphprotocol/graph-ts'
 
@@ -20,16 +20,8 @@ export function getOrCreateUniPool(
     pair.token0 = pairContract.token0()
     pair.token1 = pairContract.token1()
 
-    let reserves = pairContract.getReserves()
-    pair.reserve0 = decimal.fromWad(reserves.value0)
-    pair.reserve1 = decimal.fromWad(reserves.value1)
-
-    if (pair.reserve1.notEqual(decimal.ZERO)) pair.token0Price = pair.reserve0.div(pair.reserve1)
-    else pair.token0Price = decimal.ZERO
-    if (pair.reserve0.notEqual(decimal.ZERO)) pair.token1Price = pair.reserve1.div(pair.reserve0)
-    else pair.token1Price = decimal.ZERO
-
-    pair.totalSupply = decimal.fromWad(pairContract.totalSupply())
+    let slot = pairContract.slot0()
+    pair.sqrtPriceX96 = slot.value0
 
     pair.createdAt = event.block.timestamp
     pair.createdAtBlock = event.block.number

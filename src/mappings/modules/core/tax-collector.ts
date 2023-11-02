@@ -1,44 +1,42 @@
 import { log } from '@graphprotocol/graph-ts'
 import {
   AddAuthorization,
-  ModifyParameters as ModifyParametersCollateralTypeUint,
-  ModifyParameters1 as ModifyParametersUint,
+  ModifyParameters as ModifyParameters,
   RemoveAuthorization,
 } from '../../../../generated/TaxCollector/TaxCollector'
 import { getSystemState, getOrCreateCollateral } from '../../../entities'
 import * as decimal from '../../../utils/decimal'
+import * as integer from '../../../utils/integer'
 import { addAuthorization, removeAuthorization } from '../governance/authorizations'
 
 // TODO: Authorizations
 // TODO: Tax Recipients
 
-export function handleModifyParametersCollateralTypeUint(
-  event: ModifyParametersCollateralTypeUint,
+export function handleModifyParameters(
+  event: ModifyParameters,
 ): void {
-  let what = event.params.parameter.toString()
+  let what = event.params._param.toString()
 
   if (what == 'stabilityFee') {
-    let collateral = getOrCreateCollateral(event.params.collateralType, event)
-    collateral.stabilityFee = decimal.fromRay(event.params.data)
+    let collateral = getOrCreateCollateral(event.params._cType, event)
+    let data = decimal.fromRay(integer.BigInt.fromUnsignedBytes(event.params._data))
+
+    collateral.stabilityFee = data
     collateral.stabilityFeeLastUpdatedAt = event.block.timestamp
 
     // Calculate the annualized
     let system = getSystemState(event)
-    let totalPerSecondRate = decimal.toRay(system.globalStabilityFee).plus(event.params.data)
+    let totalPerSecondRate = decimal.toRay(system.globalStabilityFee).plus(decimal.toRay(data))
 
     collateral.totalAnnualizedStabilityFee = decimal.fromNumber(
       parseFloat(decimal.fromRay(totalPerSecondRate).toString()) ** 31536000,
     )
     collateral.save()
-  }
-}
+  } else if (what == 'globalStabilityFee') {
+    let data = decimal.fromRay(integer.BigInt.fromUnsignedBytes(event.params._data))
 
-export function handleModifyParametersUint(event: ModifyParametersUint): void {
-  let what = event.params.parameter.toString()
-
-  if (what == 'globalStabilityFee') {
     let system = getSystemState(event)
-    system.globalStabilityFee = decimal.fromRay(event.params.data)
+    system.globalStabilityFee = data
     system.save()
 
     // TODO: Address this.
@@ -50,9 +48,9 @@ export function handleModifyParametersUint(event: ModifyParametersUint): void {
 }
 
 export function handleAddAuthorization(event: AddAuthorization): void {
-  addAuthorization(event.params.account, event)
+  addAuthorization(event.params._account, event)
 }
 
 export function handleRemoveAuthorization(event: RemoveAuthorization): void {
-  removeAuthorization(event.params.account, event)
+  removeAuthorization(event.params._account, event)
 }

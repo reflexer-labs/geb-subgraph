@@ -1322,20 +1322,8 @@ type UniswapPair @entity {
   " Quote token address "
   token1: Bytes!
 
-  " Base token reserve amount "
-  reserve0: BigDecimal!
-
-  " Quote token reserve amount "
-  reserve1: BigDecimal!
-
-  " reserve0 / reserve 1 "
-  token0Price: BigDecimal!
-
-  " reserve1 / reserve 0 "
-  token1Price: BigDecimal!
-
-  " Supply of pool token shares "
-  totalSupply: BigDecimal!
+  " SqrtPriceX96 "
+  sqrtPriceX96: BigInt!
 
   " Timestamp of the block at which the pair was created [unix time] "
   createdAt: BigInt!

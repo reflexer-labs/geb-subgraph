@@ -1,5 +1,5 @@
 import {
-  ModifyParameters as ModifyParametersUint,
+  ModifyParameters as ModifyParameters,
   DecreaseSoldAmount,
   RestartAuction,
   SettleAuction,
@@ -17,7 +17,7 @@ import { getOrCreateEnglishAuctionConfiguration } from '../../../entities/auctio
 import { addAuthorization, removeAuthorization } from '../governance/authorizations'
 import { getOrCreateAccountingEngine } from '../../../entities/accounting-engine'
 
-export function handleModifyParametersUint(event: ModifyParametersUint): void {
+export function handleModifyParameters(event: ModifyParameters): void {
   let what = event.params._param.toString()
 
   let config = getOrCreateEnglishAuctionConfiguration(

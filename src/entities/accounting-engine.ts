@@ -10,15 +10,16 @@ export function getOrCreateAccountingEngine(event: ethereum.Event): AccountingEn
   if (engine == null) {
     let engineContract = AccountingEngineBind.bind(dataSource.address())
     engine = new AccountingEngine('current')
+    let params = engineContract.params()
     engine.totalQueuedDebt = decimal.ZERO
     engine.totalOnAuctionDebt = decimal.ZERO
-    engine.surplusAuctionDelay = integer.ZERO
-    engine.popDebtDelay = integer.ZERO
-    engine.initialDebtAuctionMintedTokens = decimal.ZERO
-    engine.debtAuctionBidSize = decimal.ZERO
-    engine.surplusAuctionAmountToSell = decimal.ZERO
-    engine.surplusBuffer = decimal.ZERO
-    engine.disableCooldown = integer.ZERO
+    engine.surplusAuctionDelay = params.surplusDelay
+    engine.popDebtDelay = params.popDebtDelay
+    engine.initialDebtAuctionMintedTokens = decimal.fromWad(params.debtAuctionMintedTokens)
+    engine.debtAuctionBidSize = decimal.fromRad(params.debtAuctionBidSize)
+    engine.surplusAuctionAmountToSell = decimal.fromRad(params.surplusAmount)
+    engine.surplusBuffer = decimal.fromRad(params.surplusBuffer)
+    engine.disableCooldown = params.disableCooldown
     engine.contractEnabled = true
     engine.safeEngine = engineContract.safeEngine()
     engine.surplusAuctionHouse = engineContract.surplusAuctionHouse()

@@ -26,34 +26,32 @@ dataSources:
         - name: SAFEEngine
           file: ./abis/SAFEEngine.json
         # These 2 contract are needed by the periodic handler
-        # - name: UniswapV2Pair
-        #   file: ./abis/UniswapV2Pair.json
-        # - name: EACAggregatorProxy
-        #   file: ./abis/EACAggregatorProxy.json
+        - name: UniswapV3Pool
+          file: ./abis/UniswapV3Pool.json
+        - name: EACAggregatorProxy
+          file: ./abis/EACAggregatorProxy.json
       eventHandlers:
         - event: InitializeCollateralType(bytes32)
           handler: handleInitializeCollateralType
-        - event: ModifyParameters(bytes32,bytes32,uint256)
-          handler: handleModifyParametersCollateralTypeUint
-        - event: ModifyParameters(bytes32,uint256)
-          handler: handleModifyParametersUint
-        - event: ModifyCollateralBalance(indexed bytes32,indexed address,int256)
-          handler: handleModifyCollateralBalance
+        - event: ModifyParameters(indexed bytes32,indexed bytes32,bytes)
+          handler: handleModifyParameters
+        # - event: ModifyCollateralBalance(indexed bytes32,indexed address,int256)
+        #   handler: handleModifyCollateralBalance
         - event: TransferCollateral(indexed bytes32,indexed address,indexed address,uint256)
           handler: handleTransferCollateral
         - event: TransferInternalCoins(indexed address,indexed address,uint256)
           handler: handleTransferInternalCoins
-        - event: ModifySAFECollateralization(indexed bytes32,indexed address,address,address,int256,int256,uint256,uint256,uint256)
+        - event: ModifySAFECollateralization(indexed bytes32,indexed address,address,address,int256,int256)
           handler: handleModifySAFECollateralization
-        - event: TransferSAFECollateralAndDebt(indexed bytes32,indexed address,indexed address,int256,int256,uint256,uint256,uint256,uint256)
+        - event: TransferSAFECollateralAndDebt(indexed bytes32,indexed address,indexed address,int256,int256)
           handler: handleTransferSAFECollateralAndDebt
-        - event: ConfiscateSAFECollateralAndDebt(indexed bytes32,indexed address,address,address,int256,int256,uint256)
+        - event: ConfiscateSAFECollateralAndDebt(indexed bytes32,indexed address,address,address,int256,int256)
           handler: handleConfiscateSAFECollateralAndDebt
-        - event: SettleDebt(indexed address,uint256,uint256,uint256,uint256,uint256)
+        - event: SettleDebt(indexed address,uint256)
           handler: handleSettleDebt
-        - event: CreateUnbackedDebt(indexed address,indexed address,uint256,uint256,uint256,uint256,uint256)
+        - event: CreateUnbackedDebt(indexed address,indexed address,uint256)
           handler: handleCreateUnbackedDebt
-        - event: UpdateAccumulatedRate(indexed bytes32,address,int256,uint256,uint256)
+        - event: UpdateAccumulatedRate(indexed bytes32,address,int256)
           handler: handleUpdateAccumulatedRate
         - event: AddAuthorization(address)
           handler: handleAddAuthorization
@@ -117,12 +115,8 @@ dataSources:
           handler: handleUpdateCollateralPrice
         - event: UpdateRedemptionPrice(uint256)
           handler: handleUpdateRedemptionPrice
-        - event: ModifyParameters(bytes32,bytes32,address)
-          handler: handleModifyParametersCollateralTypeAddress
-        - event: ModifyParameters(bytes32,bytes32,uint256)
-          handler: handleModifyParametersCollateralTypeUint
-        - event: ModifyParameters(bytes32,uint256)
-          handler: handleModifyParametersUint
+        - event: ModifyParameters(indexed bytes32,indexed bytes32,bytes)
+          handler: handleModifyParameters
         - event: AddAuthorization(address)
           handler: handleAddAuthorization
         - event: RemoveAuthorization(address)
@@ -149,10 +143,8 @@ dataSources:
         - name: RateSetter
           file: ./abis/RateSetter.json
       eventHandlers:
-        - event: ModifyParameters(bytes32,bytes32,uint256) # Type 0
-          handler: handleModifyParametersCollateralTypeUint
-        - event: ModifyParameters(bytes32,uint256) # Type 1
-          handler: handleModifyParametersUint
+        - event: ModifyParameters(indexed bytes32,indexed bytes32,bytes)
+          handler: handleModifyParameters
         - event: AddAuthorization(address)
           handler: handleAddAuthorization
         - event: RemoveAuthorization(address)
@@ -201,10 +193,8 @@ dataSources:
       eventHandlers:
         - event: Liquidate(indexed bytes32,indexed address,uint256,uint256,uint256,address,uint256)
           handler: handleLiquidate
-        - event: ModifyParameters(bytes32,bytes32,address)
-          handler: handleModifyParametersCollateralTypeAddress
-        - event: ModifyParameters(bytes32,bytes32,uint256)
-          handler: handleModifyParametersCollateralTypeUint
+        - event: ModifyParameters(indexed bytes32,indexed bytes32,bytes)
+          handler: handleModifyParameters
         - event: AddAuthorization(address)
           handler: handleAddAuthorization
         - event: RemoveAuthorization(address)
@@ -604,6 +594,31 @@ dataSources:
   #         handler: handleMint
   #       - event: Burn(indexed address,uint256)
   #         handler: handleBurn
+
+  - name: UniCoinPool 
+    kind: ethereum/contract
+    network: {{NETWORK}}
+    source:
+      abi: UniswapV3Pool
+      address: '{{GEB_COIN_UNISWAP_POOL}}'
+      startBlock: {{STARTING_BLOCK_NUMBER}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/modules/uniswap/uniswapv3.ts
+      entities:
+        - UniswapV3Pool
+      abis:
+        - name: UniswapV3Pool
+          file: ./abis/UniswapV3Pool.json
+      eventHandlers:
+        - event: Swap(indexed address,indexed address,int256,int256,uint160,uint128,int24)
+          handler: handleSwap
+        # - event: Mint(address,indexed address,indexed int24,indexed int24,uint128,uint256,uint256)
+        #   handler: handleMint
+        # - event: Burn(indexed address,indexed int24,indexed int24,uint128,uint256,uint256)
+        #   handler: handleBurn
   
   # - name: UniCoinPool 
   #   kind: ethereum/contract
@@ -700,7 +715,7 @@ dataSources:
           file: ./abis/DebtAuctionHouse.json
       eventHandlers:
         - event: ModifyParameters(indexed bytes32,indexed bytes32,bytes)
-          handler: handleModifyParametersUint
+          handler: handleModifyParameters
         - event: AddAuthorization(address)
           handler: handleAddAuthorization
         - event: RemoveAuthorization(address)

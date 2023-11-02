@@ -1,10 +1,152 @@
 [
   {
     "inputs": [
-      { "internalType": "address", "name": "safeEngine_", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "_safeEngine",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_accountingEngine",
+        "type": "address"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "onAuctionSystemCoinLimit",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct ILiquidationEngine.LiquidationEngineParams",
+        "name": "_liqEngineParams",
+        "type": "tuple"
+      }
     ],
     "stateMutability": "nonpayable",
     "type": "constructor"
+  },
+  {
+    "inputs": [],
+    "name": "AlreadyAuthorized",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "ContractIsDisabled",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "ContractIsEnabled",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "IntOverflow",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "LiqEng_CannotModifySAFE",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "LiqEng_CollateralTypeAlreadyInitialized",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "LiqEng_DustySAFE",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "LiqEng_InvalidAmounts",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "LiqEng_InvalidSAFESaviourOperation",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "LiqEng_LiquidationLimitHit",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "LiqEng_NullAuction",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "LiqEng_NullCollateralToSell",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "LiqEng_SAFENotUnsafe",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "LiqEng_SaviourNotAuthorized",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "LiqEng_SaviourNotOk",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NonDisableable",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NotAuthorized",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_x",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_y",
+        "type": "uint256"
+      }
+    ],
+    "name": "NotLesserOrEqualThan",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NullAddress",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "Unauthorized",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "UnrecognizedCType",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "UnrecognizedParam",
+    "type": "error"
   },
   {
     "anonymous": false,
@@ -12,7 +154,7 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "account",
+        "name": "_account",
         "type": "address"
       }
     ],
@@ -25,7 +167,7 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "saviour",
+        "name": "_saviour",
         "type": "address"
       }
     ],
@@ -44,7 +186,7 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "saviour",
+        "name": "_saviour",
         "type": "address"
       }
     ],
@@ -57,7 +199,7 @@
       {
         "indexed": false,
         "internalType": "bytes",
-        "name": "failReason",
+        "name": "_failReason",
         "type": "bytes"
       }
     ],
@@ -70,43 +212,43 @@
       {
         "indexed": true,
         "internalType": "bytes32",
-        "name": "collateralType",
+        "name": "_cType",
         "type": "bytes32"
       },
       {
         "indexed": true,
         "internalType": "address",
-        "name": "safe",
+        "name": "_safe",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "collateralAmount",
+        "name": "_collateralAmount",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "debtAmount",
+        "name": "_debtAmount",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "amountToRaise",
+        "name": "_amountToRaise",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "address",
-        "name": "collateralAuctioneer",
+        "name": "_collateralAuctioneer",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "auctionId",
+        "name": "_auctionId",
         "type": "uint256"
       }
     ],
@@ -117,85 +259,22 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "bytes32",
-        "name": "parameter",
+        "name": "_param",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "_cType",
         "type": "bytes32"
       },
       {
         "indexed": false,
-        "internalType": "uint256",
-        "name": "data",
-        "type": "uint256"
-      }
-    ],
-    "name": "ModifyParameters",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "bytes32",
-        "name": "parameter",
-        "type": "bytes32"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "data",
-        "type": "address"
-      }
-    ],
-    "name": "ModifyParameters",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "bytes32",
-        "name": "collateralType",
-        "type": "bytes32"
-      },
-      {
-        "indexed": false,
-        "internalType": "bytes32",
-        "name": "parameter",
-        "type": "bytes32"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "data",
-        "type": "uint256"
-      }
-    ],
-    "name": "ModifyParameters",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "bytes32",
-        "name": "collateralType",
-        "type": "bytes32"
-      },
-      {
-        "indexed": false,
-        "internalType": "bytes32",
-        "name": "parameter",
-        "type": "bytes32"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "data",
-        "type": "address"
+        "internalType": "bytes",
+        "name": "_data",
+        "type": "bytes"
       }
     ],
     "name": "ModifyParameters",
@@ -207,19 +286,19 @@
       {
         "indexed": true,
         "internalType": "bytes32",
-        "name": "collateralType",
+        "name": "_cType",
         "type": "bytes32"
       },
       {
         "indexed": true,
         "internalType": "address",
-        "name": "safe",
+        "name": "_safe",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "address",
-        "name": "saviour",
+        "name": "_saviour",
         "type": "address"
       }
     ],
@@ -232,7 +311,7 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "account",
+        "name": "_account",
         "type": "address"
       }
     ],
@@ -245,19 +324,19 @@
       {
         "indexed": true,
         "internalType": "bytes32",
-        "name": "collateralType",
+        "name": "_cType",
         "type": "bytes32"
       },
       {
         "indexed": true,
         "internalType": "address",
-        "name": "safe",
+        "name": "_safe",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "collateralAddedOrDebtRepaid",
+        "name": "_collateralAddedOrDebtRepaid",
         "type": "uint256"
       }
     ],
@@ -270,7 +349,7 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "currentOnAuctionSystemCoins",
+        "name": "_currentOnAuctionSystemCoins",
         "type": "uint256"
       }
     ],
@@ -278,47 +357,14 @@
     "type": "event"
   },
   {
-    "inputs": [],
-    "name": "accountingEngine",
-    "outputs": [
+    "inputs": [
       {
-        "internalType": "contract AccountingEngineLike",
-        "name": "",
-        "type": "address"
+        "internalType": "bytes32",
+        "name": "_cType",
+        "type": "bytes32"
       }
     ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "address", "name": "account", "type": "address" }
-    ],
-    "name": "addAuthorization",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [{ "internalType": "address", "name": "", "type": "address" }],
-    "name": "authorizedAccounts",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "bytes32", "name": "", "type": "bytes32" },
-      { "internalType": "address", "name": "", "type": "address" }
-    ],
-    "name": "chosenSAFESaviour",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
-    "name": "collateralTypes",
+    "name": "_cParams",
     "outputs": [
       {
         "internalType": "address",
@@ -340,8 +386,156 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "_params",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "onAuctionSystemCoinLimit",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "accountingEngine",
+    "outputs": [
+      {
+        "internalType": "contract IAccountingEngine",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
-      { "internalType": "address", "name": "saviour", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "_account",
+        "type": "address"
+      }
+    ],
+    "name": "addAuthorization",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_account",
+        "type": "address"
+      }
+    ],
+    "name": "authorizedAccounts",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "_authorized",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "authorizedAccounts",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "_accounts",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "_cType",
+        "type": "bytes32"
+      }
+    ],
+    "name": "cParams",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "collateralAuctionHouse",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "liquidationPenalty",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "liquidationQuantity",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct ILiquidationEngine.LiquidationEngineCollateralParams",
+        "name": "_liqEngineCParams",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "chosenSAFESaviour",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "collateralList",
+    "outputs": [
+      {
+        "internalType": "bytes32[]",
+        "name": "__collateralList",
+        "type": "bytes32[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_saviour",
+        "type": "address"
+      }
     ],
     "name": "connectSAFESaviour",
     "outputs": [],
@@ -351,14 +545,26 @@
   {
     "inputs": [],
     "name": "contractEnabled",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "currentOnAuctionSystemCoins",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
@@ -371,7 +577,11 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "saviour", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "_saviour",
+        "type": "address"
+      }
     ],
     "name": "disconnectSAFESaviour",
     "outputs": [],
@@ -382,13 +592,23 @@
     "inputs": [
       {
         "internalType": "bytes32",
-        "name": "collateralType",
+        "name": "_cType",
         "type": "bytes32"
       },
-      { "internalType": "address", "name": "safe", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "_safe",
+        "type": "address"
+      }
     ],
     "name": "getLimitAdjustedDebtToCover",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "_limitAdjustedDebtToCover",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
@@ -396,14 +616,57 @@
     "inputs": [
       {
         "internalType": "bytes32",
-        "name": "collateralType",
+        "name": "_cType",
         "type": "bytes32"
       },
-      { "internalType": "address", "name": "safe", "type": "address" }
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "collateralAuctionHouse",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "liquidationPenalty",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "liquidationQuantity",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct ILiquidationEngine.LiquidationEngineCollateralParams",
+        "name": "_liqEngineCParams",
+        "type": "tuple"
+      }
+    ],
+    "name": "initializeCollateralType",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "_cType",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "address",
+        "name": "_safe",
+        "type": "address"
+      }
     ],
     "name": "liquidateSAFE",
     "outputs": [
-      { "internalType": "uint256", "name": "auctionId", "type": "uint256" }
+      {
+        "internalType": "uint256",
+        "name": "_auctionId",
+        "type": "uint256"
+      }
     ],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -412,21 +675,19 @@
     "inputs": [
       {
         "internalType": "bytes32",
-        "name": "collateralType",
+        "name": "_cType",
         "type": "bytes32"
       },
-      { "internalType": "bytes32", "name": "parameter", "type": "bytes32" },
-      { "internalType": "address", "name": "data", "type": "address" }
-    ],
-    "name": "modifyParameters",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "bytes32", "name": "parameter", "type": "bytes32" },
-      { "internalType": "address", "name": "data", "type": "address" }
+      {
+        "internalType": "bytes32",
+        "name": "_param",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes",
+        "name": "_data",
+        "type": "bytes"
+      }
     ],
     "name": "modifyParameters",
     "outputs": [],
@@ -437,41 +698,37 @@
     "inputs": [
       {
         "internalType": "bytes32",
-        "name": "collateralType",
+        "name": "_param",
         "type": "bytes32"
       },
-      { "internalType": "bytes32", "name": "parameter", "type": "bytes32" },
-      { "internalType": "uint256", "name": "data", "type": "uint256" }
+      {
+        "internalType": "bytes",
+        "name": "_data",
+        "type": "bytes"
+      }
     ],
     "name": "modifyParameters",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "bytes32", "name": "parameter", "type": "bytes32" },
-      { "internalType": "uint256", "name": "data", "type": "uint256" }
-    ],
-    "name": "modifyParameters",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "bytes32", "name": "", "type": "bytes32" },
-      { "internalType": "address", "name": "", "type": "address" }
-    ],
-    "name": "mutex",
-    "outputs": [{ "internalType": "uint8", "name": "", "type": "uint8" }],
-    "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
-    "name": "onAuctionSystemCoinLimit",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "name": "params",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "onAuctionSystemCoinLimit",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct ILiquidationEngine.LiquidationEngineParams",
+        "name": "_liqEngineParams",
+        "type": "tuple"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
@@ -479,11 +736,19 @@
     "inputs": [
       {
         "internalType": "bytes32",
-        "name": "collateralType",
+        "name": "_cType",
         "type": "bytes32"
       },
-      { "internalType": "address", "name": "safe", "type": "address" },
-      { "internalType": "address", "name": "saviour", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "_safe",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_saviour",
+        "type": "address"
+      }
     ],
     "name": "protectSAFE",
     "outputs": [],
@@ -492,7 +757,11 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "account", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "_account",
+        "type": "address"
+      }
     ],
     "name": "removeAuthorization",
     "outputs": [],
@@ -500,7 +769,13 @@
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "uint256", "name": "rad", "type": "uint256" }],
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_rad",
+        "type": "uint256"
+      }
+    ],
     "name": "removeCoinsFromAuction",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -511,7 +786,7 @@
     "name": "safeEngine",
     "outputs": [
       {
-        "internalType": "contract SAFEEngineLike",
+        "internalType": "contract ISAFEEngine",
         "name": "",
         "type": "address"
       }
@@ -520,9 +795,21 @@
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
     "name": "safeSaviours",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   }

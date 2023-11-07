@@ -50,7 +50,7 @@ services:
       PGDATA: "/data/postgres"
       POSTGRES_INITDB_ARGS: "-E UTF8 --locale=C"
     volumes:
-      - ./data/postgres:/var/lib/postgresql/data
+      - pgdata:/data/postgres
     restart: always
     logging:
       options:
@@ -70,3 +70,7 @@ services:
     logging:
       options:
         max-size: 100m
+
+volumes:
+  pgdata:
+    external: true

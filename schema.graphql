@@ -1063,7 +1063,7 @@ type DiscountAuction @entity {
   buyAmount: BigDecimal!
 
   " Cumulative collateral amount sold so far "
-  sellAmount: BigDecimal
+  sellAmount: BigDecimal!
 
   " Liquidated Safe "
   safe: Safe!
@@ -1141,7 +1141,7 @@ type ERC20Balance @entity {
   address: Bytes!
 
   " Either the address or the owner of the proxy if the address is a Proxy "
-  owner: User
+  owner: User!
 
   " Balance amount "
   balance: BigDecimal!
@@ -1508,10 +1508,10 @@ type DailyStat @entity {
   blockNumber: BigInt!
 
   " Redemption rate "
-  redemptionRate: RedemptionRate!
+  redemptionRate: RedemptionRate
 
   " Redemption price "
-  redemptionPrice: RedemptionPrice!
+  redemptionPrice: RedemptionPrice
 
   " Price of COIN in USD (Uniswap pool price * ETH median price) "
   marketPriceUsd: BigDecimal!
@@ -1537,10 +1537,10 @@ type HourlyStat @entity {
   blockNumber: BigInt!
 
   " Redemption rate "
-  redemptionRate: RedemptionRate!
+  redemptionRate: RedemptionRate
 
   " Redemption price "
-  redemptionPrice: RedemptionPrice!
+  redemptionPrice: RedemptionPrice
 
   " Price of COIN in USD (Uniswap v2 pool price * ETH median price) "
   marketPriceUsd: BigDecimal!

@@ -80,11 +80,15 @@ export function handleModifyParameters(
 
     collateral.save()
   } else if (what == 'safetyCRatio') {
-    collateralType.safetyCRatio = decimal.fromRay(integer.BigInt.fromUnsignedBytes(event.params._data))
-    collateralType.save()
+    if (collateralType != null) {
+      collateralType.safetyCRatio = decimal.fromRay(integer.BigInt.fromUnsignedBytes(event.params._data))
+      collateralType.save()
+    }
   } else if (what == 'liquidationCRatio') {
-    collateralType.liquidationCRatio = decimal.fromRay(integer.BigInt.fromUnsignedBytes(event.params._data))
-    collateralType.save()
+    if (collateralType != null) {
+      collateralType.liquidationCRatio = decimal.fromRay(integer.BigInt.fromUnsignedBytes(event.params._data))
+      collateralType.save()
+    }
   } else  if (what == 'redemptionPrice') {
     log.error('ModifyParameters-redemptionPrice is not supported', [])
   } else if (what == 'redemptionRate') {

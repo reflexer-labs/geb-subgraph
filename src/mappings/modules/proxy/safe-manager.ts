@@ -39,12 +39,14 @@ export function handleOpenSAFE(event: OpenSAFE): void {
       event.params._safe,
       event,
     )
-    log.info('New Manged SAFE, id: #{}, owner {}, address: {}', [
-      safe.safeId.toString(),
-      safe.owner,
-      safeAddress.toHexString(),
-    ])
-    safe.save()
+    if (safe != null) {
+      log.info('New Manged SAFE, owner {}, address: {}', [
+        // safe.safeId == null ? '' : safe.safeId.toString(),
+        safe.owner,
+        safeAddress.toHexString(),
+      ])
+      safe.save()
+    }
   } else {
     log.warning('Wrong collateral type: {}, safe_id: {}, tx_hash: {}', [
       collateralType.toString(),
@@ -63,34 +65,41 @@ export function handleTransferSAFEOwnership(event: TransferSAFEOwnership): void 
   let collateralType = safeData.collateralType
 
   let collateral = CollateralType.load(collateralType.toString())
-  let safe = Safe.load(safeHandler.toHexString() + '-' + collateral.id)
-  safe.owner = findUltimateOwner(event.params._dst).toHexString()
-  updateLastModifySafe(safe as Safe, event)
+  if (collateral != null) {
+    let safe = Safe.load(safeHandler.toHexString() + '-' + collateral.id)
+    if (safe != null) {
+      safe.owner = findUltimateOwner(event.params._dst).toHexString()
+      updateLastModifySafe(safe as Safe, event)
 
-  // Assign a proxy if it exists
-  safe.proxy = UserProxy.load(event.params._dst.toHexString()).id
+      // Assign a proxy if it exists
+      let proxy = UserProxy.load(event.params._dst.toHexString())
+      if (proxy != null) {
+        safe.proxy = proxy.id
+      }
 
-  safe.save()
+      safe.save()
 
-  // Transfers balances ownership
-  let coinBalance = InternalCoinBalance.load(safeHandler.toHexString())
-  if (coinBalance) {
-    coinBalance.owner = safe.owner
-    coinBalance.save()
-  }
+      // Transfers balances ownership
+      let coinBalance = InternalCoinBalance.load(safeHandler.toHexString())
+      if (coinBalance) {
+        coinBalance.owner = safe.owner
+        coinBalance.save()
+      }
 
-  let debtBalance = InternalDebtBalance.load(safeHandler.toHexString())
-  if (debtBalance) {
-    debtBalance.owner = safe.owner
-    debtBalance.save()
-  }
+      let debtBalance = InternalDebtBalance.load(safeHandler.toHexString())
+      if (debtBalance) {
+        debtBalance.owner = safe.owner
+        debtBalance.save()
+      }
 
-  let collateralBalance = InternalCollateralBalance.load(
-    safeHandler.toHexString() + '-' + collateralType.toString(),
-  )
-  if (collateralBalance) {
-    collateralBalance.owner = safe.owner
-    collateralBalance.save()
+      let collateralBalance = InternalCollateralBalance.load(
+        safeHandler.toHexString() + '-' + collateralType.toString(),
+      )
+      if (collateralBalance) {
+        collateralBalance.owner = safe.owner
+        collateralBalance.save()
+      }
+    }
   }
 }
 

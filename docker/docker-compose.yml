@@ -16,6 +16,7 @@ services:
       ipfs: 'ipfs:5001'
       ethereum: ${ETHEREUM_RPC}
       RUST_LOG: error
+      RUST_BACKTRACE: full
       GRAPH_LOG: info
       GRAPH_ETH_CALL_BY_NUMBER: 'true'
       ETHEREUM_POLLING_INTERVAL: 1000
@@ -64,7 +65,7 @@ services:
     environment:
       - GRAPH_ADMIN_RPC_URL=http://graph-node:8020/
       - IPFS_URL=http://ipfs:5001
-      - SUBGRAPH_NAME=reflexer-labs/rai
+      - SUBGRAPH_NAME=hai/hai
       - NETWORK
     command: 'npm\ run\ deploy-local'
     logging:

@@ -16,5 +16,5 @@ export function fromNumber(value: i32): BigInt {
 }
 
 export function fromString(value: string): BigInt {
-  return fromNumber(parseI32(value))
+  return BigInt.fromString(value)
 }

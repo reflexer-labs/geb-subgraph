@@ -16,6 +16,7 @@ import { getSystemState } from '../../../entities'
 import {
   InitializeCollateralType,
   ModifyParameters as ModifyParameters,
+  // ModifyCollateralBalance,
   TransferCollateral,
   TransferInternalCoins,
   TransferSAFECollateralAndDebt,
@@ -94,6 +95,21 @@ export function handleModifyParameters(event: ModifyParameters): void {
     collateral.save()
   }
 }
+
+// // Modify a user's collateral balance (Called by authorized collateral adapters, mint system coins)
+// export function handleModifyCollateralBalance(event: ModifyCollateralBalance): void {
+//   let account = event.params._account
+//   let collateral = event.params._cType
+//   let amount = decimal.fromWad(event.params._wad)
+
+//   // Update user balance
+//   updateCollateralBalance(account, collateral, event)
+
+//   // Update collateral counter
+//   let collateralObj = getOrCreateCollateral(collateral, event)
+//   collateralObj.totalCollateral = collateralObj.totalCollateral.plus(amount)
+//   collateralObj.save()
+// }
 
 // Transfer collateral between users
 export function handleTransferCollateral(event: TransferCollateral): void {

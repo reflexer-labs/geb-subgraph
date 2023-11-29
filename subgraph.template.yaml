@@ -35,7 +35,7 @@ dataSources:
           handler: handleInitializeCollateralType
         - event: ModifyParameters(indexed bytes32,indexed bytes32,bytes)
           handler: handleModifyParameters
-        # - event: ModifyCollateralBalance(indexed bytes32,indexed address,int256)
+        # - event: ModifyCollateralBalance(bytes32,address,int256)
         #   handler: handleModifyCollateralBalance
         - event: TransferCollateral(indexed bytes32,indexed address,indexed address,uint256)
           handler: handleTransferCollateral
@@ -274,7 +274,7 @@ dataSources:
     kind: ethereum/contract
     network: {{NETWORK}}
     source:
-      abi: DSProxyFactory
+      abi: HaiProxyFactory
       address: '{{PROXY_FACTORY}}'
       startBlock: {{STARTING_BLOCK_NUMBER}}
       # Use this instead of the above for dev (faster sync but not all proxies available)
@@ -287,10 +287,10 @@ dataSources:
       entities:
         - UserProxy
       abis:
-        - name: DSProxyFactory
-          file: ./abis/DSProxyFactory.json
+        - name: HaiProxyFactory
+          file: ./abis/HaiProxyFactory.json
       eventHandlers:
-        - event: Created(indexed address,indexed address,address,address)
+        - event: Created(indexed address,indexed address,address)
           handler: handleCreated
 
   - name: CoinJoin

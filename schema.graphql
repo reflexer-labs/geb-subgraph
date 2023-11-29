@@ -104,9 +104,6 @@ type UserProxy @entity {
   " Proxy contract address "
   address: Bytes!
 
-  " Cache contract address "
-  cache: Bytes!
-
   " Allowance of the proxy to spend its owner RAIs (Useful when we need to repay debt)"
   coinAllowance: ERC20Allowance
 

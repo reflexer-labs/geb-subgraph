@@ -121,6 +121,8 @@ dataSources:
           handler: handleAddAuthorization
         - event: RemoveAuthorization(address)
           handler: handleRemoveAuthorization
+        # - event: InitializeCollateralType(bytes32)
+        #   handler: handleInitializeCollateralType
   
   - name: TaxCollector
     kind: ethereum/contract
@@ -149,6 +151,9 @@ dataSources:
           handler: handleAddAuthorization
         - event: RemoveAuthorization(address)
           handler: handleRemoveAuthorization
+        - event: InitializeCollateralType(bytes32)
+          handler: handleInitializeCollateralType
+        
         
         # Remaining events
         # - event: AddSecondaryReceiver(bytes32,uint256,uint256,uint256,uint256)
@@ -157,8 +162,6 @@ dataSources:
         #   handle: handleCollectTax
         # - event: DistributeTax(bytes32,address,int256)
         #   handle: handleDistributeTax
-        # - event: InitializeCollateralType(bytes32)
-        #   handle: handleInitializeCollateralType
         # - event: ModifyParameters(bytes32,address)
         #   handle: handleModifyParameters
         # - event: ModifyParameters(bytes32,uint256,uint256)
@@ -205,6 +208,8 @@ dataSources:
           handler: handleDisconnectSAFESaviour
         - event: ProtectSAFE(indexed bytes32,indexed address,address)
           handler: handleProtectSAFE
+        # - event: InitializeCollateralType(bytes32)
+        #   handler: handleInitializeCollateralType
 
         # Remaining events:
         # - event: DisableContract()
@@ -615,6 +620,8 @@ dataSources:
       eventHandlers:
         - event: Swap(indexed address,indexed address,int256,int256,uint160,uint128,int24)
           handler: handleSwap
+        - event: Initialize(uint160,int24)
+          handler: handleInitialize
         # - event: Mint(address,indexed address,indexed int24,indexed int24,uint128,uint256,uint256)
         #   handler: handleMint
         # - event: Burn(indexed address,indexed int24,indexed int24,uint128,uint256,uint256)

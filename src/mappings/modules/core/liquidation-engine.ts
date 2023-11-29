@@ -1,4 +1,5 @@
 import {
+  // InitializeCollateralType,
   ModifyParameters as ModifyParameters,
   Liquidate,
   AddAuthorization,
@@ -7,6 +8,8 @@ import {
   DisconnectSAFESaviour,
   ProtectSAFE,
 } from '../../../../generated/LiquidationEngine/LiquidationEngine'
+
+import { LiquidationEngine as LiquidationEngineBind } from '../../../../generated/LiquidationEngine/LiquidationEngine'
 
 import {
   FixedDiscountCollateralAuctionHouse,
@@ -24,10 +27,24 @@ import * as decimal from '../../../utils/decimal'
 import * as integer from '../../../utils/integer'
 import * as bytes from '../../../utils/bytes'
 
-import { log, BigInt } from '@graphprotocol/graph-ts'
+import { log, BigInt, dataSource } from '@graphprotocol/graph-ts'
 import * as enums from '../../../utils/enums'
 import { getOrCreateEnglishAuctionConfiguration } from '../../../entities/auctions'
 import { addAuthorization, removeAuthorization } from '../governance/authorizations'
+
+// // Register a new collateral type
+// export function handleInitializeCollateralType(event: InitializeCollateralType): void {
+//   let collateral = getOrCreateCollateral(event.params._cType, event)
+//   let liquidationEngineContract = LiquidationEngineBind.bind(dataSource.address())
+
+//   let liqParams = liquidationEngineContract.cParams(event.params_cType)
+
+//   collateral.liquidationPenalty = decimal.fromWad(liqParams.liquidationPenalty)
+//   collateral.liquidationQuantity = decimal.fromRad(liqParams.liquidationQuantity)
+//   collateral.collateralAuctionHouseAddress = liqParams.collateralAuctionHouse
+
+//   log.info('Onboard new collateral Liq Engine {}', [collateral.id])
+// }
 
 export function handleModifyParameters(
   event: ModifyParameters,

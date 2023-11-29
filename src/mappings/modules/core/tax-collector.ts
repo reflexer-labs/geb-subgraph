@@ -1,9 +1,13 @@
-import { log } from '@graphprotocol/graph-ts'
+import { log, dataSource } from '@graphprotocol/graph-ts'
 import {
+  InitializeCollateralType,
   AddAuthorization,
   ModifyParameters as ModifyParameters,
   RemoveAuthorization,
 } from '../../../../generated/TaxCollector/TaxCollector'
+
+import { TaxCollector as TaxcollectorBind } from '../../../../generated/TaxCollector/TaxCollector'
+
 import { getSystemState, getOrCreateCollateral } from '../../../entities'
 import * as decimal from '../../../utils/decimal'
 import * as integer from '../../../utils/integer'
@@ -11,6 +15,23 @@ import { addAuthorization, removeAuthorization } from '../governance/authorizati
 
 // TODO: Authorizations
 // TODO: Tax Recipients
+
+// Register a new collateral type
+export function handleInitializeCollateralType(event: InitializeCollateralType): void {
+  let collateral = getOrCreateCollateral(event.params._cType, event)
+  let taxCollectorContract = TaxcollectorBind.bind(dataSource.address())
+
+  let stabilityFee = taxCollectorContract.cParams(event.params._cType)
+
+  collateral.stabilityFee = decimal.fromRay(stabilityFee.stabilityFee)
+  collateral.save()
+
+  let system = getSystemState(event)
+  let params = taxCollectorContract._params()
+  system.globalStabilityFee = decimal.fromRay(params.getGlobalStabilityFee())
+  system.save()
+  log.info('Onboard new collateral Tax Collector {}', [collateral.id])
+}
 
 export function handleModifyParameters(
   event: ModifyParameters,

@@ -18,12 +18,13 @@ export function getOrCreateCollateral(
     // TODO: auction parameter init
 
     collateral.liquidationPenalty = decimal.ZERO
+    collateral.liquidationQuantity = decimal.ZERO
     collateral.liquidationCRatio = decimal.ZERO
     collateral.safetyCRatio = decimal.ZERO
     collateral.collateralAuctionHouseAddress = Address.fromHexString(
       '0x0000000000000000000000000000000000000000',
     ) as Bytes
-
+    
     collateral.accumulatedRate = decimal.fromRay(BigInt.fromI32(10).pow(27))
 
     collateral.stabilityFee = decimal.ONE

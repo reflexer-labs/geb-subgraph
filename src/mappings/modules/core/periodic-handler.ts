@@ -45,8 +45,13 @@ export function periodicHandler(event: ethereum.Event): void {
     daily.redemptionRate = state.currentRedemptionRate
     daily.redemptionPrice = state.currentRedemptionPrice
     let haiEthPrice = getUniEthPrice(event)
-    daily.marketPriceEth = haiEthPrice
-    daily.marketPriceUsd = ethPrice.times(haiEthPrice)
+    if (haiEthPrice == decimal.ZERO) {
+      daily.marketPriceEth = decimal.ZERO
+      daily.marketPriceUsd = decimal.ZERO
+    } else {
+      daily.marketPriceEth = haiEthPrice
+      daily.marketPriceUsd = ethPrice.times(haiEthPrice)
+    }
     daily.globalDebt = state.globalDebt
     daily.erc20CoinTotalSupply = state.erc20CoinTotalSupply
     daily.save()
@@ -58,8 +63,13 @@ export function periodicHandler(event: ethereum.Event): void {
     hourly.redemptionRate = state.currentRedemptionRate
     hourly.redemptionPrice = state.currentRedemptionPrice
     let haiEthPrice = getUniEthPrice(event)
-    hourly.marketPriceEth = haiEthPrice
-    hourly.marketPriceUsd = ethPrice.times(haiEthPrice)
+    if (haiEthPrice == decimal.ZERO) {
+      hourly.marketPriceEth = decimal.ZERO
+      hourly.marketPriceUsd = decimal.ZERO
+    } else {
+      hourly.marketPriceEth = haiEthPrice
+      hourly.marketPriceUsd = ethPrice.times(haiEthPrice)
+    }
     hourly.globalDebt = state.globalDebt
     hourly.erc20CoinTotalSupply = state.erc20CoinTotalSupply
     hourly.save()

@@ -1,4 +1,4 @@
-import { Address, log, Bytes, ethereum } from '@graphprotocol/graph-ts'
+import { Address, log, Bytes, ethereum, dataSource } from '@graphprotocol/graph-ts'
 
 import {
   CollateralType,
@@ -8,6 +8,8 @@ import {
   TransferSAFECollateralAndDebt as TransferSAFECollateralAndDebtEntity,
   UpdateAccumulatedRate as UpdateAccumulatedRateEntity,
 } from '../../../../generated/schema'
+
+import { SAFEEngine as SAFEEngineBind } from '../../../../generated/SAFEEngine/SAFEEngine'
 
 import { getSystemState } from '../../../entities'
 
@@ -43,11 +45,21 @@ import { addAuthorization, removeAuthorization } from '../governance/authorizati
 // Register a new collateral type
 export function handleInitializeCollateralType(event: InitializeCollateralType): void {
   let collateral = getOrCreateCollateral(event.params._cType, event)
+  let safeEngineContract = SAFEEngineBind.bind(dataSource.address())
 
-  log.info('Onboard new collateral {}', [collateral.id])
+  let cParams = safeEngineContract.cParams(event.params._cType)
+
+  collateral.debtCeiling = decimal.fromRad(cParams.debtCeiling)
+  collateral.debtFloor = decimal.fromRad(cParams.debtFloor)
+  log.info('Onboard new collateral {}', [collateral.id, collateral.debtCeiling.toString()])
+
+  collateral.save()
 
   // Update system state
   let system = getSystemState(event)
+  let params = safeEngineContract.params()
+  system.globalDebtCeiling = decimal.fromRad(params.globalDebtCeiling)
+  system.perSafeDebtCeiling = decimal.fromWad(params.safeDebtCeiling)
   system.collateralCount = system.collateralCount.plus(integer.ONE)
   system.save()
 }

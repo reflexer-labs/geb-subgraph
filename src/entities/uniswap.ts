@@ -35,3 +35,10 @@ export function getOrCreateUniPool(
 
   return pair as UniswapPairEntity
 }
+
+export function getUniPool(
+  pairAddress: Address
+): UniswapPairEntity | null {
+  let pair = UniswapPairEntity.load(pairAddress.toHexString())
+  return pair
+}

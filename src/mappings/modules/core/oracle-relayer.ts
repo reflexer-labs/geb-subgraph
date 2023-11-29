@@ -5,6 +5,7 @@ import * as decimal from '../../../utils/decimal'
 import * as integer from '../../../utils/integer'
 
 import {
+  // InitializeCollateralType,
   UpdateCollateralPrice,
   UpdateRedemptionPrice,
   ModifyParameters as ModifyParameters,
@@ -14,6 +15,8 @@ import {
 } from '../../../../generated/OracleRelayer/OracleRelayer'
 
 import { RateSetter } from '../../../../generated/OracleRelayer/RateSetter'
+
+import { OracleRelayer as OracleRelayerBind } from '../../../../generated/OracleRelayer/OracleRelayer'
 
 import {
   CollateralType,
@@ -27,6 +30,18 @@ import { eventUid } from '../../../utils/ethereum'
 import { addressMap } from '../../../utils/addresses'
 import { SECOND_PER_YEAR } from '../../../utils/integer'
 import { addAuthorization, removeAuthorization } from '../governance/authorizations'
+
+// // Register a new collateral type
+// export function handleInitializeCollateralType(event: InitializeCollateralType): void {
+//   let collateral = getOrCreateCollateral(event.params._cType, event)
+//   let oracleContract = OracleRelayerBind.bind(dataSource.address())
+
+//   let cParams = oracleContract.cParams(event.params._cType)
+
+//   collateral.safetyCRatio = decimal.fromRay(cParams.safetyCRatio)
+//   collateral.liquidationCRatio = decimal.fromRay(cParams.liquidationCRatio)
+//   log.info('Onboard new collateral Oracle {}', [collateral.id])
+// }
 
 export function handleUpdateCollateralPrice(event: UpdateCollateralPrice): void {
   let collateralType = event.params._cType.toString()
@@ -55,13 +70,38 @@ export function handleUpdateRedemptionPrice(event: UpdateRedemptionPrice): void 
   price.timestamp = event.block.timestamp
   price.value = decimal.fromRay(event.params._redemptionPrice)
   let relayer = OracleRelayer.bind(dataSource.address())
-  price.redemptionRate = decimal.fromRay(relayer.redemptionRate())
+  let redemptionRate = relayer.redemptionRate()
+  price.redemptionRate = decimal.fromRay(redemptionRate)
+
+  let rate = new RedemptionRate(eventUid(event))
+
+  let perSecondRate = decimal.fromRay(redemptionRate)
+  let perSecondRateRay = redemptionRate
+  rate.perSecondRate = perSecondRate
+
+  // Calculate solidity annualized rate by calling the contract
+
+  const rpowerRate = (rate: BigInt, nSeconds: i32): decimal.BigDecimal => {
+    // Exponentiate in web assembly, it's not exactly like Solidity but more than accurate enough
+    return decimal.fromNumber(parseFloat(decimal.fromRay(rate).toString()) ** nSeconds)
+  }
+
+  rate.annualizedRate = rpowerRate(perSecondRateRay, 31536000)
+  rate.eightHourlyRate = rpowerRate(perSecondRateRay, 3600 * 8)
+  rate.twentyFourHourlyRate = rpowerRate(perSecondRateRay, 3600 * 24)
+  rate.hourlyRate = rpowerRate(perSecondRateRay, 3600)
+
+  rate.createdAt = event.block.timestamp
+  rate.createdAtBlock = event.block.number
+  rate.createdAtTransaction = event.transaction.hash
 
   let system = getSystemState(event)
   system.currentRedemptionPrice = price.id
+  system.currentRedemptionRate = rate.id
 
   system.save()
   price.save()
+  rate.save()
 }
 
 export function handleModifyParameters(
@@ -91,34 +131,6 @@ export function handleModifyParameters(
     }
   } else  if (what == 'redemptionPrice') {
     log.error('ModifyParameters-redemptionPrice is not supported', [])
-  } else if (what == 'redemptionRate') {
-    let system = getSystemState(event)
-    let rate = new RedemptionRate(eventUid(event))
-
-    let perSecondRate = decimal.fromRay(integer.BigInt.fromUnsignedBytes(event.params._data))
-    let perSecondRateRay = integer.BigInt.fromUnsignedBytes(event.params._data)
-    rate.perSecondRate = perSecondRate
-
-    // Calculate solidity annualized rate by calling the contract
-
-    const rpowerRate = (rate: BigInt, nSeconds: i32): decimal.BigDecimal => {
-      // Exponentiate in web assembly, it's not exactly like Solidity but more than accurate enough
-      return decimal.fromNumber(parseFloat(decimal.fromRay(rate).toString()) ** nSeconds)
-    }
-
-    rate.annualizedRate = rpowerRate(perSecondRateRay, 31536000)
-    rate.eightHourlyRate = rpowerRate(perSecondRateRay, 3600 * 8)
-    rate.twentyFourHourlyRate = rpowerRate(perSecondRateRay, 3600 * 24)
-    rate.hourlyRate = rpowerRate(perSecondRateRay, 3600)
-
-    rate.createdAt = event.block.timestamp
-    rate.createdAtBlock = event.block.number
-    rate.createdAtTransaction = event.transaction.hash
-
-    system.currentRedemptionRate = rate.id
-
-    rate.save()
-    system.save()
   }
 }
 

@@ -80,11 +80,11 @@ dataSources:
       eventHandlers:
         - event: OpenSAFE(indexed address,indexed address,indexed uint256)
           handler: handleOpenSAFE
-        - event: TransferSAFEOwnership(address,uint256,address)
+        - event: TransferSAFEOwnership(indexed address,indexed uint256,address)
           handler: handleTransferSAFEOwnership
-        - event: AllowSAFE(address,uint256,address,uint256)
+        - event: AllowSAFE(indexed address,indexed uint256,address,bool)
           handler: handleAllowSAFE
-        - event: AllowHandler(address,address,uint256)
+        - event: AllowHandler(indexed address,address,bool)
           handler: handleAllowHandler
         # Other events in SAFEManager are handled by SAFEEngine
 
@@ -121,8 +121,8 @@ dataSources:
           handler: handleAddAuthorization
         - event: RemoveAuthorization(address)
           handler: handleRemoveAuthorization
-        # - event: InitializeCollateralType(bytes32)
-        #   handler: handleInitializeCollateralType
+        - event: InitializeCollateralType(bytes32)
+          handler: handleInitializeCollateralType
   
   - name: TaxCollector
     kind: ethereum/contract
@@ -208,8 +208,8 @@ dataSources:
           handler: handleDisconnectSAFESaviour
         - event: ProtectSAFE(indexed bytes32,indexed address,address)
           handler: handleProtectSAFE
-        # - event: InitializeCollateralType(bytes32)
-        #   handler: handleInitializeCollateralType
+        - event: InitializeCollateralType(bytes32)
+          handler: handleInitializeCollateralType
 
         # Remaining events:
         # - event: DisableContract()

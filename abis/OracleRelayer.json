@@ -39,12 +39,28 @@
   },
   {
     "inputs": [],
+    "name": "CollateralTypeAlreadyInitialized",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "ContractIsDisabled",
     "type": "error"
   },
   {
     "inputs": [],
     "name": "ContractIsEnabled",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_contract",
+        "type": "address"
+      }
+    ],
+    "name": "NoCode",
     "type": "error"
   },
   {
@@ -158,6 +174,19 @@
     "anonymous": false,
     "inputs": [
       {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "_cType",
+        "type": "bytes32"
+      }
+    ],
+    "name": "InitializeCollateralType",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
         "indexed": true,
         "internalType": "bytes32",
         "name": "_param",
@@ -240,14 +269,14 @@
     "inputs": [
       {
         "internalType": "bytes32",
-        "name": "",
+        "name": "_cType",
         "type": "bytes32"
       }
     ],
     "name": "_cParams",
     "outputs": [
       {
-        "internalType": "contract IDelayedOracle",
+        "internalType": "contract IBaseOracle",
         "name": "oracle",
         "type": "address"
       },
@@ -341,7 +370,7 @@
       {
         "components": [
           {
-            "internalType": "contract IDelayedOracle",
+            "internalType": "contract IBaseOracle",
             "name": "oracle",
             "type": "address"
           },
@@ -418,26 +447,9 @@
         "type": "bytes32"
       },
       {
-        "components": [
-          {
-            "internalType": "contract IDelayedOracle",
-            "name": "oracle",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "safetyCRatio",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "liquidationCRatio",
-            "type": "uint256"
-          }
-        ],
-        "internalType": "struct IOracleRelayer.OracleRelayerCollateralParams",
-        "name": "_oracleRelayerCParams",
-        "type": "tuple"
+        "internalType": "bytes",
+        "name": "_collateralParams",
+        "type": "bytes"
       }
     ],
     "name": "initializeCollateralType",

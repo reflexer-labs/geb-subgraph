@@ -74,11 +74,6 @@
   },
   {
     "inputs": [],
-    "name": "AccEng_DebtNotZero",
-    "type": "error"
-  },
-  {
-    "inputs": [],
     "name": "AccEng_InsufficientDebt",
     "type": "error"
   },
@@ -119,11 +114,6 @@
   },
   {
     "inputs": [],
-    "name": "AccEng_SurplusNotZero",
-    "type": "error"
-  },
-  {
-    "inputs": [],
     "name": "AccEng_SurplusTransferDisabled",
     "type": "error"
   },
@@ -140,6 +130,17 @@
   {
     "inputs": [],
     "name": "ContractIsEnabled",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_contract",
+        "type": "address"
+      }
+    ],
+    "name": "NoCode",
     "type": "error"
   },
   {
@@ -548,7 +549,7 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "_timestamp",
         "type": "uint256"
       }
     ],
@@ -556,7 +557,7 @@
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "_rad",
         "type": "uint256"
       }
     ],
@@ -607,29 +608,6 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "_cType",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "_param",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "bytes",
-        "name": "_data",
-        "type": "bytes"
-      }
-    ],
-    "name": "modifyParameters",
-    "outputs": [],
-    "stateMutability": "nonpayable",
     "type": "function"
   },
   {

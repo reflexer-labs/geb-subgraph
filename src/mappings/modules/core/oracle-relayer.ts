@@ -5,7 +5,7 @@ import * as decimal from '../../../utils/decimal'
 import * as integer from '../../../utils/integer'
 
 import {
-  // InitializeCollateralType,
+  InitializeCollateralType,
   UpdateCollateralPrice,
   UpdateRedemptionPrice,
   ModifyParameters as ModifyParameters,
@@ -31,17 +31,19 @@ import { addressMap } from '../../../utils/addresses'
 import { SECOND_PER_YEAR } from '../../../utils/integer'
 import { addAuthorization, removeAuthorization } from '../governance/authorizations'
 
-// // Register a new collateral type
-// export function handleInitializeCollateralType(event: InitializeCollateralType): void {
-//   let collateral = getOrCreateCollateral(event.params._cType, event)
-//   let oracleContract = OracleRelayerBind.bind(dataSource.address())
+// Register a new collateral type
+export function handleInitializeCollateralType(event: InitializeCollateralType): void {
+  let collateral = getOrCreateCollateral(event.params._cType, event)
+  let oracleContract = OracleRelayerBind.bind(dataSource.address())
 
-//   let cParams = oracleContract.cParams(event.params._cType)
+  let cParams = oracleContract.cParams(event.params._cType)
 
-//   collateral.safetyCRatio = decimal.fromRay(cParams.safetyCRatio)
-//   collateral.liquidationCRatio = decimal.fromRay(cParams.liquidationCRatio)
-//   log.info('Onboard new collateral Oracle {}', [collateral.id])
-// }
+  collateral.safetyCRatio = decimal.fromRay(cParams.safetyCRatio)
+  collateral.liquidationCRatio = decimal.fromRay(cParams.liquidationCRatio)
+
+  collateral.save()
+  log.info('Onboard new collateral Oracle {}', [collateral.id])
+}
 
 export function handleUpdateCollateralPrice(event: UpdateCollateralPrice): void {
   let collateralType = event.params._cType.toString()

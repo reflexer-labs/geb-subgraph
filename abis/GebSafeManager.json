@@ -49,7 +49,7 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "address",
         "name": "_sender",
         "type": "address"
@@ -62,9 +62,9 @@
       },
       {
         "indexed": false,
-        "internalType": "uint256",
+        "internalType": "bool",
         "name": "_ok",
-        "type": "uint256"
+        "type": "bool"
       }
     ],
     "name": "AllowHandler",
@@ -74,13 +74,13 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "address",
         "name": "_sender",
         "type": "address"
       },
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "uint256",
         "name": "_safe",
         "type": "uint256"
@@ -93,9 +93,9 @@
       },
       {
         "indexed": false,
-        "internalType": "uint256",
+        "internalType": "bool",
         "name": "_ok",
-        "type": "uint256"
+        "type": "bool"
       }
     ],
     "name": "AllowSAFE",
@@ -105,7 +105,7 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "address",
         "name": "_sender",
         "type": "address"
@@ -117,7 +117,7 @@
         "type": "address"
       },
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "uint256",
         "name": "_safe",
         "type": "uint256"
@@ -130,13 +130,38 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "address",
         "name": "_sender",
         "type": "address"
       },
       {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "_safe",
+        "type": "uint256"
+      },
+      {
         "indexed": false,
+        "internalType": "address",
+        "name": "_dst",
+        "type": "address"
+      }
+    ],
+    "name": "InitiateTransferSAFEOwnership",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "_sender",
+        "type": "address"
+      },
+      {
+        "indexed": true,
         "internalType": "uint256",
         "name": "_safe",
         "type": "uint256"
@@ -161,19 +186,19 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "address",
         "name": "_sender",
         "type": "address"
       },
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "uint256",
         "name": "_safeSrc",
         "type": "uint256"
       },
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "uint256",
         "name": "_safeDst",
         "type": "uint256"
@@ -211,13 +236,13 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "address",
         "name": "_sender",
         "type": "address"
       },
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "uint256",
         "name": "_safe",
         "type": "uint256"
@@ -242,13 +267,13 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "address",
         "name": "_sender",
         "type": "address"
       },
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "uint256",
         "name": "_safe",
         "type": "uint256"
@@ -267,13 +292,13 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "address",
         "name": "_sender",
         "type": "address"
       },
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "uint256",
         "name": "_safe",
         "type": "uint256"
@@ -298,7 +323,7 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "address",
         "name": "_sender",
         "type": "address"
@@ -310,7 +335,7 @@
         "type": "bytes32"
       },
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "uint256",
         "name": "_safe",
         "type": "uint256"
@@ -335,13 +360,13 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "address",
         "name": "_sender",
         "type": "address"
       },
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "uint256",
         "name": "_safe",
         "type": "uint256"
@@ -366,13 +391,13 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "address",
         "name": "_sender",
         "type": "address"
       },
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "uint256",
         "name": "_safe",
         "type": "uint256"
@@ -395,6 +420,19 @@
         "type": "uint256"
       }
     ],
+    "name": "acceptSAFEOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_safe",
+        "type": "uint256"
+      }
+    ],
     "name": "addSAFE",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -408,9 +446,9 @@
         "type": "address"
       },
       {
-        "internalType": "uint256",
+        "internalType": "bool",
         "name": "_ok",
-        "type": "uint256"
+        "type": "bool"
       }
     ],
     "name": "allowHandler",
@@ -431,9 +469,9 @@
         "type": "address"
       },
       {
-        "internalType": "uint256",
+        "internalType": "bool",
         "name": "_ok",
-        "type": "uint256"
+        "type": "bool"
       }
     ],
     "name": "allowSAFE",
@@ -547,9 +585,9 @@
     "name": "handlerCan",
     "outputs": [
       {
-        "internalType": "uint256",
+        "internalType": "bool",
         "name": "_ok",
-        "type": "uint256"
+        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -695,9 +733,9 @@
     "name": "safeCan",
     "outputs": [
       {
-        "internalType": "uint256",
+        "internalType": "bool",
         "name": "_ok",
-        "type": "uint256"
+        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -722,6 +760,11 @@
           },
           {
             "internalType": "address",
+            "name": "pendingOwner",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
             "name": "safeHandler",
             "type": "address"
           },
@@ -731,7 +774,7 @@
             "type": "bytes32"
           }
         ],
-        "internalType": "struct HaiSafeManager.SAFEData",
+        "internalType": "struct IHaiSafeManager.SAFEData",
         "name": "_sData",
         "type": "tuple"
       }

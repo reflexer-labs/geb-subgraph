@@ -1,5 +1,5 @@
 import {
-  // InitializeCollateralType,
+  InitializeCollateralType,
   ModifyParameters as ModifyParameters,
   Liquidate,
   AddAuthorization,
@@ -32,19 +32,22 @@ import * as enums from '../../../utils/enums'
 import { getOrCreateEnglishAuctionConfiguration } from '../../../entities/auctions'
 import { addAuthorization, removeAuthorization } from '../governance/authorizations'
 
-// // Register a new collateral type
-// export function handleInitializeCollateralType(event: InitializeCollateralType): void {
-//   let collateral = getOrCreateCollateral(event.params._cType, event)
-//   let liquidationEngineContract = LiquidationEngineBind.bind(dataSource.address())
+// Register a new collateral type
+export function handleInitializeCollateralType(event: InitializeCollateralType): void {
+  let collateral = getOrCreateCollateral(event.params._cType, event)
+  let liquidationEngineContract = LiquidationEngineBind.bind(dataSource.address())
 
-//   let liqParams = liquidationEngineContract.cParams(event.params_cType)
+  let liqParams = liquidationEngineContract.cParams(event.params._cType)
 
-//   collateral.liquidationPenalty = decimal.fromWad(liqParams.liquidationPenalty)
-//   collateral.liquidationQuantity = decimal.fromRad(liqParams.liquidationQuantity)
-//   collateral.collateralAuctionHouseAddress = liqParams.collateralAuctionHouse
+  collateral.liquidationPenalty = decimal.fromWad(liqParams.liquidationPenalty)
+  collateral.liquidationQuantity = decimal.fromRad(liqParams.liquidationQuantity)
+  collateral.collateralAuctionHouseAddress = liqParams.collateralAuctionHouse
 
-//   log.info('Onboard new collateral Liq Engine {}', [collateral.id])
-// }
+  collateral.save()
+
+  log.info('Onboard new collateral Liq Engine {} {} {} {}', [collateral.id, liqParams.liquidationPenalty.toString(), liqParams.liquidationQuantity.toString(), liqParams.collateralAuctionHouse.toHexString()])
+
+}
 
 export function handleModifyParameters(
   event: ModifyParameters,

@@ -103,6 +103,17 @@
     "type": "error"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_contract",
+        "type": "address"
+      }
+    ],
+    "name": "NoCode",
+    "type": "error"
+  },
+  {
     "inputs": [],
     "name": "NonDisableable",
     "type": "error"
@@ -379,7 +390,7 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "_auctionId",
         "type": "uint256"
       }
     ],
@@ -596,11 +607,6 @@
         "internalType": "uint256",
         "name": "_amountToBuy",
         "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_bid",
-        "type": "uint256"
       }
     ],
     "name": "decreaseSoldAmount",
@@ -611,29 +617,6 @@
   {
     "inputs": [],
     "name": "disableContract",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "_cType",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "_param",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "bytes",
-        "name": "_data",
-        "type": "bytes"
-      }
-    ],
-    "name": "modifyParameters",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

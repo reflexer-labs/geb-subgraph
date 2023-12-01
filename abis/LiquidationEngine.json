@@ -17,6 +17,11 @@
             "internalType": "uint256",
             "name": "onAuctionSystemCoinLimit",
             "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "saviourGasLimit",
+            "type": "uint256"
           }
         ],
         "internalType": "struct ILiquidationEngine.LiquidationEngineParams",
@@ -30,6 +35,11 @@
   {
     "inputs": [],
     "name": "AlreadyAuthorized",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "CollateralTypeAlreadyInitialized",
     "type": "error"
   },
   {
@@ -50,16 +60,6 @@
   {
     "inputs": [],
     "name": "LiqEng_CannotModifySAFE",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "LiqEng_CollateralTypeAlreadyInitialized",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "LiqEng_DustySAFE",
     "type": "error"
   },
   {
@@ -89,6 +89,11 @@
   },
   {
     "inputs": [],
+    "name": "LiqEng_OnlyLiqEng",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "LiqEng_SAFENotUnsafe",
     "type": "error"
   },
@@ -100,6 +105,17 @@
   {
     "inputs": [],
     "name": "LiqEng_SaviourNotOk",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_contract",
+        "type": "address"
+      }
+    ],
+    "name": "NoCode",
     "type": "error"
   },
   {
@@ -131,6 +147,11 @@
   {
     "inputs": [],
     "name": "NullAddress",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "ReentrancyGuardReentrantCall",
     "type": "error"
   },
   {
@@ -204,6 +225,19 @@
       }
     ],
     "name": "FailedSAFESave",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "_cType",
+        "type": "bytes32"
+      }
+    ],
+    "name": "InitializeCollateralType",
     "type": "event"
   },
   {
@@ -393,6 +427,11 @@
         "internalType": "uint256",
         "name": "onAuctionSystemCoinLimit",
         "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "saviourGasLimit",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -421,6 +460,64 @@
     ],
     "name": "addAuthorization",
     "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "_cType",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "address",
+        "name": "_safe",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_liquidator",
+        "type": "address"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "lockedCollateral",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "generatedDebt",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct ISAFEEngine.SAFE",
+        "name": "_safeData",
+        "type": "tuple"
+      }
+    ],
+    "name": "attemptSave",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "lockedCollateral",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "generatedDebt",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct ISAFEEngine.SAFE",
+        "name": "_newSafeData",
+        "type": "tuple"
+      }
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -496,12 +593,12 @@
     "inputs": [
       {
         "internalType": "bytes32",
-        "name": "",
+        "name": "_cType",
         "type": "bytes32"
       },
       {
         "internalType": "address",
-        "name": "",
+        "name": "_safe",
         "type": "address"
       }
     ],
@@ -509,7 +606,7 @@
     "outputs": [
       {
         "internalType": "address",
-        "name": "",
+        "name": "_saviour",
         "type": "address"
       }
     ],
@@ -620,26 +717,9 @@
         "type": "bytes32"
       },
       {
-        "components": [
-          {
-            "internalType": "address",
-            "name": "collateralAuctionHouse",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "liquidationPenalty",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "liquidationQuantity",
-            "type": "uint256"
-          }
-        ],
-        "internalType": "struct ILiquidationEngine.LiquidationEngineCollateralParams",
-        "name": "_liqEngineCParams",
-        "type": "tuple"
+        "internalType": "bytes",
+        "name": "_collateralParams",
+        "type": "bytes"
       }
     ],
     "name": "initializeCollateralType",
@@ -722,6 +802,11 @@
             "internalType": "uint256",
             "name": "onAuctionSystemCoinLimit",
             "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "saviourGasLimit",
+            "type": "uint256"
           }
         ],
         "internalType": "struct ILiquidationEngine.LiquidationEngineParams",
@@ -798,16 +883,16 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "",
+        "name": "_saviour",
         "type": "address"
       }
     ],
     "name": "safeSaviours",
     "outputs": [
       {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
+        "internalType": "bool",
+        "name": "_allowed",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",

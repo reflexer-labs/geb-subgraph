@@ -29,6 +29,11 @@
   },
   {
     "inputs": [],
+    "name": "CollateralTypeAlreadyInitialized",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "ContractIsDisabled",
     "type": "error"
   },
@@ -55,11 +60,6 @@
   {
     "inputs": [],
     "name": "SAFEEng_CollateralDebtCeilingHit",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "SAFEEng_CollateralTypeAlreadyExists",
     "type": "error"
   },
   {
@@ -779,7 +779,7 @@
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "_rad",
         "type": "uint256"
       }
     ],
@@ -885,7 +885,7 @@
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "_rad",
         "type": "uint256"
       }
     ],
@@ -946,21 +946,9 @@
         "type": "bytes32"
       },
       {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "debtCeiling",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "debtFloor",
-            "type": "uint256"
-          }
-        ],
-        "internalType": "struct ISAFEEngine.SAFEEngineCollateralParams",
-        "name": "_safeEngineCParams",
-        "type": "tuple"
+        "internalType": "bytes",
+        "name": "_collateralParams",
+        "type": "bytes"
       }
     ],
     "name": "initializeCollateralType",
@@ -1112,21 +1100,21 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_cType",
+        "name": "_caller",
         "type": "address"
       },
       {
         "internalType": "address",
-        "name": "_safe",
+        "name": "_account",
         "type": "address"
       }
     ],
     "name": "safeRights",
     "outputs": [
       {
-        "internalType": "uint256",
+        "internalType": "bool",
         "name": "_isAllowed",
-        "type": "uint256"
+        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -1198,7 +1186,7 @@
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "_wad",
         "type": "uint256"
       }
     ],

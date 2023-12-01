@@ -41,6 +41,7 @@ import { createUnmanagedSafe, updateSafeCollateralization } from '../../../entit
 import { eventUid } from '../../../utils/ethereum'
 import { periodicHandler } from './periodic-handler'
 import { addressMap } from '../../../utils/addresses'
+import { NULL_ADDRESS } from '../../../utils/ethereum'
 import { addAuthorization, removeAuthorization } from '../governance/authorizations'
 
 // Register a new collateral type
@@ -160,6 +161,9 @@ export function handleModifySAFECollateralization(event: ModifySAFECollateraliza
   collateral.totalCollateralLockedInSafes = collateral.totalCollateralLockedInSafes.plus(
     deltaCollateral,
   )
+  collateral.totalCollateral = collateral.totalCollateral.plus(
+    deltaCollateral
+  )
   collateral.save()
 
   let system = getSystemState(event)
@@ -267,6 +271,9 @@ export function handleConfiscateSAFECollateralAndDebt(
   collateral.debtAmount = collateral.debtAmount.plus(deltaDebt)
   collateral.totalCollateralLockedInSafes = collateral.totalCollateralLockedInSafes.plus(
     deltaCollateral,
+  )
+  collateral.totalCollateral = collateral.totalCollateral.plus(
+    deltaCollateral
   )
   collateral.save()
 

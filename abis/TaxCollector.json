@@ -44,6 +44,11 @@
   },
   {
     "inputs": [],
+    "name": "CollateralTypeAlreadyInitialized",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "IntOverflow",
     "type": "error"
   },
@@ -119,11 +124,6 @@
   {
     "inputs": [],
     "name": "NullAddress",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "TaxCollector_CollateralTypeAlreadyInitialized",
     "type": "error"
   },
   {
@@ -349,7 +349,7 @@
     "inputs": [
       {
         "internalType": "bytes32",
-        "name": "",
+        "name": "_cType",
         "type": "bytes32"
       }
     ],
@@ -378,7 +378,7 @@
     "inputs": [
       {
         "internalType": "bytes32",
-        "name": "",
+        "name": "_cType",
         "type": "bytes32"
       }
     ],
@@ -425,12 +425,12 @@
     "inputs": [
       {
         "internalType": "bytes32",
-        "name": "",
+        "name": "_cType",
         "type": "bytes32"
       },
       {
         "internalType": "address",
-        "name": "",
+        "name": "_taxReceiver",
         "type": "address"
       }
     ],
@@ -620,16 +620,9 @@
         "type": "bytes32"
       },
       {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "stabilityFee",
-            "type": "uint256"
-          }
-        ],
-        "internalType": "struct ITaxCollector.TaxCollectorCollateralParams",
-        "name": "_taxCollectorCParams",
-        "type": "tuple"
+        "internalType": "bytes",
+        "name": "_collateralParams",
+        "type": "bytes"
       }
     ],
     "name": "initializeCollateralType",

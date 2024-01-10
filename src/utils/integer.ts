@@ -1,5 +1,7 @@
 import { BigInt, Bytes } from '@graphprotocol/graph-ts'
 
+export { BigInt }
+
 export let ONE = BigInt.fromI32(1)
 export let ZERO = BigInt.fromI32(0)
 export let MAX_UINT_256 = BigInt.fromUnsignedBytes(
@@ -14,5 +16,5 @@ export function fromNumber(value: i32): BigInt {
 }
 
 export function fromString(value: string): BigInt {
-  return fromNumber(parseI32(value))
+  return BigInt.fromString(value)
 }

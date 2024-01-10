@@ -88,13 +88,15 @@ export function handleModifyParametersCollateralTypeUint(
   let what = event.params.parameter.toString()
   let collateralType = CollateralType.load(event.params.collateralType.toString())
 
-  if (what == 'safetyCRatio') {
-    collateralType.safetyCRatio = decimal.fromRay(event.params.data)
-  } else if (what == 'liquidationCRatio') {
-    collateralType.liquidationCRatio = decimal.fromRay(event.params.data)
+  if (collateralType != null) {
+    if (what == 'safetyCRatio') {
+      collateralType.safetyCRatio = decimal.fromRay(event.params.data)
+    } else if (what == 'liquidationCRatio') {
+      collateralType.liquidationCRatio = decimal.fromRay(event.params.data)
+    }
+  
+    collateralType.save()
   }
-
-  collateralType.save()
 }
 
 export function handleModifyParametersUint(event: ModifyParametersUint): void {

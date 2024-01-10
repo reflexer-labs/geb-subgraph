@@ -49,9 +49,11 @@ export function handleAttachTransactionDescription(event: AttachTransactionDescr
   )
 
   let proposal = DsPauseScheduledTransaction.load(fullHash.toHexString())
-  proposal.transactionDescription = event.params.description
+  if (proposal != null) {
+    proposal.transactionDescription = event.params.description
 
-  proposal.save()
+    proposal.save()
+  }
 }
 
 export function handleExecuteTransaction(event: ExecuteTransaction): void {
@@ -64,9 +66,11 @@ export function handleExecuteTransaction(event: ExecuteTransaction): void {
   )
 
   let proposal = DsPauseScheduledTransaction.load(fullHash.toHexString())
-  proposal.executed = true
+  if (proposal != null) {
+    proposal.executed = true
 
-  proposal.save()
+    proposal.save()
+  }
 }
 
 export function handleAbandonTransaction(event: AbandonTransaction): void {
@@ -79,7 +83,9 @@ export function handleAbandonTransaction(event: AbandonTransaction): void {
   )
 
   let proposal = DsPauseScheduledTransaction.load(fullHash.toHexString())
-  proposal.abandoned = true
+  if (proposal != null) {
+    proposal.abandoned = true
 
-  proposal.save()
+    proposal.save()
+  }
 }

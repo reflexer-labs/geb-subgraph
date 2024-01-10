@@ -43,7 +43,7 @@ export function handleCreated(event: Created): void {
   system.save()
 }
 
-export function findProxy(address: Bytes): UserProxy {
+export function findProxy(address: Bytes): UserProxy | null {
   let proxy = UserProxy.load(address.toHexString())
 
   if (proxy) {

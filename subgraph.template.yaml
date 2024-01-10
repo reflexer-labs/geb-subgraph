@@ -13,7 +13,7 @@ dataSources:
       startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.5
       language: wasm/assemblyscript
       file: ./src/mappings/modules/core/safe-engine.ts
       entities:
@@ -69,7 +69,7 @@ dataSources:
       startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.5
       language: wasm/assemblyscript
       file: ./src/mappings/modules/proxy/safe-manager.ts
       entities:
@@ -99,7 +99,7 @@ dataSources:
       startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.5
       language: wasm/assemblyscript
       file: ./src/mappings/modules/core/oracle-relayer.ts
       entities:
@@ -137,7 +137,7 @@ dataSources:
       startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.5
       language: wasm/assemblyscript
       file: ./src/mappings/modules/core/tax-collector.ts
       entities:
@@ -185,7 +185,7 @@ dataSources:
       startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.5
       language: wasm/assemblyscript
       file: ./src/mappings/modules/core/liquidation-engine.ts
       entities:
@@ -233,7 +233,7 @@ dataSources:
       startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.5
       language: wasm/assemblyscript
       file: ./src/mappings/modules/core/accounting-engine.ts
       entities:
@@ -288,7 +288,7 @@ dataSources:
       # startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.5
       language: wasm/assemblyscript
       file: ./src/mappings/modules/proxy/proxy-factory.ts
       entities:
@@ -309,7 +309,7 @@ dataSources:
       startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.5
       language: wasm/assemblyscript
       file: ./src/mappings/modules/token/coin-join.ts
       entities:
@@ -339,7 +339,7 @@ dataSources:
       startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.5
       language: wasm/assemblyscript
       file: ./src/mappings/modules/token/collateral-join.ts
       entities:
@@ -369,7 +369,7 @@ dataSources:
       startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.5
       language: wasm/assemblyscript
       file: ./src/mappings/modules/token/coin.ts
       entities:
@@ -400,7 +400,7 @@ dataSources:
       startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.5
       language: wasm/assemblyscript
       file: ./src/mappings/modules/governance/ds-protest-pause.ts
       entities:
@@ -442,7 +442,7 @@ dataSources:
       startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.5
       language: wasm/assemblyscript
       file: ./src/mappings/modules/oracles/fsm.ts
       entities:
@@ -478,7 +478,7 @@ dataSources:
       startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.5
       language: wasm/assemblyscript
       file: ./src/mappings/modules/oracles/coinTwap.ts
       entities:
@@ -514,7 +514,7 @@ dataSources:
       startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.5
       language: wasm/assemblyscript
       file: ./src/mappings/modules/core/global-settlement.ts
       entities:
@@ -537,7 +537,7 @@ dataSources:
       startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.5
       language: wasm/assemblyscript
       file: ./src/mappings/modules/core/stability-fee-treasury.ts
       entities:
@@ -560,7 +560,7 @@ dataSources:
       startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.5
       language: wasm/assemblyscript
       file: ./src/mappings/modules/governance/protocol-token-authority.ts
       entities:
@@ -587,7 +587,7 @@ dataSources:
       startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.5
       language: wasm/assemblyscript
       file: ./src/mappings/modules/token/prot-token.ts
       entities:
@@ -616,7 +616,7 @@ dataSources:
       startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.5
       language: wasm/assemblyscript
       file: ./src/mappings/modules/uniswap/uniswap.ts
       entities:
@@ -649,7 +649,7 @@ dataSources:
       startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.5
       language: wasm/assemblyscript
       file: ./src/mappings/modules/auctions/surplus-auction-houses.ts
       entities:
@@ -689,7 +689,7 @@ dataSources:
       startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.5
       language: wasm/assemblyscript
       file: ./src/mappings/modules/auctions/debt-auction-house.ts
       entities:
@@ -733,7 +733,7 @@ dataSources:
       startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.5
       language: wasm/assemblyscript
       file: ./src/mappings/modules/auctions/staked-tokens-auction-houses.ts
       entities:
@@ -768,7 +768,7 @@ dataSources:
       startBlock: {{STARTING_BLOCK_NUMBER}}
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.5
       language: wasm/assemblyscript
       file: ./src/mappings/modules/incentive/incentive-factory.ts
       entities:
@@ -797,7 +797,7 @@ templates:
       abi: FixedDiscountCollateralAuctionHouse
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.5
       language: wasm/assemblyscript
       file: ./src/mappings/modules/auctions/discount-collateral-auction-house.ts
       entities:
@@ -831,7 +831,7 @@ templates:
       abi: StakingRewards
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.5
       language: wasm/assemblyscript
       file: ./src/mappings/modules/incentive/incentive.ts
       entities:

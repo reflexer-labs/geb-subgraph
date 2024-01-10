@@ -40,32 +40,36 @@ export function handleModifyParametersUint(event: ModifyParametersUint): void {
 
 export function handleDecreaseSoldAmount(event: DecreaseSoldAmount): void {
   let auction = EnglishAuction.load(auctionId(event.params.id))
-  let bid = new EnglishAuctionBid(bidAuctionId(event.params.id, auction.numberOfBids))
+  if (auction != null) {
+    let bid = new EnglishAuctionBid(bidAuctionId(event.params.id, auction.numberOfBids))
 
-  bid.bidNumber = auction.numberOfBids
-  bid.type = enums.EnglishBidType_DECREASE_SOLD
-  bid.auction = auction.id
-  bid.sellAmount = decimal.fromWad(event.params.amountToBuy)
-  bid.buyAmount = auction.buyInitialAmount
-  bid.price = bid.sellAmount.div(bid.buyAmount)
-  bid.bidder = event.params.highBidder
-  bid.createdAt = event.block.timestamp
-  bid.createdAtBlock = event.block.number
-  bid.createdAtTransaction = event.transaction.hash
-  bid.save()
-
-  auction.numberOfBids = auction.numberOfBids.plus(integer.ONE)
-  auction.auctionDeadline = event.params.bidExpiry
-  auction.sellAmount = bid.sellAmount
-  auction.price = bid.price
-  auction.winner = bid.bidder
-  auction.save()
+    bid.bidNumber = auction.numberOfBids
+    bid.type = enums.EnglishBidType_DECREASE_SOLD
+    bid.auction = auction.id
+    bid.sellAmount = decimal.fromWad(event.params.amountToBuy)
+    bid.buyAmount = auction.buyInitialAmount
+    bid.price = bid.sellAmount.div(bid.buyAmount)
+    bid.bidder = event.params.highBidder
+    bid.createdAt = event.block.timestamp
+    bid.createdAtBlock = event.block.number
+    bid.createdAtTransaction = event.transaction.hash
+    bid.save()
+  
+    auction.numberOfBids = auction.numberOfBids.plus(integer.ONE)
+    auction.auctionDeadline = event.params.bidExpiry
+    auction.sellAmount = bid.sellAmount
+    auction.price = bid.price
+    auction.winner = bid.bidder
+    auction.save()
+  }
 }
 
 export function handleRestartAuction(event: RestartAuction): void {
   let auction = EnglishAuction.load(auctionId(event.params.id))
-  auction.auctionDeadline = event.params.auctionDeadline
-  auction.save()
+  if (auction != null) {
+    auction.auctionDeadline = event.params.auctionDeadline
+    auction.save()
+  }
 }
 
 export function handleSettleAuction(event: SettleAuction): void {
@@ -73,8 +77,10 @@ export function handleSettleAuction(event: SettleAuction): void {
   accounting.activeDebtAuctions = accounting.activeDebtAuctions.minus(integer.ONE)
   accounting.save()
   let auction = EnglishAuction.load(auctionId(event.params.id))
-  auction.isClaimed = true
-  auction.save()
+  if (auction != null) {
+    auction.isClaimed = true
+    auction.save()
+  }
 }
 
 function auctionId(auctionId: BigInt): string {

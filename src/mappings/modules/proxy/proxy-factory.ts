@@ -52,7 +52,11 @@ export function findProxy(address: Bytes): UserProxy | null {
     let handler = SafeHandlerOwner.load(address.toHexString())
     if (handler) {
       proxy = UserProxy.load(handler.owner)
-      return proxy as UserProxy
+      if (proxy) {
+        return proxy as UserProxy
+      } else {
+        return null
+      }
     } else {
       return null
     }

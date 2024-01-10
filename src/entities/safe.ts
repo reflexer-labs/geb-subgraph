@@ -1,6 +1,6 @@
 import { Bytes, ethereum, Address, BigInt, log } from '@graphprotocol/graph-ts'
-import { Safe, UserProxy, SafeHandlerOwner } from '../../generated/schema'
-import { getOrCreateCollateral } from './collateral'
+import { Safe, UserProxy, SafeHandlerOwner, CollateralPrice, CollateralSafe } from '../../generated/schema'
+import { getOrCreateCollateral, getCollateral } from './collateral'
 
 import * as decimal from '../utils/decimal'
 import * as integer from '../utils/integer'
@@ -95,12 +95,21 @@ function createSafe(safeHandler: Bytes, collateral: Bytes, event: ethereum.Event
   safe.collateralType = collateral.toString()
   safe.collateral = decimal.ZERO
   safe.debt = decimal.ZERO
+  safe.cRatio = decimal.ZERO
   safe.safeHandler = safeHandler
   safe.internalCollateralBalance = safeHandler.toHexString() + "-" + collateral.toString()
   safe.internalCoinBalance = safeHandler.toHexString()
   safe.createdAt = event.block.timestamp
   safe.createdAtBlock = event.block.number
   safe.createdAtTransaction = event.transaction.hash
+
+  let collateralSafe = CollateralSafe.load(collateral.toString())
+  if (collateralSafe) {
+    let safeIds = collateralSafe.safeIds
+    safeIds.push(id)
+    collateralSafe.safeIds = safeIds
+    collateralSafe.save()
+  }
   return safe
 }
 
@@ -114,6 +123,25 @@ export function updateSafeCollateralization(
 
   safe.collateral = collateral
   safe.debt = debt
+
+  if (collateral != decimal.ZERO && debt != decimal.ZERO) {
+    let collateralType = getCollateral(safe.collateralType)
+    if (collateralType != null && collateralType.currentPrice !== null) {
+      let priceId = collateralType.currentPrice
+      if (priceId) {
+        let currentPrice = CollateralPrice.load(priceId)
+        if (currentPrice != null) {
+          let liqCRatio = collateralType.liquidationCRatio
+      
+          let cRatio = collateral.times(currentPrice.liquidationPrice).times(liqCRatio).div(debt)
+        
+          safe.cRatio = cRatio
+        }
+      }
+    }
+  } else {
+    safe.cRatio = decimal.ZERO;
+  }
 
   let system = getSystemState(event)
 

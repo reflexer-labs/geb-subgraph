@@ -23,6 +23,8 @@ import {
   CollateralPrice,
   RedemptionPrice,
   RedemptionRate,
+  CollateralSafe,
+  Safe
 } from '../../../../generated/schema'
 import { getSystemState } from '../../../entities'
 import { getOrCreateCollateral } from '../../../entities/collateral'
@@ -52,17 +54,35 @@ export function handleUpdateCollateralPrice(event: UpdateCollateralPrice): void 
   let collateral = CollateralType.load(collateralType)
 
   if (collateral != null) {
+    let liqCRatio = collateral.liquidationCRatio
     let price = new CollateralPrice(eventUid(event))
     price.block = event.block.number
     price.collateral = collateral.id
     price.safetyPrice = decimal.fromRay(event.params._safetyPrice)
     price.liquidationPrice = decimal.fromRay(event.params._liquidationPrice)
+    let liqPrice = price.liquidationPrice
     price.timestamp = event.block.timestamp
     price.value = collateralPrice
     price.save()
 
     collateral.currentPrice = price.id
     collateral.save()
+
+    let collateralSafe = CollateralSafe.load(collateralType)
+    if (collateralSafe) {
+      let safeIds = collateralSafe.safeIds
+
+      for (let i = 0; i < safeIds.length; i++) {
+        let safe = Safe.load(safeIds[i]) 
+        if (safe && safe.collateral != decimal.ZERO && safe.debt != decimal.ZERO) {
+          let cRatio = safe.collateral.times(liqPrice).times(liqCRatio).div(safe.debt)
+        
+          safe.cRatio = cRatio
+
+          safe.save()
+        }
+      }
+    }
   }
 }
 

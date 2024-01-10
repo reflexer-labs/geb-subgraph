@@ -1,4 +1,4 @@
-import { CollateralType } from '../../generated/schema'
+import { CollateralType, CollateralSafe } from '../../generated/schema'
 import { Bytes, ethereum, BigInt, Entity, Address } from '@graphprotocol/graph-ts'
 
 import * as decimal from '../utils/decimal'
@@ -11,6 +11,8 @@ export function getOrCreateCollateral(
   let collateral = CollateralType.load(collateralType.toString())
   if (collateral == null) {
     collateral = new CollateralType(collateralType.toString())
+    let collateralSafe = new CollateralSafe(collateralType.toString())
+    collateralSafe.safeIds = []
     collateral.debtCeiling = decimal.ZERO
     collateral.debtFloor = decimal.ZERO
     collateral.debtAmount = decimal.ZERO
@@ -45,6 +47,7 @@ export function getOrCreateCollateral(
     collateral.createdAtTransaction = event.transaction.hash
 
     collateral.save()
+    collateralSafe.save()
   }
 
   collateral.modifiedAt = event.block.timestamp
@@ -54,3 +57,11 @@ export function getOrCreateCollateral(
 
   return collateral as CollateralType
 }
+
+export function getCollateral(
+  collateralType: string,
+): CollateralType | null {
+  let collateral = CollateralType.load(collateralType)
+  return collateral
+}
+

@@ -16,6 +16,9 @@ type Safe @entity {
   " Outstanding Safe debt "
   debt: BigDecimal!
 
+  " Current CRatio for this Safe "
+  cRatio: BigDecimal!
+
   " The address of the Safe handler (ownership at the SAFEEngine level if the Safe was created using GebSafeManager) "
   safeHandler: Bytes!
 
@@ -377,6 +380,14 @@ type CollateralType @entity {
 
   " Hash of the transaction that last modified this collateral type "
   modifiedAtTransaction: Bytes
+}
+
+type CollateralSafe @entity {
+  " Set to Collateral Type string "
+  id: ID!
+
+  " List of Safe IDs with this Collateral Type "
+  safeIds: [String!]!
 }
 
 type SystemState @entity {

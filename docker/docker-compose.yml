@@ -47,10 +47,12 @@ services:
       POSTGRES_USER: graph-node
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: graph-node
-      PGDATA: "/data/postgres"
-      POSTGRES_INITDB_ARGS: "-E UTF8 --locale=C"
+      # PGDATA: "/data/postgres"
+      # POSTGRES_INITDB_ARGS: "-E UTF8 --locale=C"
+    # volumes:
+    #   - pgdata:/data/postgres
     volumes:
-      - pgdata:/data/postgres
+      - ./data/postgres:/var/lib/postgresql/data
     restart: always
     logging:
       options:
@@ -71,6 +73,6 @@ services:
       options:
         max-size: 100m
 
-volumes:
-  pgdata:
-    external: true
+# volumes:
+#   pgdata:
+#     external: true

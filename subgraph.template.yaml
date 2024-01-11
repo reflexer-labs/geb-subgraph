@@ -505,6 +505,33 @@ dataSources:
         # - event:  RewardCaller(address,uint256)
         #   handler: handleRewardCaller
 
+  - name: ChainlinkTwap
+    kind: ethereum/contract
+    network: {{NETWORK}}
+    source:
+      abi: CoinTwap
+      address: '{{CHAINLINK_TWAP}}'
+      startBlock: 18789489
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      file: ./src/mappings/modules/oracles/chainlinkTwap.ts
+      entities:
+        - MedianizerUpdate
+      abis:
+        - name: CoinTwap
+          file: ./abis/ChainlinkTWAP.json
+        - name: ConverterFeed
+          file: ./abis/ConverterFeed.json
+      eventHandlers:
+        - event:  UpdateResult(uint256)
+          handler: handleUpdateResult
+        - event: AddAuthorization(address)
+          handler: handleAddAuthorization
+        - event: RemoveAuthorization(address)
+          handler: handleRemoveAuthorization
+
   - name: GlobalSettlement
     kind: ethereum/contract
     network: {{NETWORK}}

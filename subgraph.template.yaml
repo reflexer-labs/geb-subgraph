@@ -524,6 +524,10 @@ dataSources:
           file: ./abis/ChainlinkTWAP.json
         - name: ConverterFeed
           file: ./abis/ConverterFeed.json
+        - name: UniswapV2Pair
+          file: ./abis/UniswapV2Pair.json
+        - name: EACAggregatorProxy
+          file: ./abis/EACAggregatorProxy.json
       eventHandlers:
         - event:  UpdateResult(uint256)
           handler: handleUpdateResult

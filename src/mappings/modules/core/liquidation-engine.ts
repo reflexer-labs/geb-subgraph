@@ -129,7 +129,9 @@ export function handleLiquidate(event: Liquidate): void {
     liquidation.auctionDeadline = config.totalAuctionLength.plus(event.block.timestamp)
 
     let safe = Safe.load(event.params.safe.toHexString() + '-' + collateral.id)
-    liquidation.safe = safe.id
+    if (safe != null) {
+      liquidation.safe = safe.id
+    }
 
     liquidation.save()
   } else if (collateral.auctionType == enums.AuctionType_FIXED_DISCOUNT || collateral.auctionType == enums.AuctionType_INCREASING_DISCOUNT) {
@@ -145,7 +147,9 @@ export function handleLiquidate(event: Liquidate): void {
     liquidation.buyAmount = decimal.ZERO
     liquidation.sellAmount = liquidation.sellInitialAmount
     let safe = Safe.load(event.params.safe.toHexString() + '-' + collateral.id)
-    liquidation.safe = safe.id
+    if (safe != null) {
+      liquidation.safe = safe.id
+    }
     liquidation.startedBy = event.address
     liquidation.numberOfBatches = integer.ZERO
     liquidation.isTerminated = false

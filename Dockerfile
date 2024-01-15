@@ -1,4 +1,4 @@
-FROM node:12 AS deployer
+FROM node:18 AS deployer
 WORKDIR /usr/graph/
 
 COPY package.json .

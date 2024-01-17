@@ -3,7 +3,7 @@ import { Address, BigInt, Bytes } from '@graphprotocol/graph-ts'
 const ADDRESS_LENGTH = 20
 
 export function toAddress(address: Bytes): Address {
-  return Address.fromHexString(address.toHex()).subarray(-ADDRESS_LENGTH) as Address
+  return Address.fromString(address.toHex().substr(-40)) as Address
 }
 
 export function toSignedInt(
@@ -15,7 +15,11 @@ export function toSignedInt(
 }
 
 export function toUnsignedInt(value: Bytes, bigEndian: boolean = true): BigInt {
-  return BigInt.fromUnsignedBytes(bigEndian ? (value.reverse() as Bytes) : value)
+  if (bigEndian) {
+    return BigInt.fromUnsignedBytes(value.reverse() as Bytes)
+  } else {
+    return BigInt.fromUnsignedBytes(value)
+  }
 }
 
 export let ETH_A = Bytes.fromHexString(

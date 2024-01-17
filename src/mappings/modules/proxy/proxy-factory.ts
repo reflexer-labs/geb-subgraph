@@ -43,7 +43,7 @@ export function handleCreated(event: Created): void {
   system.save()
 }
 
-export function findProxy(address: Bytes): UserProxy {
+export function findProxy(address: Bytes): UserProxy | null {
   let proxy = UserProxy.load(address.toHexString())
 
   if (proxy) {
@@ -52,7 +52,11 @@ export function findProxy(address: Bytes): UserProxy {
     let handler = SafeHandlerOwner.load(address.toHexString())
     if (handler) {
       proxy = UserProxy.load(handler.owner)
-      return proxy as UserProxy
+      if (proxy) {
+        return proxy as UserProxy
+      } else {
+        return null
+      }
     } else {
       return null
     }

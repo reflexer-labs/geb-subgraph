@@ -8,9 +8,11 @@ export var addressLabels: string[] = []
 export var addressValues: Address[] = []
 
 function addEntry(label: string, address: string): void {
-  addressMap.set(label, Address.fromHexString(address) as Address)
-  addressLabels.push(label)
-  addressValues.push(Address.fromHexString(address) as Address)
+  if (address != '') {
+    addressMap.set(label, Address.fromString(address))
+    addressLabels.push(label)
+    addressValues.push(Address.fromString(address))
+  }
 }
 
 addEntry('ETH_FROM', '{{ETH_FROM}}')
@@ -73,3 +75,6 @@ addEntry('GEB_COIN_UNISWAP_POOL', '{{GEB_COIN_UNISWAP_POOL}}')
 addEntry('GEB_SINGLE_CEILING_SETTER', '{{GEB_SINGLE_CEILING_SETTER}}')
 addEntry('CHAINLINK_AGGREGATOR', '{{CHAINLINK_AGGREGATOR}}')
 addEntry('GEB_STAKING_AUCTION_HOUSE', '{{GEB_STAKING_AUCTION_HOUSE}}')
+addEntry('CHAINLINK_TWAP', '{{CHAINLINK_TWAP}}')
+addEntry('UNI_V3_MEDIANIZER', '{{UNI_V3_MEDIANIZER}}')
+addEntry('CONVERTER_FEED', '{{CONVERTER_FEED}}')

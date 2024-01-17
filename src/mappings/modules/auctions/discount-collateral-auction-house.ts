@@ -22,30 +22,30 @@ export function handleBuyCollateral(event: BuyCollateral): void {
 
   if (auction == null) {
     log.error('handleBuyCollateral - auction {} not found.', [auctionId])
+  } else {
+    let batch = new DiscountAuctionBatch(
+      event.address.toHexString() + '-' + id.toString() + '-' + auction.numberOfBatches.toString(),
+    )
+  
+    batch.batchNumber = auction.numberOfBatches
+    batch.auction = auctionId
+    let remainingToRaise = auction.amountToRaise.minus(auction.buyAmount)
+    let wad = decimal.fromWad(event.params.wad)
+    batch.buyAmount = wad.gt(remainingToRaise) ? remainingToRaise : wad
+    batch.sellAmount = decimal.fromWad(event.params.boughtCollateral)
+    batch.price = batch.sellAmount.div(batch.buyAmount)
+    batch.buyer = event.transaction.from
+    batch.createdAt = event.block.timestamp
+    batch.createdAtBlock = event.block.number
+    batch.createdAtTransaction = event.transaction.hash
+    batch.save()
+  
+    auction.numberOfBatches = auction.numberOfBatches.plus(integer.ONE)
+    auction.buyAmount = auction.buyAmount.plus(batch.buyAmount)
+    auction.sellAmount = auction.sellAmount.minus(batch.sellAmount)
+    auction.isTerminated = auction.amountToRaise.equals(auction.buyAmount) ? true : false
+    auction.save()
   }
-
-  let batch = new DiscountAuctionBatch(
-    event.address.toHexString() + '-' + id.toString() + '-' + auction.numberOfBatches.toString(),
-  )
-
-  batch.batchNumber = auction.numberOfBatches
-  batch.auction = auctionId
-  let remainingToRaise = auction.amountToRaise.minus(auction.buyAmount)
-  let wad = decimal.fromWad(event.params.wad)
-  batch.buyAmount = wad.gt(remainingToRaise) ? remainingToRaise : wad
-  batch.sellAmount = decimal.fromWad(event.params.boughtCollateral)
-  batch.price = batch.sellAmount.div(batch.buyAmount)
-  batch.buyer = event.transaction.from
-  batch.createdAt = event.block.timestamp
-  batch.createdAtBlock = event.block.number
-  batch.createdAtTransaction = event.transaction.hash
-  batch.save()
-
-  auction.numberOfBatches = auction.numberOfBatches.plus(integer.ONE)
-  auction.buyAmount = auction.buyAmount.plus(batch.buyAmount)
-  auction.sellAmount = auction.sellAmount.minus(batch.sellAmount)
-  auction.isTerminated = auction.amountToRaise.equals(auction.buyAmount) ? true : false
-  auction.save()
 }
 
 export function handleSettleAuction(event: SettleAuction): void {
@@ -58,9 +58,11 @@ export function handleSettleAuction(event: SettleAuction): void {
 
   let auctionId = event.address.toHexString() + '-' + id.toString()
   let auction = DiscountAuction.load(auctionId)
-
-  auction.isSettled = true
-  auction.save()
+  if (auction != null) {
+    auction.isSettled = true
+    auction.save()
+  }
+  
   collateral.save()
 }
 

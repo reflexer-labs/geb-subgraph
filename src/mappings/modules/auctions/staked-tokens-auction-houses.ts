@@ -90,27 +90,29 @@ function increaseBidSize(
   event: ethereum.Event,
 ): void {
   let auction = EnglishAuction.load(auctionId(id))
-  let bid = new EnglishAuctionBid(bidAuctionId(id, auction.numberOfBids))
+  if (auction != null) {
+    let bid = new EnglishAuctionBid(bidAuctionId(id, auction.numberOfBids))
 
-  bid.bidNumber = auction.numberOfBids
-  bid.type = enums.EnglishBidType_INCREASE_BUY
-  bid.auction = auction.id
-  bid.sellAmount = auction.sellInitialAmount
-  bid.buyAmount = bidAmount
-  bid.price = bid.sellAmount.div(bid.buyAmount)
-  bid.bidder = highBidder
-  bid.createdAt = event.block.timestamp
-  bid.createdAtBlock = event.block.number
-  bid.createdAtTransaction = event.transaction.hash
-  bid.save()
+    bid.bidNumber = auction.numberOfBids
+    bid.type = enums.EnglishBidType_INCREASE_BUY
+    bid.auction = auction.id
+    bid.sellAmount = auction.sellInitialAmount
+    bid.buyAmount = bidAmount
+    bid.price = bid.sellAmount.div(bid.buyAmount)
+    bid.bidder = highBidder
+    bid.createdAt = event.block.timestamp
+    bid.createdAtBlock = event.block.number
+    bid.createdAtTransaction = event.transaction.hash
+    bid.save()
 
-  auction.numberOfBids = auction.numberOfBids.plus(integer.ONE)
-  auction.auctionDeadline = bidExpiry
-  auction.sellAmount = bid.sellAmount
-  auction.buyAmount = bid.buyAmount
-  auction.price = bid.price
-  auction.winner = bid.bidder
-  auction.save()
+    auction.numberOfBids = auction.numberOfBids.plus(integer.ONE)
+    auction.auctionDeadline = bidExpiry
+    auction.sellAmount = bid.sellAmount
+    auction.buyAmount = bid.buyAmount
+    auction.price = bid.price
+    auction.winner = bid.bidder
+    auction.save()
+  }
 }
 
 export function handleRestartAuction(event: RestartAuction): void {
@@ -123,16 +125,20 @@ export function handleSettleAuction(event: SettleAuction): void {
 
 function restartAuction(id: BigInt, auctionDeadline: BigInt, newBidAmount: BigInt): void {
   let auction = EnglishAuction.load(auctionId(id))
-  auction.buyInitialAmount = decimal.fromWad(newBidAmount)
-  auction.buyAmount = auction.buyInitialAmount
-  auction.auctionDeadline = auctionDeadline
-  auction.save()
+  if (auction != null) {
+    auction.buyInitialAmount = decimal.fromWad(newBidAmount)
+    auction.buyAmount = auction.buyInitialAmount
+    auction.auctionDeadline = auctionDeadline
+    auction.save()
+  }
 }
 
 function settleAuction(id: BigInt, event: ethereum.Event): void {
   let auction = EnglishAuction.load(auctionId(id))
-  auction.isClaimed = true
-  auction.save()
+  if (auction != null) {
+    auction.isClaimed = true
+    auction.save()
+  }
 }
 
 function auctionId(auctionId: BigInt): string {

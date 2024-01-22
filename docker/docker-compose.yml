@@ -16,9 +16,10 @@ services:
       ipfs: 'ipfs:5001'
       ethereum: ${ETHEREUM_RPC}
       RUST_LOG: error
+      RUST_BACKTRACE: full
       GRAPH_LOG: info
       GRAPH_ETH_CALL_BY_NUMBER: 'true'
-      ETHEREUM_POLLING_INTERVAL: 500
+      ETHEREUM_POLLING_INTERVAL: 1000
       ETHEREUM_ANCESTOR_COUNT: 15
       ETHEREUM_REORG_THRESHOLD: 15
       EXPERIMENTAL_SUBGRAPH_VERSION_SWITCHING_MODE: synced
@@ -26,7 +27,7 @@ services:
       options:
         max-size: 100m
 
-    restart: always
+    # restart: always
   ipfs:
     image: ipfs/go-ipfs:v0.4.23
     ports:
@@ -47,8 +48,10 @@ services:
       POSTGRES_USER: graph-node
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: graph-node
+      PGDATA: "/data/postgres"
+      POSTGRES_INITDB_ARGS: "-E UTF8 --locale=C"
     volumes:
-      - ./data/postgres:/var/lib/postgresql/data
+      - pgdata:/data/postgres
     restart: always
     logging:
       options:
@@ -62,9 +65,13 @@ services:
     environment:
       - GRAPH_ADMIN_RPC_URL=http://graph-node:8020/
       - IPFS_URL=http://ipfs:5001
-      - SUBGRAPH_NAME=reflexer-labs/rai
+      - SUBGRAPH_NAME=hai/hai
       - NETWORK
-    command: './docker/wait-for-it.sh\ graph-node:8000\ --timeout=40\ &&\ npm\ run\ deploy-local'
+    command: 'npm\ run\ deploy-local'
     logging:
       options:
         max-size: 100m
+
+volumes:
+  pgdata:
+    external: true

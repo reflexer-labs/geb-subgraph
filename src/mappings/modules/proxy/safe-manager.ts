@@ -22,8 +22,11 @@ import { findUltimateOwner } from '../../../entities/user'
 export function handleOpenSAFE(event: OpenSAFE): void {
   let manager = GebSafeManager.bind(dataSource.address())
 
-  let collateralType = manager.collateralTypes(event.params.safe)
-  let safeAddress = manager.safes(event.params.safe)
+  let safeData = manager.safeData(event.params._safe)
+
+  let owner = safeData.owner
+  let safeAddress = safeData.safeHandler
+  let collateralType = safeData.collateralType
 
   let collateral = CollateralType.load(collateralType.toString())
 
@@ -31,21 +34,23 @@ export function handleOpenSAFE(event: OpenSAFE): void {
     // Register new vault
     let safe = createManagedSafe(
       safeAddress,
-      event.params.own,
+      event.params._own,
       collateralType,
-      event.params.safe,
+      event.params._safe,
       event,
     )
-    log.info('New Manged SAFE, id: #{}, owner {}, address: {}', [
-      safe.safeId.toString(),
-      safe.owner,
-      safeAddress.toHexString(),
-    ])
-    safe.save()
+    if (safe != null) {
+      log.info('New Manged SAFE, owner {}, address: {}', [
+        // safe.safeId == null ? '' : safe.safeId.toString(),
+        safe.owner,
+        safeAddress.toHexString(),
+      ])
+      safe.save()
+    }
   } else {
     log.warning('Wrong collateral type: {}, safe_id: {}, tx_hash: {}', [
       collateralType.toString(),
-      event.params.safe.toString(),
+      event.params._safe.toString(),
       event.transaction.hash.toHexString(),
     ])
   }
@@ -53,37 +58,48 @@ export function handleOpenSAFE(event: OpenSAFE): void {
 
 export function handleTransferSAFEOwnership(event: TransferSAFEOwnership): void {
   let manager = GebSafeManager.bind(dataSource.address())
-  let collateralType = manager.collateralTypes(event.params.safe)
+  let safeData = manager.safeData(event.params._safe)
+
+  let owner = safeData.owner
+  let safeHandler = safeData.safeHandler
+  let collateralType = safeData.collateralType
+
   let collateral = CollateralType.load(collateralType.toString())
-  let safeHandler = manager.safes(event.params.safe)
-  let safe = Safe.load(safeHandler.toHexString() + '-' + collateral.id)
-  safe.owner = findUltimateOwner(event.params.dst).toHexString()
-  updateLastModifySafe(safe as Safe, event)
+  if (collateral != null) {
+    let safe = Safe.load(safeHandler.toHexString() + '-' + collateral.id)
+    if (safe != null) {
+      safe.owner = findUltimateOwner(event.params._dst).toHexString()
+      updateLastModifySafe(safe as Safe, event)
 
-  // Assign a proxy if it exists
-  safe.proxy = UserProxy.load(event.params.dst.toHexString()).id
+      // Assign a proxy if it exists
+      let proxy = UserProxy.load(event.params._dst.toHexString())
+      if (proxy != null) {
+        safe.proxy = proxy.id
+      }
 
-  safe.save()
+      safe.save()
 
-  // Transfers balances ownership
-  let coinBalance = InternalCoinBalance.load(safeHandler.toHexString())
-  if (coinBalance) {
-    coinBalance.owner = safe.owner
-    coinBalance.save()
-  }
+      // Transfers balances ownership
+      let coinBalance = InternalCoinBalance.load(safeHandler.toHexString())
+      if (coinBalance) {
+        coinBalance.owner = safe.owner
+        coinBalance.save()
+      }
 
-  let debtBalance = InternalDebtBalance.load(safeHandler.toHexString())
-  if (debtBalance) {
-    debtBalance.owner = safe.owner
-    debtBalance.save()
-  }
+      let debtBalance = InternalDebtBalance.load(safeHandler.toHexString())
+      if (debtBalance) {
+        debtBalance.owner = safe.owner
+        debtBalance.save()
+      }
 
-  let collateralBalance = InternalCollateralBalance.load(
-    safeHandler.toHexString() + '-' + collateralType.toString(),
-  )
-  if (collateralBalance) {
-    collateralBalance.owner = safe.owner
-    collateralBalance.save()
+      let collateralBalance = InternalCollateralBalance.load(
+        safeHandler.toHexString() + '-' + collateralType.toString(),
+      )
+      if (collateralBalance) {
+        collateralBalance.owner = safe.owner
+        collateralBalance.save()
+      }
+    }
   }
 }
 

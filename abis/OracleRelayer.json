@@ -1,10 +1,155 @@
 [
   {
     "inputs": [
-      { "internalType": "address", "name": "safeEngine_", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "_safeEngine",
+        "type": "address"
+      },
+      {
+        "internalType": "contract IBaseOracle",
+        "name": "_systemCoinOracle",
+        "type": "address"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "redemptionRateUpperBound",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "redemptionRateLowerBound",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct IOracleRelayer.OracleRelayerParams",
+        "name": "_oracleRelayerParams",
+        "type": "tuple"
+      }
     ],
     "stateMutability": "nonpayable",
     "type": "constructor"
+  },
+  {
+    "inputs": [],
+    "name": "AlreadyAuthorized",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "CollateralTypeAlreadyInitialized",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "ContractIsDisabled",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "ContractIsEnabled",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_contract",
+        "type": "address"
+      }
+    ],
+    "name": "NoCode",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NonDisableable",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NotAuthorized",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_x",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_y",
+        "type": "uint256"
+      }
+    ],
+    "name": "NotGreaterOrEqualThan",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_x",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_y",
+        "type": "uint256"
+      }
+    ],
+    "name": "NotGreaterThan",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_x",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_y",
+        "type": "uint256"
+      }
+    ],
+    "name": "NotLesserThan",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NullAddress",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "OracleRelayer_CollateralTypeAlreadyInitialized",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "OracleRelayer_RedemptionPriceNotUpdated",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "Unauthorized",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "UnrecognizedCType",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "UnrecognizedParam",
+    "type": "error"
   },
   {
     "anonymous": false,
@@ -12,7 +157,7 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "account",
+        "name": "_account",
         "type": "address"
       }
     ],
@@ -31,64 +176,33 @@
       {
         "indexed": false,
         "internalType": "bytes32",
-        "name": "collateralType",
+        "name": "_cType",
         "type": "bytes32"
-      },
-      {
-        "indexed": false,
-        "internalType": "bytes32",
-        "name": "parameter",
-        "type": "bytes32"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "addr",
-        "type": "address"
       }
     ],
-    "name": "ModifyParameters",
+    "name": "InitializeCollateralType",
     "type": "event"
   },
   {
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "bytes32",
-        "name": "parameter",
+        "name": "_param",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "_cType",
         "type": "bytes32"
       },
       {
         "indexed": false,
-        "internalType": "uint256",
-        "name": "data",
-        "type": "uint256"
-      }
-    ],
-    "name": "ModifyParameters",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "bytes32",
-        "name": "collateralType",
-        "type": "bytes32"
-      },
-      {
-        "indexed": false,
-        "internalType": "bytes32",
-        "name": "parameter",
-        "type": "bytes32"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "data",
-        "type": "uint256"
+        "internalType": "bytes",
+        "name": "_data",
+        "type": "bytes"
       }
     ],
     "name": "ModifyParameters",
@@ -100,7 +214,7 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "account",
+        "name": "_account",
         "type": "address"
       }
     ],
@@ -113,25 +227,25 @@
       {
         "indexed": true,
         "internalType": "bytes32",
-        "name": "collateralType",
+        "name": "_cType",
         "type": "bytes32"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "priceFeedValue",
+        "name": "_priceFeedValue",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "safetyPrice",
+        "name": "_safetyPrice",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "liquidationPrice",
+        "name": "_liquidationPrice",
         "type": "uint256"
       }
     ],
@@ -144,7 +258,7 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "redemptionPrice",
+        "name": "_redemptionPrice",
         "type": "uint256"
       }
     ],
@@ -153,30 +267,24 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "account", "type": "address" }
+      {
+        "internalType": "bytes32",
+        "name": "_cType",
+        "type": "bytes32"
+      }
     ],
-    "name": "addAuthorization",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [{ "internalType": "address", "name": "", "type": "address" }],
-    "name": "authorizedAccounts",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
-    "name": "collateralTypes",
+    "name": "_cParams",
     "outputs": [
       {
-        "internalType": "contract OracleLike",
-        "name": "orcl",
+        "internalType": "contract IBaseOracle",
+        "name": "oracle",
         "type": "address"
       },
-      { "internalType": "uint256", "name": "safetyCRatio", "type": "uint256" },
+      {
+        "internalType": "uint256",
+        "name": "safetyCRatio",
+        "type": "uint256"
+      },
       {
         "internalType": "uint256",
         "name": "liquidationCRatio",
@@ -188,8 +296,139 @@
   },
   {
     "inputs": [],
+    "name": "_params",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "redemptionRateUpperBound",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "redemptionRateLowerBound",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_account",
+        "type": "address"
+      }
+    ],
+    "name": "addAuthorization",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_account",
+        "type": "address"
+      }
+    ],
+    "name": "authorizedAccounts",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "_authorized",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "authorizedAccounts",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "_accounts",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "_cType",
+        "type": "bytes32"
+      }
+    ],
+    "name": "cParams",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "contract IBaseOracle",
+            "name": "oracle",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "safetyCRatio",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "liquidationCRatio",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct IOracleRelayer.OracleRelayerCollateralParams",
+        "name": "_oracleRelayerCParams",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "calcRedemptionPrice",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "_virtualRedemptionPrice",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "collateralList",
+    "outputs": [
+      {
+        "internalType": "bytes32[]",
+        "name": "__collateralList",
+        "type": "bytes32[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "contractEnabled",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
@@ -202,10 +441,32 @@
   },
   {
     "inputs": [
-      { "internalType": "bytes32", "name": "collateralType", "type": "bytes32" }
+      {
+        "internalType": "bytes32",
+        "name": "_cType",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes",
+        "name": "_collateralParams",
+        "type": "bytes"
+      }
     ],
-    "name": "liquidationCRatio",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "name": "initializeCollateralType",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "marketPrice",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "_marketPrice",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
@@ -213,11 +474,19 @@
     "inputs": [
       {
         "internalType": "bytes32",
-        "name": "collateralType",
+        "name": "_cType",
         "type": "bytes32"
       },
-      { "internalType": "bytes32", "name": "parameter", "type": "bytes32" },
-      { "internalType": "address", "name": "addr", "type": "address" }
+      {
+        "internalType": "bytes32",
+        "name": "_param",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes",
+        "name": "_data",
+        "type": "bytes"
+      }
     ],
     "name": "modifyParameters",
     "outputs": [],
@@ -228,11 +497,14 @@
     "inputs": [
       {
         "internalType": "bytes32",
-        "name": "collateralType",
+        "name": "_param",
         "type": "bytes32"
       },
-      { "internalType": "bytes32", "name": "parameter", "type": "bytes32" },
-      { "internalType": "uint256", "name": "data", "type": "uint256" }
+      {
+        "internalType": "bytes",
+        "name": "_data",
+        "type": "bytes"
+      }
     ],
     "name": "modifyParameters",
     "outputs": [],
@@ -240,62 +512,76 @@
     "type": "function"
   },
   {
-    "inputs": [
-      { "internalType": "bytes32", "name": "parameter", "type": "bytes32" },
-      { "internalType": "uint256", "name": "data", "type": "uint256" }
+    "inputs": [],
+    "name": "params",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "redemptionRateUpperBound",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "redemptionRateLowerBound",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct IOracleRelayer.OracleRelayerParams",
+        "name": "_oracleRelayerParams",
+        "type": "tuple"
+      }
     ],
-    "name": "modifyParameters",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "bytes32", "name": "collateralType", "type": "bytes32" }
-    ],
-    "name": "orcl",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "redemptionPrice",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "_updatedPrice",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "redemptionPriceUpdateTime",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "redemptionRate",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "redemptionRateLowerBound",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "redemptionRateUpperBound",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "account", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "_account",
+        "type": "address"
+      }
     ],
     "name": "removeAuthorization",
     "outputs": [],
@@ -307,7 +593,20 @@
     "name": "safeEngine",
     "outputs": [
       {
-        "internalType": "contract SAFEEngineLike",
+        "internalType": "contract ISAFEEngine",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "systemCoinOracle",
+    "outputs": [
+      {
+        "internalType": "contract IBaseOracle",
         "name": "",
         "type": "address"
       }
@@ -317,18 +616,26 @@
   },
   {
     "inputs": [
-      { "internalType": "bytes32", "name": "collateralType", "type": "bytes32" }
+      {
+        "internalType": "bytes32",
+        "name": "_cType",
+        "type": "bytes32"
+      }
     ],
-    "name": "safetyCRatio",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
+    "name": "updateCollateralPrice",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "bytes32", "name": "collateralType", "type": "bytes32" }
+      {
+        "internalType": "uint256",
+        "name": "_redemptionRate",
+        "type": "uint256"
+      }
     ],
-    "name": "updateCollateralPrice",
+    "name": "updateRedemptionRate",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

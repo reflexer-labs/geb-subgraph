@@ -5,9 +5,9 @@ import {
   } from '../../../../generated/GlobalSettlement/GlobalSettlement'
 
 export function handleAddAuthorization(event: AddAuthorization): void {
-    addAuthorization(event.params.account, event)
+    addAuthorization(event.params._account, event)
   }
   
   export function handleRemoveAuthorization(event: RemoveAuthorization): void {
-    removeAuthorization(event.params.account, event)
+    removeAuthorization(event.params._account, event)
   }

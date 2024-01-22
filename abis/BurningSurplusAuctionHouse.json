@@ -1,11 +1,146 @@
 [
   {
     "inputs": [
-      { "internalType": "address", "name": "safeEngine_", "type": "address" },
-      { "internalType": "address", "name": "protocolToken_", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "_safeEngine",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_protocolToken",
+        "type": "address"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "bidIncrease",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "bidDuration",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "totalAuctionLength",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "bidReceiver",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "recyclingPercentage",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct ISurplusAuctionHouse.SurplusAuctionHouseParams",
+        "name": "_sahParams",
+        "type": "tuple"
+      }
     ],
     "stateMutability": "nonpayable",
     "type": "constructor"
+  },
+  {
+    "inputs": [],
+    "name": "AlreadyAuthorized",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "ContractIsDisabled",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "ContractIsEnabled",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NonDisableable",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NotAuthorized",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NullAddress",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "SAH_AmountsNotMatching",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "SAH_AuctionAlreadyExpired",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "SAH_AuctionNeverStarted",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "SAH_AuctionNotFinished",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "SAH_BidAlreadyExpired",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "SAH_BidAlreadyPlaced",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "SAH_BidNotHigher",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "SAH_HighBidderNotSet",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "SAH_InsufficientIncrease",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "SAH_NullProtTokenReceiver",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "Unauthorized",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "UnrecognizedCType",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "UnrecognizedParam",
+    "type": "error"
   },
   {
     "anonymous": false,
@@ -13,7 +148,7 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "account",
+        "name": "_account",
         "type": "address"
       }
     ],
@@ -30,33 +165,39 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "uint256",
-        "name": "id",
+        "name": "_id",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "address",
-        "name": "highBidder",
+        "name": "_bidder",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "amountToBuy",
+        "name": "_blockTimestamp",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "bid",
+        "name": "_raisedAmount",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "bidExpiry",
+        "name": "_soldAmount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_bidExpiry",
         "type": "uint256"
       }
     ],
@@ -67,16 +208,22 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "bytes32",
-        "name": "parameter",
+        "name": "_param",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "_cType",
         "type": "bytes32"
       },
       {
         "indexed": false,
-        "internalType": "uint256",
-        "name": "data",
-        "type": "uint256"
+        "internalType": "bytes",
+        "name": "_data",
+        "type": "bytes"
       }
     ],
     "name": "ModifyParameters",
@@ -88,7 +235,7 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "account",
+        "name": "_account",
         "type": "address"
       }
     ],
@@ -99,15 +246,21 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "uint256",
-        "name": "id",
+        "name": "_id",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "auctionDeadline",
+        "name": "_blockTimestamp",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_auctionDeadline",
         "type": "uint256"
       }
     ],
@@ -120,7 +273,25 @@
       {
         "indexed": true,
         "internalType": "uint256",
-        "name": "id",
+        "name": "_id",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_blockTimestamp",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "_highBidder",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_raisedAmount",
         "type": "uint256"
       }
     ],
@@ -133,31 +304,37 @@
       {
         "indexed": true,
         "internalType": "uint256",
-        "name": "id",
+        "name": "_id",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "_auctioneer",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_blockTimestamp",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "auctionsStarted",
+        "name": "_amountToSell",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "amountToSell",
+        "name": "_amountToRaise",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "initialBid",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "auctionDeadline",
+        "name": "_auctionDeadline",
         "type": "uint256"
       }
     ],
@@ -170,25 +347,25 @@
       {
         "indexed": true,
         "internalType": "uint256",
-        "name": "id",
+        "name": "_id",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_blockTimestamp",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "address",
-        "name": "sender",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "highBidder",
+        "name": "_highBidder",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "bidAmount",
+        "name": "_raisedAmount",
         "type": "uint256"
       }
     ],
@@ -198,20 +375,95 @@
   {
     "inputs": [],
     "name": "AUCTION_HOUSE_TYPE",
-    "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "SURPLUS_AUCTION_TYPE",
-    "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "account", "type": "address" }
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "_auctions",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "bidAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amountToSell",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "highBidder",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "bidExpiry",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "auctionDeadline",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "_params",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "bidIncrease",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "bidDuration",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "totalAuctionLength",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "bidReceiver",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "recyclingPercentage",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_account",
+        "type": "address"
+      }
     ],
     "name": "addAuthorization",
     "outputs": [],
@@ -219,42 +471,92 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_id",
+        "type": "uint256"
+      }
+    ],
+    "name": "auctions",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "bidAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "amountToSell",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "highBidder",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "bidExpiry",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "auctionDeadline",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct ICommonSurplusAuctionHouse.Auction",
+        "name": "_auction",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "auctionsStarted",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [{ "internalType": "address", "name": "", "type": "address" }],
-    "name": "authorizedAccounts",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "bidDuration",
-    "outputs": [{ "internalType": "uint48", "name": "", "type": "uint48" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "bidIncrease",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "name": "bids",
     "outputs": [
-      { "internalType": "uint256", "name": "bidAmount", "type": "uint256" },
-      { "internalType": "uint256", "name": "amountToSell", "type": "uint256" },
-      { "internalType": "address", "name": "highBidder", "type": "address" },
-      { "internalType": "uint48", "name": "bidExpiry", "type": "uint48" },
-      { "internalType": "uint48", "name": "auctionDeadline", "type": "uint48" }
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_account",
+        "type": "address"
+      }
+    ],
+    "name": "authorizedAccounts",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "_authorized",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "authorizedAccounts",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "_accounts",
+        "type": "address[]"
+      }
     ],
     "stateMutability": "view",
     "type": "function"
@@ -262,7 +564,13 @@
   {
     "inputs": [],
     "name": "contractEnabled",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
@@ -275,9 +583,21 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "id", "type": "uint256" },
-      { "internalType": "uint256", "name": "amountToBuy", "type": "uint256" },
-      { "internalType": "uint256", "name": "bid", "type": "uint256" }
+      {
+        "internalType": "uint256",
+        "name": "_id",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_amountToBuy",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_bid",
+        "type": "uint256"
+      }
     ],
     "name": "increaseBidSize",
     "outputs": [],
@@ -286,8 +606,39 @@
   },
   {
     "inputs": [
-      { "internalType": "bytes32", "name": "parameter", "type": "bytes32" },
-      { "internalType": "uint256", "name": "data", "type": "uint256" }
+      {
+        "internalType": "bytes32",
+        "name": "_cType",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "_param",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes",
+        "name": "_data",
+        "type": "bytes"
+      }
+    ],
+    "name": "modifyParameters",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "_param",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes",
+        "name": "_data",
+        "type": "bytes"
+      }
     ],
     "name": "modifyParameters",
     "outputs": [],
@@ -296,16 +647,64 @@
   },
   {
     "inputs": [],
+    "name": "params",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "bidIncrease",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "bidDuration",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "totalAuctionLength",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "bidReceiver",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "recyclingPercentage",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct ISurplusAuctionHouse.SurplusAuctionHouseParams",
+        "name": "_sahParams",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "protocolToken",
     "outputs": [
-      { "internalType": "contract TokenLike", "name": "", "type": "address" }
+      {
+        "internalType": "contract IProtocolToken",
+        "name": "",
+        "type": "address"
+      }
     ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "account", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "_account",
+        "type": "address"
+      }
     ],
     "name": "removeAuthorization",
     "outputs": [],
@@ -313,7 +712,13 @@
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "uint256", "name": "id", "type": "uint256" }],
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_id",
+        "type": "uint256"
+      }
+    ],
     "name": "restartAuction",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -324,7 +729,7 @@
     "name": "safeEngine",
     "outputs": [
       {
-        "internalType": "contract SAFEEngineLike",
+        "internalType": "contract ISAFEEngine",
         "name": "",
         "type": "address"
       }
@@ -333,7 +738,13 @@
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "uint256", "name": "id", "type": "uint256" }],
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_id",
+        "type": "uint256"
+      }
+    ],
     "name": "settleAuction",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -341,26 +752,39 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "amountToSell", "type": "uint256" },
-      { "internalType": "uint256", "name": "initialBid", "type": "uint256" }
+      {
+        "internalType": "uint256",
+        "name": "_amountToSell",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_initialBid",
+        "type": "uint256"
+      }
     ],
     "name": "startAuction",
-    "outputs": [{ "internalType": "uint256", "name": "id", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "_id",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "uint256", "name": "id", "type": "uint256" }],
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_id",
+        "type": "uint256"
+      }
+    ],
     "name": "terminateAuctionPrematurely",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "totalAuctionLength",
-    "outputs": [{ "internalType": "uint48", "name": "", "type": "uint48" }],
-    "stateMutability": "view",
     "type": "function"
   }
 ]

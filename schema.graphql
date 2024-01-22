@@ -16,6 +16,9 @@ type Safe @entity {
   " Outstanding Safe debt "
   debt: BigDecimal!
 
+  " Current CRatio for this Safe "
+  cRatio: BigDecimal!
+
   " The address of the Safe handler (ownership at the SAFEEngine level if the Safe was created using GebSafeManager) "
   safeHandler: Bytes!
 
@@ -103,9 +106,6 @@ type UserProxy @entity {
 
   " Proxy contract address "
   address: Bytes!
-
-  " Cache contract address "
-  cache: Bytes!
 
   " Allowance of the proxy to spend its owner RAIs (Useful when we need to repay debt)"
   coinAllowance: ERC20Allowance
@@ -382,6 +382,14 @@ type CollateralType @entity {
   modifiedAtTransaction: Bytes
 }
 
+type CollateralSafe @entity {
+  " Set to Collateral Type string "
+  id: ID!
+
+  " List of Safe IDs with this Collateral Type "
+  safeIds: [String!]!
+}
+
 type SystemState @entity {
   " Singleton entity. Always set to 'current' "
   id: ID!
@@ -534,9 +542,6 @@ type AccountingEngine @entity {
 
   " Contract that handles auctions for debt that couldn't be covered by collateral auctions "
   debtAuctionHouse: Bytes!
-
-  " Permissions registry dictating who can burn and mint protocol tokens "
-  protocolTokenAuthority: Bytes!
 
   " Addredd of the contract that auctions extra surplus after settlement is triggered "
   postSettlementSurplusDrain: Bytes!
@@ -1066,7 +1071,7 @@ type DiscountAuction @entity {
   buyAmount: BigDecimal!
 
   " Cumulative collateral amount sold so far "
-  sellAmount: BigDecimal
+  sellAmount: BigDecimal!
 
   " Liquidated Safe "
   safe: Safe!
@@ -1144,7 +1149,7 @@ type ERC20Balance @entity {
   address: Bytes!
 
   " Either the address or the owner of the proxy if the address is a Proxy "
-  owner: User
+  owner: User!
 
   " Balance amount "
   balance: BigDecimal!
@@ -1325,20 +1330,8 @@ type UniswapPair @entity {
   " Quote token address "
   token1: Bytes!
 
-  " Base token reserve amount "
-  reserve0: BigDecimal!
-
-  " Quote token reserve amount "
-  reserve1: BigDecimal!
-
-  " reserve0 / reserve 1 "
-  token0Price: BigDecimal!
-
-  " reserve1 / reserve 0 "
-  token1Price: BigDecimal!
-
-  " Supply of pool token shares "
-  totalSupply: BigDecimal!
+  " SqrtPriceX96 "
+  sqrtPriceX96: BigInt!
 
   " Timestamp of the block at which the pair was created [unix time] "
   createdAt: BigInt!
@@ -1523,10 +1516,10 @@ type DailyStat @entity {
   blockNumber: BigInt!
 
   " Redemption rate "
-  redemptionRate: RedemptionRate!
+  redemptionRate: RedemptionRate
 
   " Redemption price "
-  redemptionPrice: RedemptionPrice!
+  redemptionPrice: RedemptionPrice
 
   " Price of COIN in USD (Uniswap pool price * ETH median price) "
   marketPriceUsd: BigDecimal!
@@ -1552,10 +1545,10 @@ type HourlyStat @entity {
   blockNumber: BigInt!
 
   " Redemption rate "
-  redemptionRate: RedemptionRate!
+  redemptionRate: RedemptionRate
 
   " Redemption price "
-  redemptionPrice: RedemptionPrice!
+  redemptionPrice: RedemptionPrice
 
   " Price of COIN in USD (Uniswap v2 pool price * ETH median price) "
   marketPriceUsd: BigDecimal!

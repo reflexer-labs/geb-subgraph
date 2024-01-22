@@ -1,16 +1,141 @@
 [
   {
     "inputs": [
-      { "internalType": "address", "name": "safeEngine_", "type": "address" },
       {
         "internalType": "address",
-        "name": "extraSurplusReceiver_",
+        "name": "_safeEngine",
         "type": "address"
       },
-      { "internalType": "address", "name": "coinJoin_", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "_extraSurplusReceiver",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_coinJoin",
+        "type": "address"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "treasuryCapacity",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "pullFundsMinThreshold",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "surplusTransferDelay",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct IStabilityFeeTreasury.StabilityFeeTreasuryParams",
+        "name": "_sfTreasuryParams",
+        "type": "tuple"
+      }
     ],
     "stateMutability": "nonpayable",
     "type": "constructor"
+  },
+  {
+    "inputs": [],
+    "name": "AlreadyAuthorized",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "ContractIsDisabled",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "ContractIsEnabled",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NonDisableable",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NotAuthorized",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NullAddress",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "SFTreasury_AccountCannotBeTreasury",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "SFTreasury_BelowPullFundsMinThreshold",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "SFTreasury_DstCannotBeAccounting",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "SFTreasury_NotAllowed",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "SFTreasury_NotEnoughFunds",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "SFTreasury_NotEnoughSurplus",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "SFTreasury_NullTransferAmount",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "SFTreasury_OutstandingBadDebt",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "SFTreasury_PerHourLimitExceeded",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "SFTreasury_TransferCooldownNotPassed",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "Unauthorized",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "UnrecognizedCType",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "UnrecognizedParam",
+    "type": "error"
   },
   {
     "anonymous": false,
@@ -18,7 +143,7 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "account",
+        "name": "_account",
         "type": "address"
       }
     ],
@@ -37,19 +162,13 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "account",
+        "name": "_account",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "rad",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "expensesAccumulator",
+        "name": "_rad",
         "type": "uint256"
       }
     ],
@@ -61,34 +180,34 @@
     "inputs": [
       {
         "indexed": false,
-        "internalType": "bytes32",
-        "name": "parameter",
-        "type": "bytes32"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "addr",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "_wad",
+        "type": "uint256"
       }
     ],
-    "name": "ModifyParameters",
+    "name": "JoinCoins",
     "type": "event"
   },
   {
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "bytes32",
-        "name": "parameter",
+        "name": "_param",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "_cType",
         "type": "bytes32"
       },
       {
         "indexed": false,
-        "internalType": "uint256",
-        "name": "val",
-        "type": "uint256"
+        "internalType": "bytes",
+        "name": "_data",
+        "type": "bytes"
       }
     ],
     "name": "ModifyParameters",
@@ -100,31 +219,19 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "sender",
+        "name": "_sender",
         "type": "address"
       },
       {
         "indexed": true,
         "internalType": "address",
-        "name": "dstAccount",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "token",
+        "name": "_dstAccount",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "rad",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "expensesAccumulator",
+        "name": "_rad",
         "type": "uint256"
       }
     ],
@@ -137,7 +244,7 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "account",
+        "name": "_account",
         "type": "address"
       }
     ],
@@ -150,17 +257,17 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "account",
+        "name": "_account",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "rad",
+        "name": "_rad",
         "type": "uint256"
       }
     ],
-    "name": "SetPerBlockAllowance",
+    "name": "SetPerHourAllowance",
     "type": "event"
   },
   {
@@ -169,13 +276,13 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "account",
+        "name": "_account",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "rad",
+        "name": "_rad",
         "type": "uint256"
       }
     ],
@@ -186,15 +293,28 @@
     "anonymous": false,
     "inputs": [
       {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_rad",
+        "type": "uint256"
+      }
+    ],
+    "name": "SettleDebt",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
         "indexed": true,
         "internalType": "address",
-        "name": "account",
+        "name": "_account",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "rad",
+        "name": "_rad",
         "type": "uint256"
       }
     ],
@@ -207,13 +327,13 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "extraSurplusReceiver",
+        "name": "_extraSurplusReceiver",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "fundsToTransfer",
+        "name": "_fundsToTransfer",
         "type": "uint256"
       }
     ],
@@ -221,15 +341,59 @@
     "type": "event"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_account",
+        "type": "address"
+      }
+    ],
+    "name": "_allowance",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "total",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "perHour",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
-    "name": "accumulatorTag",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "name": "_params",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "treasuryCapacity",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "pullFundsMinThreshold",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "surplusTransferDelay",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "account", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "_account",
+        "type": "address"
+      }
     ],
     "name": "addAuthorization",
     "outputs": [],
@@ -237,9 +401,65 @@
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_account",
+        "type": "address"
+      }
+    ],
+    "name": "allowance",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "total",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "perHour",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct IStabilityFeeTreasury.Allowance",
+        "name": "__allowance",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_account",
+        "type": "address"
+      }
+    ],
     "name": "authorizedAccounts",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "_authorized",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "authorizedAccounts",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "_accounts",
+        "type": "address[]"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
@@ -247,7 +467,11 @@
     "inputs": [],
     "name": "coinJoin",
     "outputs": [
-      { "internalType": "contract CoinJoinLike", "name": "", "type": "address" }
+      {
+        "internalType": "contract ICoinJoin",
+        "name": "",
+        "type": "address"
+      }
     ],
     "stateMutability": "view",
     "type": "function"
@@ -255,7 +479,13 @@
   {
     "inputs": [],
     "name": "contractEnabled",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
@@ -268,41 +498,29 @@
   },
   {
     "inputs": [],
-    "name": "expensesAccumulator",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "expensesMultiplier",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "extraSurplusReceiver",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "address", "name": "account", "type": "address" }
-    ],
-    "name": "getAllowance",
     "outputs": [
-      { "internalType": "uint256", "name": "", "type": "uint256" },
-      { "internalType": "uint256", "name": "", "type": "uint256" }
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
     ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "account", "type": "address" },
-      { "internalType": "uint256", "name": "rad", "type": "uint256" }
+      {
+        "internalType": "address",
+        "name": "_account",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_rad",
+        "type": "uint256"
+      }
     ],
     "name": "giveFunds",
     "outputs": [],
@@ -312,42 +530,76 @@
   {
     "inputs": [],
     "name": "latestSurplusTransferTime",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "_param",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes",
+        "name": "_data",
+        "type": "bytes"
+      }
+    ],
+    "name": "modifyParameters",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [],
-    "name": "minimumFundsRequired",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "name": "params",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "treasuryCapacity",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "pullFundsMinThreshold",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "surplusTransferDelay",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct IStabilityFeeTreasury.StabilityFeeTreasuryParams",
+        "name": "_sfTreasuryParams",
+        "type": "tuple"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "bytes32", "name": "parameter", "type": "bytes32" },
-      { "internalType": "address", "name": "addr", "type": "address" }
-    ],
-    "name": "modifyParameters",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "bytes32", "name": "parameter", "type": "bytes32" },
-      { "internalType": "uint256", "name": "val", "type": "uint256" }
-    ],
-    "name": "modifyParameters",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "address", "name": "dstAccount", "type": "address" },
-      { "internalType": "address", "name": "token", "type": "address" },
-      { "internalType": "uint256", "name": "wad", "type": "uint256" }
+      {
+        "internalType": "address",
+        "name": "_dstAccount",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_wad",
+        "type": "uint256"
+      }
     ],
     "name": "pullFunds",
     "outputs": [],
@@ -355,25 +607,36 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "pullFundsMinThreshold",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
-      { "internalType": "address", "name": "", "type": "address" },
-      { "internalType": "uint256", "name": "", "type": "uint256" }
+      {
+        "internalType": "address",
+        "name": "_account",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_blockHour",
+        "type": "uint256"
+      }
     ],
-    "name": "pulledPerBlock",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "name": "pulledPerHour",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "_rad",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "account", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "_account",
+        "type": "address"
+      }
     ],
     "name": "removeAuthorization",
     "outputs": [],
@@ -385,7 +648,7 @@
     "name": "safeEngine",
     "outputs": [
       {
-        "internalType": "contract SAFEEngineLike",
+        "internalType": "contract ISAFEEngine",
         "name": "",
         "type": "address"
       }
@@ -395,18 +658,34 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "account", "type": "address" },
-      { "internalType": "uint256", "name": "rad", "type": "uint256" }
+      {
+        "internalType": "address",
+        "name": "_account",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_rad",
+        "type": "uint256"
+      }
     ],
-    "name": "setPerBlockAllowance",
+    "name": "setPerHourAllowance",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "account", "type": "address" },
-      { "internalType": "uint256", "name": "rad", "type": "uint256" }
+      {
+        "internalType": "address",
+        "name": "_account",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_rad",
+        "type": "uint256"
+      }
     ],
     "name": "setTotalAllowance",
     "outputs": [],
@@ -416,15 +695,19 @@
   {
     "inputs": [],
     "name": "settleDebt",
-    "outputs": [],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "_coinBalance",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_debtBalance",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "surplusTransferDelay",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -432,7 +715,7 @@
     "name": "systemCoin",
     "outputs": [
       {
-        "internalType": "contract SystemCoinLike",
+        "internalType": "contract ISystemCoin",
         "name": "",
         "type": "address"
       }
@@ -442,8 +725,16 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "account", "type": "address" },
-      { "internalType": "uint256", "name": "rad", "type": "uint256" }
+      {
+        "internalType": "address",
+        "name": "_account",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_rad",
+        "type": "uint256"
+      }
     ],
     "name": "takeFunds",
     "outputs": [],
@@ -455,13 +746,6 @@
     "name": "transferSurplusFunds",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "treasuryCapacity",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
     "type": "function"
   }
 ]

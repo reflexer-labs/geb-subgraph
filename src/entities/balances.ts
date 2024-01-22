@@ -53,7 +53,10 @@ function createCoinBalance(
   let bal = new InternalCoinBalance(address.toHexString())
   bal.accountHandler = address
   bal.owner = getOrCreateUser(findUltimateOwner(address)).id
-  bal.proxy = findProxy(address).id
+  let proxy = findProxy(address)
+  if (proxy != null) {
+    bal.proxy = proxy.id
+  }
   bal.balance = balance
   bal.createdAt = event.block.timestamp
   bal.createdAtBlock = event.block.number
@@ -114,7 +117,10 @@ function createCollateralBalance(
   let bal = new InternalCollateralBalance(address.toHexString() + '-' + collateralType.toString())
   bal.accountHandler = address
   bal.owner = getOrCreateUser(findUltimateOwner(address)).id
-  bal.proxy = findProxy(address).id
+  let proxy = findProxy(address)
+  if (proxy != null) {
+    bal.proxy = proxy.id
+  }
   bal.collateralType = collateralType.toString()
   bal.balance = balance
   bal.createdAt = event.block.timestamp

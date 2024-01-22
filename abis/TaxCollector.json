@@ -1,10 +1,185 @@
 [
   {
     "inputs": [
-      { "internalType": "address", "name": "safeEngine_", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "_safeEngine",
+        "type": "address"
+      },
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "primaryTaxReceiver",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "globalStabilityFee",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxStabilityFeeRange",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxSecondaryReceivers",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct ITaxCollector.TaxCollectorParams",
+        "name": "_taxCollectorParams",
+        "type": "tuple"
+      }
     ],
     "stateMutability": "nonpayable",
     "type": "constructor"
+  },
+  {
+    "inputs": [],
+    "name": "AlreadyAuthorized",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "CollateralTypeAlreadyInitialized",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "IntOverflow",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NotAuthorized",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_x",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_y",
+        "type": "uint256"
+      }
+    ],
+    "name": "NotGreaterOrEqualThan",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_x",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_y",
+        "type": "uint256"
+      }
+    ],
+    "name": "NotGreaterThan",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_x",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_y",
+        "type": "uint256"
+      }
+    ],
+    "name": "NotLesserOrEqualThan",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_x",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_y",
+        "type": "uint256"
+      }
+    ],
+    "name": "NotLesserThan",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NullAddress",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "TaxCollector_CollateralTypeNotInitialized",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "TaxCollector_ExceedsMaxReceiverLimit",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "TaxCollector_InvalidIndexes",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "TaxCollector_NullAccount",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "TaxCollector_NullSF",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "TaxCollector_PrimaryReceiverCannotBeSecondary",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "TaxCollector_TaxCutExceedsHundred",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "TaxCollector_TaxCutTooBig",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "Unauthorized",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "UnrecognizedCType",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "UnrecognizedParam",
+    "type": "error"
   },
   {
     "anonymous": false,
@@ -12,7 +187,7 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "account",
+        "name": "_account",
         "type": "address"
       }
     ],
@@ -25,56 +200,19 @@
       {
         "indexed": true,
         "internalType": "bytes32",
-        "name": "collateralType",
+        "name": "_cType",
         "type": "bytes32"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "secondaryReceiverNonce",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "latestSecondaryReceiver",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "secondaryReceiverAllotedTax",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "secondaryReceiverRevenueSources",
-        "type": "uint256"
-      }
-    ],
-    "name": "AddSecondaryReceiver",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "collateralType",
-        "type": "bytes32"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "latestAccumulatedRate",
+        "name": "_latestAccumulatedRate",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "int256",
-        "name": "deltaRate",
+        "name": "_deltaRate",
         "type": "int256"
       }
     ],
@@ -87,19 +225,19 @@
       {
         "indexed": true,
         "internalType": "bytes32",
-        "name": "collateralType",
+        "name": "_cType",
         "type": "bytes32"
       },
       {
         "indexed": true,
         "internalType": "address",
-        "name": "target",
+        "name": "_target",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "int256",
-        "name": "taxCut",
+        "name": "_taxCut",
         "type": "int256"
       }
     ],
@@ -112,7 +250,7 @@
       {
         "indexed": false,
         "internalType": "bytes32",
-        "name": "collateralType",
+        "name": "_cType",
         "type": "bytes32"
       }
     ],
@@ -123,22 +261,22 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "bytes32",
-        "name": "collateralType",
+        "name": "_param",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "_cType",
         "type": "bytes32"
       },
       {
         "indexed": false,
-        "internalType": "bytes32",
-        "name": "parameter",
-        "type": "bytes32"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "data",
-        "type": "uint256"
+        "internalType": "bytes",
+        "name": "_data",
+        "type": "bytes"
       }
     ],
     "name": "ModifyParameters",
@@ -147,95 +285,14 @@
   {
     "anonymous": false,
     "inputs": [
-      {
-        "indexed": false,
-        "internalType": "bytes32",
-        "name": "parameter",
-        "type": "bytes32"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "data",
-        "type": "uint256"
-      }
-    ],
-    "name": "ModifyParameters",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "bytes32",
-        "name": "parameter",
-        "type": "bytes32"
-      },
       {
         "indexed": false,
         "internalType": "address",
-        "name": "data",
+        "name": "_account",
         "type": "address"
       }
     ],
-    "name": "ModifyParameters",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "bytes32",
-        "name": "collateralType",
-        "type": "bytes32"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "position",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "val",
-        "type": "uint256"
-      }
-    ],
-    "name": "ModifyParameters",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "bytes32",
-        "name": "collateralType",
-        "type": "bytes32"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "position",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "taxPercentage",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "receiverAccount",
-        "type": "address"
-      }
-    ],
-    "name": "ModifyParameters",
+    "name": "RemoveAuthorization",
     "type": "event"
   },
   {
@@ -244,53 +301,167 @@
       {
         "indexed": true,
         "internalType": "bytes32",
-        "name": "collateralType",
+        "name": "_cType",
         "type": "bytes32"
       },
       {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "secondaryReceiverNonce",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "latestSecondaryReceiver",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "secondaryReceiverAllotedTax",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "secondaryReceiverRevenueSources",
-        "type": "uint256"
+        "indexed": true,
+        "internalType": "address",
+        "name": "_receiver",
+        "type": "address"
       }
     ],
-    "name": "ModifySecondaryReceiver",
+    "name": "SetPrimaryReceiver",
     "type": "event"
   },
   {
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "_cType",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
         "internalType": "address",
-        "name": "account",
+        "name": "_receiver",
         "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_taxPercentage",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "_canTakeBackTax",
+        "type": "bool"
       }
     ],
-    "name": "RemoveAuthorization",
+    "name": "SetSecondaryReceiver",
     "type": "event"
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "account", "type": "address" }
+      {
+        "internalType": "bytes32",
+        "name": "_cType",
+        "type": "bytes32"
+      }
+    ],
+    "name": "_cData",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "nextStabilityFee",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "updateTime",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "secondaryReceiverAllotedTax",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "_cType",
+        "type": "bytes32"
+      }
+    ],
+    "name": "_cParams",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "stabilityFee",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "_params",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "primaryTaxReceiver",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "globalStabilityFee",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "maxStabilityFeeRange",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "maxSecondaryReceivers",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "_cType",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "address",
+        "name": "_taxReceiver",
+        "type": "address"
+      }
+    ],
+    "name": "_secondaryTaxReceivers",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "receiver",
+        "type": "address"
+      },
+      {
+        "internalType": "bool",
+        "name": "canTakeBackTax",
+        "type": "bool"
+      },
+      {
+        "internalType": "uint256",
+        "name": "taxPercentage",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_account",
+        "type": "address"
+      }
     ],
     "name": "addAuthorization",
     "outputs": [],
@@ -298,56 +469,161 @@
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_account",
+        "type": "address"
+      }
+    ],
     "name": "authorizedAccounts",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "_authorized",
+        "type": "bool"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "inputs": [],
+    "name": "authorizedAccounts",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "_accounts",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "_cType",
+        "type": "bytes32"
+      }
+    ],
+    "name": "cData",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "nextStabilityFee",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "updateTime",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "secondaryReceiverAllotedTax",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct ITaxCollector.TaxCollectorCollateralData",
+        "name": "_taxCollectorCData",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "_cType",
+        "type": "bytes32"
+      }
+    ],
+    "name": "cParams",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "stabilityFee",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct ITaxCollector.TaxCollectorCollateralParams",
+        "name": "_taxCollectorCParams",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "collateralList",
-    "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
+    "outputs": [
+      {
+        "internalType": "bytes32[]",
+        "name": "__collateralList",
+        "type": "bytes32[]"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "collateralListLength",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
-    "name": "collateralTypes",
     "outputs": [
-      { "internalType": "uint256", "name": "stabilityFee", "type": "uint256" },
-      { "internalType": "uint256", "name": "updateTime", "type": "uint256" }
+      {
+        "internalType": "uint256",
+        "name": "_collateralListLength",
+        "type": "uint256"
+      }
     ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "start", "type": "uint256" },
-      { "internalType": "uint256", "name": "end", "type": "uint256" }
+      {
+        "internalType": "uint256",
+        "name": "_start",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_end",
+        "type": "uint256"
+      }
     ],
     "name": "collectedManyTax",
-    "outputs": [{ "internalType": "bool", "name": "ok", "type": "bool" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "globalStabilityFee",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "_ok",
+        "type": "bool"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "bytes32", "name": "collateralType", "type": "bytes32" }
+      {
+        "internalType": "bytes32",
+        "name": "_cType",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes",
+        "name": "_collateralParams",
+        "type": "bytes"
+      }
     ],
     "name": "initializeCollateralType",
     "outputs": [],
@@ -356,24 +632,20 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "_receiver", "type": "uint256" }
+      {
+        "internalType": "address",
+        "name": "_receiver",
+        "type": "address"
+      }
     ],
     "name": "isSecondaryReceiver",
-    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "latestSecondaryReceiver",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "maxSecondaryReceivers",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "_isSecondaryReceiver",
+        "type": "bool"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
@@ -381,15 +653,18 @@
     "inputs": [
       {
         "internalType": "bytes32",
-        "name": "collateralType",
+        "name": "_cType",
         "type": "bytes32"
       },
-      { "internalType": "uint256", "name": "position", "type": "uint256" },
-      { "internalType": "uint256", "name": "taxPercentage", "type": "uint256" },
       {
-        "internalType": "address",
-        "name": "receiverAccount",
-        "type": "address"
+        "internalType": "bytes32",
+        "name": "_param",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes",
+        "name": "_data",
+        "type": "bytes"
       }
     ],
     "name": "modifyParameters",
@@ -401,46 +676,14 @@
     "inputs": [
       {
         "internalType": "bytes32",
-        "name": "collateralType",
+        "name": "_param",
         "type": "bytes32"
       },
-      { "internalType": "uint256", "name": "position", "type": "uint256" },
-      { "internalType": "uint256", "name": "val", "type": "uint256" }
-    ],
-    "name": "modifyParameters",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "bytes32", "name": "parameter", "type": "bytes32" },
-      { "internalType": "address", "name": "data", "type": "address" }
-    ],
-    "name": "modifyParameters",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
       {
-        "internalType": "bytes32",
-        "name": "collateralType",
-        "type": "bytes32"
-      },
-      { "internalType": "bytes32", "name": "parameter", "type": "bytes32" },
-      { "internalType": "uint256", "name": "data", "type": "uint256" }
-    ],
-    "name": "modifyParameters",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "bytes32", "name": "parameter", "type": "bytes32" },
-      { "internalType": "uint256", "name": "data", "type": "uint256" }
+        "internalType": "bytes",
+        "name": "_data",
+        "type": "bytes"
+      }
     ],
     "name": "modifyParameters",
     "outputs": [],
@@ -449,14 +692,46 @@
   },
   {
     "inputs": [],
-    "name": "primaryTaxReceiver",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "name": "params",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "primaryTaxReceiver",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "globalStabilityFee",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxStabilityFeeRange",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxSecondaryReceivers",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct ITaxCollector.TaxCollectorParams",
+        "name": "_taxCollectorParams",
+        "type": "tuple"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "account", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "_account",
+        "type": "address"
+      }
     ],
     "name": "removeAuthorization",
     "outputs": [],
@@ -468,7 +743,7 @@
     "name": "safeEngine",
     "outputs": [
       {
-        "internalType": "contract SAFEEngineLike",
+        "internalType": "contract ISAFEEngine",
         "name": "",
         "type": "address"
       }
@@ -477,61 +752,103 @@
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "name": "secondaryReceiverAccounts",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
-    "name": "secondaryReceiverAllotedTax",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "secondaryReceiverNonce",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [{ "internalType": "address", "name": "", "type": "address" }],
-    "name": "secondaryReceiverRevenueSources",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_secondaryReceiver",
+        "type": "address"
+      }
+    ],
+    "name": "secondaryReceiverRevenueSourcesList",
+    "outputs": [
+      {
+        "internalType": "bytes32[]",
+        "name": "_secondaryReceiverRevenueSourcesList",
+        "type": "bytes32[]"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
-    "name": "secondaryReceiversAmount",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "name": "secondaryReceiversList",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "_secondaryReceiversList",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "secondaryReceiversListLength",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "_secondaryReceiversListLength",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "bytes32", "name": "", "type": "bytes32" },
-      { "internalType": "uint256", "name": "", "type": "uint256" }
+      {
+        "internalType": "bytes32",
+        "name": "_cType",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "address",
+        "name": "_receiver",
+        "type": "address"
+      }
     ],
     "name": "secondaryTaxReceivers",
     "outputs": [
       {
-        "internalType": "uint256",
-        "name": "canTakeBackTax",
-        "type": "uint256"
-      },
-      { "internalType": "uint256", "name": "taxPercentage", "type": "uint256" }
+        "components": [
+          {
+            "internalType": "address",
+            "name": "receiver",
+            "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "canTakeBackTax",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "taxPercentage",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct ITaxCollector.TaxReceiver",
+        "name": "_secondaryTaxReceiver",
+        "type": "tuple"
+      }
     ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "start", "type": "uint256" },
-      { "internalType": "uint256", "name": "end", "type": "uint256" }
+      {
+        "internalType": "uint256",
+        "name": "_start",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_end",
+        "type": "uint256"
+      }
     ],
     "name": "taxMany",
     "outputs": [],
@@ -540,42 +857,73 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "start", "type": "uint256" },
-      { "internalType": "uint256", "name": "end", "type": "uint256" }
+      {
+        "internalType": "uint256",
+        "name": "_start",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_end",
+        "type": "uint256"
+      }
     ],
     "name": "taxManyOutcome",
     "outputs": [
-      { "internalType": "bool", "name": "ok", "type": "bool" },
-      { "internalType": "int256", "name": "rad", "type": "int256" }
+      {
+        "internalType": "bool",
+        "name": "_ok",
+        "type": "bool"
+      },
+      {
+        "internalType": "int256",
+        "name": "_rad",
+        "type": "int256"
+      }
     ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "bytes32", "name": "collateralType", "type": "bytes32" }
+      {
+        "internalType": "bytes32",
+        "name": "_cType",
+        "type": "bytes32"
+      }
     ],
     "name": "taxSingle",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "_latestAccumulatedRate",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "bytes32", "name": "collateralType", "type": "bytes32" }
+      {
+        "internalType": "bytes32",
+        "name": "_cType",
+        "type": "bytes32"
+      }
     ],
     "name": "taxSingleOutcome",
     "outputs": [
-      { "internalType": "uint256", "name": "", "type": "uint256" },
-      { "internalType": "int256", "name": "", "type": "int256" }
+      {
+        "internalType": "uint256",
+        "name": "_newlyAccumulatedRate",
+        "type": "uint256"
+      },
+      {
+        "internalType": "int256",
+        "name": "_deltaRate",
+        "type": "int256"
+      }
     ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [{ "internalType": "address", "name": "", "type": "address" }],
-    "name": "usedSecondaryReceiver",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   }

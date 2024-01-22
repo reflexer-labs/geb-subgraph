@@ -1,5 +1,5 @@
 import { UserProxy, User, SafeHandlerOwner } from '../../../../generated/schema'
-import { Created } from '../../../../generated/ProxyFactory/DSProxyFactory'
+import { Created } from '../../../../generated/ProxyFactory/HaiProxyFactory'
 import { getOrCreateUser, getSystemState } from '../../../entities'
 
 import * as integer from '../../../utils/integer'
@@ -8,31 +8,30 @@ import { addressMap } from '../../../utils/addresses'
 import { allowanceId } from '../../../entities/erc20'
 
 export function handleCreated(event: Created): void {
-  let user = getOrCreateUser(event.params.owner)
+  let user = getOrCreateUser(event.params._owner)
 
   // Register new user proxy
-  let proxy = new UserProxy(event.params.proxy.toHexString())
-  proxy.address = event.params.proxy
-  proxy.cache = event.params.cache
+  let proxy = new UserProxy(event.params._proxy.toHexString())
+  proxy.address = event.params._proxy
   proxy.owner = user.id
 
   // We add a reference to the proxy allowances, note that these might not yet exist.
   proxy.coinAllowance = allowanceId(
-    event.params.owner,
+    event.params._owner,
     addressMap.get('GEB_COIN'),
-    event.params.proxy,
+    event.params._proxy,
   )
 
   proxy.protAllowance = allowanceId(
-    event.params.owner,
+    event.params._owner,
     addressMap.get('GEB_PROT'),
-    event.params.proxy,
+    event.params._proxy,
   )
 
   proxy.uniCoinLpAllowance = allowanceId(
-    event.params.owner,
+    event.params._owner,
     addressMap.get('GEB_COIN_UNISWAP_POOL'),
-    event.params.proxy,
+    event.params._proxy,
   )
 
   proxy.save()
@@ -43,7 +42,7 @@ export function handleCreated(event: Created): void {
   system.save()
 }
 
-export function findProxy(address: Bytes): UserProxy {
+export function findProxy(address: Bytes): UserProxy | null {
   let proxy = UserProxy.load(address.toHexString())
 
   if (proxy) {
@@ -52,7 +51,11 @@ export function findProxy(address: Bytes): UserProxy {
     let handler = SafeHandlerOwner.load(address.toHexString())
     if (handler) {
       proxy = UserProxy.load(handler.owner)
-      return proxy as UserProxy
+      if (proxy) {
+        return proxy as UserProxy
+      } else {
+        return null
+      }
     } else {
       return null
     }

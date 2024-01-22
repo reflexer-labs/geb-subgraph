@@ -8,9 +8,11 @@ export var addressLabels: string[] = []
 export var addressValues: Address[] = []
 
 function addEntry(label: string, address: string): void {
-  addressMap.set(label, Address.fromHexString(address) as Address)
-  addressLabels.push(label)
-  addressValues.push(Address.fromHexString(address) as Address)
+  if (address != '') {
+    addressMap.set(label, Address.fromString(address))
+    addressLabels.push(label)
+    addressValues.push(Address.fromString(address))
+  }
 }
 
 addEntry('ETH_FROM', '{{ETH_FROM}}')

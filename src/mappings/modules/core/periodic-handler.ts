@@ -3,7 +3,8 @@ import { DailyStat, getSystemState, HourlyStat } from '../../../entities'
 import { EACAggregatorProxy } from '../../../../generated/SAFEEngine/EACAggregatorProxy'
 import * as integer from '../../../utils/integer'
 import * as decimal from '../../../utils/decimal'
-import { getRaiEthPrice } from '../uniswap/uniswap'
+import { getUniEthPrice } from '../uniswap/uniswapv3'
+
 import { addressMap } from '../../../utils/addresses'
 
 const CHAINLINK_ETHUSD_PRECISION = 1e8
@@ -43,9 +44,14 @@ export function periodicHandler(event: ethereum.Event): void {
     daily.blockNumber = event.block.number
     daily.redemptionRate = state.currentRedemptionRate
     daily.redemptionPrice = state.currentRedemptionPrice
-    let raiEthPrice = getRaiEthPrice(event)
-    daily.marketPriceEth = raiEthPrice
-    daily.marketPriceUsd = ethPrice.times(raiEthPrice)
+    let haiEthPrice = getUniEthPrice(event)
+    if (haiEthPrice == decimal.ZERO) {
+      daily.marketPriceEth = decimal.ZERO
+      daily.marketPriceUsd = decimal.ZERO
+    } else {
+      daily.marketPriceEth = haiEthPrice
+      daily.marketPriceUsd = ethPrice.times(haiEthPrice)
+    }
     daily.globalDebt = state.globalDebt
     daily.erc20CoinTotalSupply = state.erc20CoinTotalSupply
     daily.save()
@@ -56,9 +62,14 @@ export function periodicHandler(event: ethereum.Event): void {
     hourly.blockNumber = event.block.number
     hourly.redemptionRate = state.currentRedemptionRate
     hourly.redemptionPrice = state.currentRedemptionPrice
-    let raiEthPrice = getRaiEthPrice(event)
-    hourly.marketPriceEth = raiEthPrice
-    hourly.marketPriceUsd = ethPrice.times(raiEthPrice)
+    let haiEthPrice = getUniEthPrice(event)
+    if (haiEthPrice == decimal.ZERO) {
+      hourly.marketPriceEth = decimal.ZERO
+      hourly.marketPriceUsd = decimal.ZERO
+    } else {
+      hourly.marketPriceEth = haiEthPrice
+      hourly.marketPriceUsd = ethPrice.times(haiEthPrice)
+    }
     hourly.globalDebt = state.globalDebt
     hourly.erc20CoinTotalSupply = state.erc20CoinTotalSupply
     hourly.save()
